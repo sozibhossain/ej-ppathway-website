@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import { BlogCard } from "../../components/cards/BlogCard";
+import { BlogCardSkeleton, Skeleton } from "../../components/ui/Skeleton";
 import { BlogsFilter } from "./blogs-filter";
 import { api } from "../../lib/api";
 import { getSiteContent } from "../../lib/site-content";
@@ -12,25 +14,8 @@ export default async function BlogsPage({
   const sp = await searchParams;
   const data = await getSiteContent("blogs");
   const categories = data.categories || ["All"];
-
-  let blogs: Blog[] = [];
-  try {
-    const r = await api.get<Blog[]>("/cms/blogs", { limit: 30 }, { revalidate: 60, skipAuth: true });
-    blogs = r.data || [];
-  } catch {
-    blogs = [];
-  }
-
   const q = sp.q?.toLowerCase().trim() || "";
   const active = sp.category || "All";
-  const filtered = blogs.filter((b) => {
-    const inCat = active === "All" || b.category === active || b.type === active;
-    const inQ = !q || b.title.toLowerCase().includes(q) || (b.excerpt || "").toLowerCase().includes(q);
-    return inCat && inQ;
-  });
-
-  const featured = filtered[0];
-  const rest = filtered.slice(1);
 
   return (
     <>
@@ -52,32 +37,13 @@ export default async function BlogsPage({
 
       <section className="py-12">
         <div className="container-page">
-          {filtered.length === 0 ? (
-            <p className="text-center text-slate-500 py-20">No articles found.</p>
-          ) : (
-            <>
-              {featured && (
-                <div className="mb-8">
-                  <div className="text-center text-[#0e7490] text-sm font-semibold mb-3">+ Featured Blog</div>
-                  <BlogCard blog={featured} featured />
-                </div>
-              )}
-              {rest.length > 0 && (
-                <>
-                  <div className="text-center text-[#0e7490] text-sm font-semibold mb-4">+ All Blogs</div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-                    {rest.map((b) => (
-                      <BlogCard key={b._id} blog={b} />
-                    ))}
-                  </div>
-                </>
-              )}
-            </>
-          )}
+          <Suspense key={`${q}::${active}`} fallback={<BlogsGridSkeleton />}>
+            <BlogsGrid q={q} active={active} />
+          </Suspense>
         </div>
       </section>
 
-      {/* Newsletter CTA */}
+      {/* Newsletter CTA */}{/* (helpers defined below) */}
       {data.newsletterCta && (
         <section className="py-10 sm:py-14 bg-gradient-to-br from-[#0e7490] to-[#06495d] text-white">
           <div className="container-page text-center max-w-2xl">
@@ -99,6 +65,74 @@ export default async function BlogsPage({
           </div>
         </section>
       )}
+    </>
+  );
+}
+
+async function BlogsGrid({ q, active }: { q: string; active: string }) {
+  let blogs: Blog[] = [];
+  try {
+    const r = await api.get<Blog[]>("/cms/blogs", { limit: 30 }, { revalidate: 60, skipAuth: true });
+    blogs = r.data || [];
+  } catch {
+    blogs = [];
+  }
+
+  const filtered = blogs.filter((b) => {
+    const inCat = active === "All" || b.category === active || b.type === active;
+    const inQ = !q || b.title.toLowerCase().includes(q) || (b.excerpt || "").toLowerCase().includes(q);
+    return inCat && inQ;
+  });
+
+  if (filtered.length === 0) {
+    return <p className="text-center text-slate-500 py-20">No articles found.</p>;
+  }
+
+  const featured = filtered[0];
+  const rest = filtered.slice(1);
+
+  return (
+    <>
+      {featured && (
+        <div className="mb-8">
+          <div className="text-center text-[#0e7490] text-sm font-semibold mb-3">+ Featured Blog</div>
+          <BlogCard blog={featured} featured />
+        </div>
+      )}
+      {rest.length > 0 && (
+        <>
+          <div className="text-center text-[#0e7490] text-sm font-semibold mb-4">+ All Blogs</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            {rest.map((b) => (
+              <BlogCard key={b._id} blog={b} />
+            ))}
+          </div>
+        </>
+      )}
+    </>
+  );
+}
+
+function BlogsGridSkeleton() {
+  return (
+    <>
+      <div className="mb-8">
+        <Skeleton className="h-4 w-32 mx-auto mb-3" />
+        <div className="grid grid-cols-1 md:grid-cols-2 bg-[#e6f4f8] rounded-2xl overflow-hidden">
+          <Skeleton className="aspect-video md:aspect-auto w-full rounded-none" />
+          <div className="p-4 sm:p-6 space-y-3">
+            <Skeleton className="h-6 w-5/6" />
+            <Skeleton className="h-3 w-full" />
+            <Skeleton className="h-3 w-2/3" />
+          </div>
+        </div>
+      </div>
+      <Skeleton className="h-4 w-24 mx-auto mb-4" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <BlogCardSkeleton key={i} />
+        ))}
+      </div>
     </>
   );
 }

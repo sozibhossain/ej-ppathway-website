@@ -1,39 +1,19 @@
+import { Suspense } from "react";
 import Image from "next/image";
 import { StarIcon } from "../ui/Icons";
+import { ReviewCardSkeleton } from "../ui/Skeleton";
 import { api } from "../../lib/api";
 import type { Review } from "../../lib/types";
 
-export async function Testimonials({
-  sectionLabel,
-  title,
-  subtitle,
-  trustpilotRating,
-  totalReviews
-}: {
+type Props = {
   sectionLabel?: string;
   title?: string;
   subtitle?: string;
   trustpilotRating?: string;
   totalReviews?: string;
-}) {
-  let reviews: Review[] = [];
-  try {
-    const r = await api.get<Review[]>("/reviews/featured-testimonials", undefined, { revalidate: 60, skipAuth: true });
-    reviews = r.data || [];
-  } catch {
-    reviews = [];
-  }
+};
 
-  // Fallback to showcase reviews so the carousel is never empty
-  if (reviews.length === 0) {
-    try {
-      const r = await api.get<Review[]>("/reviews/showcase", undefined, { revalidate: 60, skipAuth: true });
-      reviews = r.data || [];
-    } catch {
-      reviews = [];
-    }
-  }
-
+export function Testimonials({ sectionLabel, title, subtitle, trustpilotRating, totalReviews }: Props) {
   return (
     <section className="py-12 sm:py-16 md:py-20">
       <div className="container-page text-center">
@@ -52,17 +32,52 @@ export async function Testimonials({
           </div>
         )}
 
-        {reviews.length > 0 ? (
-          <div className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-            {reviews.slice(0, 5).map((r) => (
-              <ReviewCard key={r._id} review={r} />
-            ))}
-          </div>
-        ) : (
-          <p className="mt-10 text-sm text-slate-500">No featured testimonials yet.</p>
-        )}
+        <Suspense fallback={<TestimonialsSkeletonGrid />}>
+          <TestimonialsGrid />
+        </Suspense>
       </div>
     </section>
+  );
+}
+
+async function TestimonialsGrid() {
+  let reviews: Review[] = [];
+  try {
+    const r = await api.get<Review[]>("/reviews/featured-testimonials", undefined, { revalidate: 60, skipAuth: true });
+    reviews = r.data || [];
+  } catch {
+    reviews = [];
+  }
+
+  if (reviews.length === 0) {
+    try {
+      const r = await api.get<Review[]>("/reviews/showcase", undefined, { revalidate: 60, skipAuth: true });
+      reviews = r.data || [];
+    } catch {
+      reviews = [];
+    }
+  }
+
+  if (reviews.length === 0) {
+    return <p className="mt-10 text-sm text-slate-500">No featured testimonials yet.</p>;
+  }
+
+  return (
+    <div className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      {reviews.slice(0, 5).map((r) => (
+        <ReviewCard key={r._id} review={r} />
+      ))}
+    </div>
+  );
+}
+
+function TestimonialsSkeletonGrid() {
+  return (
+    <div className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <ReviewCardSkeleton key={i} />
+      ))}
+    </div>
   );
 }
 

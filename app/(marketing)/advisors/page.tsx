@@ -1,17 +1,12 @@
+import { Suspense } from "react";
 import { AdvisorCard } from "../../components/cards/AdvisorCard";
+import { AdvisorCardSkeleton } from "../../components/ui/Skeleton";
 import { api } from "../../lib/api";
 import { getSiteContent } from "../../lib/site-content";
 import type { Advisor } from "../../lib/types";
 
 export default async function AdvisorsListPage() {
   const data = await getSiteContent("advisors");
-  let advisors: Advisor[] = [];
-  try {
-    const r = await api.get<Advisor[]>("/advisors/search", { limit: 24 }, { revalidate: 60, skipAuth: true });
-    advisors = r.data || [];
-  } catch {
-    advisors = [];
-  }
 
   return (
     <>
@@ -25,19 +20,47 @@ export default async function AdvisorsListPage() {
 
       <section className="py-10 sm:py-12 md:py-16">
         <div className="container-page">
-          {advisors.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
-              {advisors.map((a) => (
-                <AdvisorCard key={a.user._id} advisor={a} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-slate-500 py-20">
-              {data.listSettings?.emptyStateText || "No advisors found yet."}
-            </p>
-          )}
+          <Suspense fallback={<AdvisorsGridSkeleton />}>
+            <AdvisorsGrid emptyStateText={data.listSettings?.emptyStateText} />
+          </Suspense>
         </div>
       </section>
     </>
+  );
+}
+
+async function AdvisorsGrid({ emptyStateText }: { emptyStateText?: string }) {
+  let advisors: Advisor[] = [];
+  try {
+    const r = await api.get<Advisor[]>("/advisors/search", { limit: 24 }, { revalidate: 60, skipAuth: true });
+    advisors = r.data || [];
+  } catch {
+    advisors = [];
+  }
+
+  if (advisors.length === 0) {
+    return (
+      <p className="text-center text-slate-500 py-20">
+        {emptyStateText || "No advisors found yet."}
+      </p>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+      {advisors.map((a) => (
+        <AdvisorCard key={a.user._id} advisor={a} />
+      ))}
+    </div>
+  );
+}
+
+function AdvisorsGridSkeleton() {
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+      {Array.from({ length: 12 }).map((_, i) => (
+        <AdvisorCardSkeleton key={i} />
+      ))}
+    </div>
   );
 }
