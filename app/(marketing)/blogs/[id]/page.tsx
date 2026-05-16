@@ -59,9 +59,10 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ id:
 
       <article className="mt-10 mb-12 max-w-3xl mx-auto">
         <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{blog.title}</h1>
-        <div className="prose prose-slate max-w-none text-slate-800 leading-relaxed whitespace-pre-wrap">
-          {blog.content}
-        </div>
+        <div
+          className="prose prose-slate max-w-none text-slate-800 leading-relaxed prose-img:rounded-xl prose-a:text-[#0e7490] prose-headings:text-slate-900"
+          dangerouslySetInnerHTML={{ __html: blog.content || "" }}
+        />
       </article>
     </div>
   );

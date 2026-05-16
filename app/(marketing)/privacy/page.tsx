@@ -24,11 +24,16 @@ export default async function PrivacyPage() {
         <p className="mt-2 text-xs text-slate-500">Last Updated: {new Date().toLocaleDateString()}</p>
       </header>
 
-      <article className="prose prose-slate max-w-3xl mx-auto bg-white border border-slate-200 rounded-2xl p-6 md:p-10 whitespace-pre-wrap text-sm md:text-base leading-relaxed">
-        {page?.content || (
+      {page?.content ? (
+        <article
+          className="prose prose-slate max-w-3xl mx-auto bg-white border border-slate-200 rounded-2xl p-6 md:p-10 text-sm md:text-base leading-relaxed prose-img:rounded-xl prose-a:text-[#0e7490] prose-headings:text-slate-900"
+          dangerouslySetInnerHTML={{ __html: page.content }}
+        />
+      ) : (
+        <article className="max-w-3xl mx-auto bg-white border border-slate-200 rounded-2xl p-6 md:p-10 text-center">
           <p className="text-slate-500 italic">Privacy policy content is being prepared. Please check back soon.</p>
-        )}
-      </article>
+        </article>
+      )}
     </div>
   );
 }
