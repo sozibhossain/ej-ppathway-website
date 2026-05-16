@@ -38,7 +38,7 @@ export function BlogsFilter({
     <div className="mt-6 max-w-2xl mx-auto">
       <form
         onSubmit={(e) => { e.preventDefault(); push({ q }); }}
-        className="flex gap-2"
+        className="flex flex-col sm:flex-row gap-2"
       >
         <div className="relative flex-1">
           <SearchIcon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -49,7 +49,7 @@ export function BlogsFilter({
             className="w-full h-12 pl-11 pr-4 rounded-lg bg-white border border-slate-200 text-sm"
           />
         </div>
-        <button type="submit" className="h-12 px-6 rounded-lg bg-[#0e7490] text-white font-semibold">
+        <button type="submit" className="h-12 px-6 rounded-lg bg-[#0e7490] text-white font-semibold w-full sm:w-auto">
           Search
         </button>
       </form>

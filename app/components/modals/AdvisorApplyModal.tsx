@@ -98,24 +98,24 @@ export function AdvisorApplyModal({
 
   return (
     <Modal open={open} onClose={onClose} size="xl">
-      <div className="p-6 md:p-10">
-        <div className="flex justify-center mb-6">
-          <Image src="/logo.svg" alt="Prophetic Pathway" width={160} height={42} className="h-9 w-auto" unoptimized onError={(e) => (e.currentTarget.style.display = "none")} />
+      <div className="p-4 sm:p-6 md:p-10">
+        <div className="flex justify-center mb-4 sm:mb-6">
+          <Image src="/logo.svg" alt="Prophetic Pathway" width={160} height={42} className="h-8 sm:h-9 w-auto" unoptimized onError={(e) => (e.currentTarget.style.display = "none")} />
         </div>
 
         <Stepper currentIdx={0} />
 
-        <div className="text-center mt-8 mb-6">
-          <h2 className="text-2xl font-bold text-[#0e7490] inline-flex items-center gap-2">
+        <div className="text-center mt-6 sm:mt-8 mb-5 sm:mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#0e7490] inline-flex flex-wrap items-center justify-center gap-2">
             Welcome to Prophetic Pathway <SparkleIcon size={20} />
           </h2>
-          <p className="text-slate-600 mt-1">Fill your information here to complete the application Step</p>
+          <p className="text-sm sm:text-base text-slate-600 mt-1">Fill your information here to complete the application Step</p>
         </div>
 
-        <form onSubmit={submit} className="space-y-7">
+        <form onSubmit={submit} className="space-y-6 sm:space-y-7">
           <section>
-            <h3 className="text-lg font-bold text-slate-900 mb-4">Personal Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Personal Information</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <TextField label="Enter Your Full Name" placeholder="Enter full name" value={name}
                 onChange={(e) => setName(e.target.value)} leftIcon={<UserIcon size={18} />} />
               <TextField label="Enter Your Email" type="email" placeholder="Enter Email" value={email}
@@ -128,8 +128,8 @@ export function AdvisorApplyModal({
           </section>
 
           <section>
-            <h3 className="text-lg font-bold text-slate-900 mb-4">Address Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Address Information</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <TextField label="Enter Your Address" placeholder="Enter address" value={address}
                 onChange={(e) => setAddress(e.target.value)} leftIcon={<MapPinIcon size={18} />} />
               <TextField label="City" placeholder="Enter city" value={city} onChange={(e) => setCity(e.target.value)} />
@@ -139,7 +139,7 @@ export function AdvisorApplyModal({
           </section>
 
           <section>
-            <h3 className="text-lg font-bold text-slate-900 mb-4">Experience</h3>
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Experience</h3>
             <div className="grid grid-cols-1 gap-4">
               <TextField label="Years of Experience *" placeholder="e.g. 5" value={yearsExperience}
                 onChange={(e) => setYearsExperience(e.target.value)} />
@@ -149,10 +149,10 @@ export function AdvisorApplyModal({
           </section>
 
           <section>
-            <h3 className="text-lg font-bold text-slate-900 mb-4">Availability</h3>
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Availability</h3>
             <div className="rounded-xl border border-slate-200 overflow-hidden">
               {DAYS.map((d) => (
-                <div key={d} className="grid grid-cols-2 px-4 py-3 border-t border-slate-100 first:border-0 text-sm">
+                <div key={d} className="grid grid-cols-2 px-3 sm:px-4 py-2.5 sm:py-3 border-t border-slate-100 first:border-0 text-xs sm:text-sm">
                   <div className="text-slate-800">{d}</div>
                   <div className="text-right text-slate-600">09:00 - 17:00</div>
                 </div>
@@ -162,7 +162,7 @@ export function AdvisorApplyModal({
           </section>
 
           <section>
-            <h3 className="text-lg font-bold text-slate-900 mb-4">Introduction Video</h3>
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Introduction Video</h3>
             <FileDrop
               label="Upload an Intro video"
               accept="video/*"
@@ -173,7 +173,7 @@ export function AdvisorApplyModal({
           </section>
 
           <section>
-            <h3 className="text-lg font-bold text-slate-900 mb-4">Upload a Profile photo</h3>
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Upload a Profile photo</h3>
             <FileDrop
               label="Upload an image"
               accept="image/*"
@@ -184,8 +184,8 @@ export function AdvisorApplyModal({
           </section>
 
           <section>
-            <h3 className="text-lg font-bold text-slate-900 mb-4">Create Password</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Create Password</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <TextField
                 label="Create Password *"
                 type={showPwd ? "text" : "password"}
@@ -237,19 +237,21 @@ export function AdvisorApplyModal({
 
 function Stepper({ currentIdx }: { currentIdx: number }) {
   return (
-    <div className="flex items-center justify-between gap-2 max-w-3xl mx-auto">
-      {STEPS.map((s, i) => {
-        const active = i === currentIdx;
-        const done = i < currentIdx;
-        return (
-          <div key={s} className="flex-1 flex flex-col items-center text-center">
-            <div className={`h-10 w-10 rounded-full inline-flex items-center justify-center text-xs font-semibold ${active ? "bg-[#0e7490] text-white ring-4 ring-[#cfe9f0]" : done ? "bg-[#cfe9f0] text-[#0e7490]" : "bg-slate-100 text-slate-400"}`}>
-              Step {i + 1}
+    <div className="-mx-4 sm:mx-0 overflow-x-auto">
+      <div className="flex items-start gap-2 min-w-[480px] sm:min-w-0 sm:max-w-3xl sm:mx-auto px-4 sm:px-0">
+        {STEPS.map((s, i) => {
+          const active = i === currentIdx;
+          const done = i < currentIdx;
+          return (
+            <div key={s} className="flex-1 flex flex-col items-center text-center min-w-0">
+              <div className={`h-9 w-9 sm:h-10 sm:w-10 rounded-full inline-flex items-center justify-center text-[10px] sm:text-xs font-semibold ${active ? "bg-[#0e7490] text-white ring-4 ring-[#cfe9f0]" : done ? "bg-[#cfe9f0] text-[#0e7490]" : "bg-slate-100 text-slate-400"}`}>
+                Step {i + 1}
+              </div>
+              <div className={`mt-2 text-[10px] sm:text-xs leading-tight px-1 ${active ? "text-slate-900 font-semibold" : "text-slate-500"}`}>{s}</div>
             </div>
-            <div className={`mt-2 text-xs ${active ? "text-slate-900 font-semibold" : "text-slate-500"}`}>{s}</div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 }

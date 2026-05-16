@@ -22,16 +22,16 @@ export function CTA({
       ? "bg-gradient-to-br from-[#082e3a] to-[#0e5d75]"
       : "bg-gradient-to-br from-[#0e7490] to-[#085a72]";
   return (
-    <section className={`py-16 ${bg} text-white`}>
+    <section className={`py-12 sm:py-16 ${bg} text-white`}>
       <div className="container-page text-center">
-        <div className="mx-auto h-14 w-14 rounded-xl bg-white text-[#0e7490] inline-flex items-center justify-center mb-5">
+        <div className="mx-auto h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-white text-[#0e7490] inline-flex items-center justify-center mb-4 sm:mb-5">
           <Icon name={iconName} size={26} />
         </div>
-        {title && <h2 className="text-2xl md:text-3xl font-bold">{title}</h2>}
-        {subtitle && <p className="mt-2 text-white/85 max-w-2xl mx-auto">{subtitle}</p>}
-        <div className="mt-6 flex flex-wrap gap-3 justify-center">
-          <CmsCtaButton link={buttonPrimary} variant="white" size="lg" />
-          <CmsCtaButton link={buttonSecondary} variant="outline" size="lg" className="!border-white !text-white hover:!bg-white/10" />
+        {title && <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">{title}</h2>}
+        {subtitle && <p className="mt-2 text-sm sm:text-base text-white/85 max-w-2xl mx-auto">{subtitle}</p>}
+        <div className="mt-6 flex flex-col sm:flex-row sm:flex-wrap gap-3 justify-center">
+          <CmsCtaButton link={buttonPrimary} variant="white" size="lg" className="w-full sm:w-auto" />
+          <CmsCtaButton link={buttonSecondary} variant="outline" size="lg" className="!border-white !text-white hover:!bg-white/10 w-full sm:w-auto" />
         </div>
       </div>
     </section>

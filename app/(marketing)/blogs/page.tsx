@@ -35,11 +35,11 @@ export default async function BlogsPage({
   return (
     <>
       {/* Hero */}
-      <section className="py-14 md:py-20 bg-[#eaf4f8]">
+      <section className="py-10 sm:py-14 md:py-20 bg-[#eaf4f8]">
         <div className="container-page text-center max-w-3xl">
           {data.hero?.eyebrow && <div className="text-[#0e7490] text-sm font-semibold mb-2">+ {data.hero.eyebrow}</div>}
-          {data.hero?.title && <h1 className="text-3xl md:text-5xl font-bold text-[#0e7490]">{data.hero.title}</h1>}
-          {data.hero?.subtitle && <p className="mt-3 text-slate-600">{data.hero.subtitle}</p>}
+          {data.hero?.title && <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#0e7490]">{data.hero.title}</h1>}
+          {data.hero?.subtitle && <p className="mt-3 text-sm sm:text-base text-slate-600">{data.hero.subtitle}</p>}
 
           <BlogsFilter
             categories={categories}
@@ -65,7 +65,7 @@ export default async function BlogsPage({
               {rest.length > 0 && (
                 <>
                   <div className="text-center text-[#0e7490] text-sm font-semibold mb-4">+ All Blogs</div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                     {rest.map((b) => (
                       <BlogCard key={b._id} blog={b} />
                     ))}
@@ -79,13 +79,13 @@ export default async function BlogsPage({
 
       {/* Newsletter CTA */}
       {data.newsletterCta && (
-        <section className="py-14 bg-gradient-to-br from-[#0e7490] to-[#06495d] text-white">
+        <section className="py-10 sm:py-14 bg-gradient-to-br from-[#0e7490] to-[#06495d] text-white">
           <div className="container-page text-center max-w-2xl">
-            <div className="mx-auto h-14 w-14 rounded-xl bg-white text-[#0e7490] inline-flex items-center justify-center mb-5">
+            <div className="mx-auto h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-white text-[#0e7490] inline-flex items-center justify-center mb-4 sm:mb-5">
               ✉
             </div>
-            {data.newsletterCta.title && <h2 className="text-2xl md:text-3xl font-bold">{data.newsletterCta.title}</h2>}
-            {data.newsletterCta.subtitle && <p className="mt-3 text-white/85">{data.newsletterCta.subtitle}</p>}
+            {data.newsletterCta.title && <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">{data.newsletterCta.title}</h2>}
+            {data.newsletterCta.subtitle && <p className="mt-3 text-sm sm:text-base text-white/85">{data.newsletterCta.subtitle}</p>}
             <form className="mt-6 flex flex-col sm:flex-row gap-2 justify-center max-w-md mx-auto">
               <input
                 type="email"

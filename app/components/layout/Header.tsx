@@ -20,14 +20,14 @@ export function Header({ global }: { global: GlobalSections }) {
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-100">
-      <div className="container-page flex items-center justify-between h-16 md:h-20">
-        <Link href="/" className="flex items-center gap-2">
+      <div className="container-page flex items-center justify-between h-16 md:h-20 gap-3">
+        <Link href="/" className="flex items-center gap-2 min-w-0">
           {global.logo ? (
-            <Image src={global.logo} alt={global.siteName || "Prophetic Pathway"} width={170} height={42} className="h-8 md:h-10 w-auto" unoptimized />
+            <Image src={global.logo} alt={global.siteName || "Prophetic Pathway"} width={170} height={42} className="h-7 sm:h-8 md:h-10 w-auto" unoptimized />
           ) : (
-            <span className="flex items-center gap-1 text-lg md:text-xl font-bold text-slate-900">
-              <SparkleIcon size={20} className="text-[#0e7490]" />
-              {global.siteName || "Prophetic Pathway"}
+            <span className="flex items-center gap-1 text-base sm:text-lg md:text-xl font-bold text-slate-900 truncate">
+              <SparkleIcon size={20} className="text-[#0e7490] shrink-0" />
+              <span className="truncate">{global.siteName || "Prophetic Pathway"}</span>
             </span>
           )}
         </Link>

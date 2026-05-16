@@ -7,10 +7,10 @@ export default async function AboutPage() {
   const data = await getSiteContent("about");
   return (
     <>
-      <section className="py-16 md:py-20 bg-white">
+      <section className="py-12 sm:py-16 md:py-20 bg-white">
         <div className="container-page text-center max-w-4xl">
-          {data.hero?.title && <h1 className="text-3xl md:text-5xl font-bold text-[#0e7490] leading-tight">{data.hero.title}</h1>}
-          {data.hero?.subtitle && <p className="mt-4 text-slate-600 leading-relaxed">{data.hero.subtitle}</p>}
+          {data.hero?.title && <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#0e7490] leading-tight">{data.hero.title}</h1>}
+          {data.hero?.subtitle && <p className="mt-4 text-sm sm:text-base text-slate-600 leading-relaxed">{data.hero.subtitle}</p>}
         </div>
       </section>
 
@@ -30,10 +30,10 @@ export default async function AboutPage() {
       )}
 
       {data.values && (
-        <section className="py-12 md:py-16">
+        <section className="py-10 sm:py-12 md:py-16">
           <div className="container-page text-center">
-            {data.values.title && <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-10">{data.values.title}</h2>}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+            {data.values.title && <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-8 sm:mb-10">{data.values.title}</h2>}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto">
               {(data.values.cards || []).map((c, i) => (
                 <div key={i} className="bg-[#f0f9fb] border border-[#cfe9f0] rounded-2xl p-5 text-left">
                   <div className="flex items-start gap-4">

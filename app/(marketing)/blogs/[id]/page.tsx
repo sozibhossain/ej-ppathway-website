@@ -31,24 +31,24 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ id:
 
       <div className="relative rounded-2xl overflow-hidden">
         {blog.thumbnail ? (
-          <div className="relative aspect-[21/9]">
+          <div className="relative aspect-[16/9] sm:aspect-[21/9]">
             <Image src={blog.thumbnail} alt={blog.title} fill className="object-cover" sizes="1200px" unoptimized />
           </div>
         ) : (
-          <div className="aspect-[21/9] bg-gradient-to-br from-[#0e7490] to-[#06495d]" />
+          <div className="aspect-[16/9] sm:aspect-[21/9] bg-gradient-to-br from-[#0e7490] to-[#06495d]" />
         )}
-        <div className="absolute left-6 right-6 bottom-6 md:left-12 md:bottom-12 max-w-2xl">
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow flex items-center gap-4">
+        <div className="relative md:absolute md:left-12 md:bottom-12 md:max-w-2xl -mt-12 md:mt-0 mx-4 md:mx-0">
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow flex items-center gap-3 sm:gap-4">
             {photo ? (
-              <Image src={photo} alt={blog.authorName || ""} width={64} height={64} className="rounded-full shrink-0" unoptimized />
+              <Image src={photo} alt={blog.authorName || ""} width={56} height={56} className="rounded-full shrink-0 h-12 w-12 sm:h-16 sm:w-16" unoptimized />
             ) : (
-              <div className="h-16 w-16 rounded-full bg-slate-200 shrink-0" />
+              <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-slate-200 shrink-0" />
             )}
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               {blog.category && <span className="inline-block px-2 py-0.5 rounded bg-[#0e7490] text-white text-[10px] font-semibold mb-1">{blog.category}</span>}
-              <div className="font-bold text-slate-900 truncate">{blog.authorName}</div>
+              <div className="font-bold text-slate-900 truncate text-sm sm:text-base">{blog.authorName}</div>
               {blog.authorTitle && <div className="text-xs text-slate-500 truncate">{blog.authorTitle}</div>}
-              <div className="flex items-center gap-3 text-[10px] text-slate-500 mt-1">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-slate-500 mt-1">
                 <span className="inline-flex items-center gap-1"><CalendarIcon size={11} /> {date}</span>
                 <span className="inline-flex items-center gap-1"><ClockIcon size={11} /> {blog.readMinutes || 6} min read</span>
               </div>
@@ -57,8 +57,8 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ id:
         </div>
       </div>
 
-      <article className="mt-10 mb-12 max-w-3xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">{blog.title}</h1>
+      <article className="mt-8 sm:mt-10 mb-12 max-w-3xl mx-auto">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-4">{blog.title}</h1>
         <div
           className="prose prose-slate max-w-none text-slate-800 leading-relaxed prose-img:rounded-xl prose-a:text-[#0e7490] prose-headings:text-slate-900"
           dangerouslySetInnerHTML={{ __html: blog.content || "" }}

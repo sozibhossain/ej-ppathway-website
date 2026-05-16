@@ -16,13 +16,13 @@ export function WhyChoose({
 }) {
   const items = cards || [];
   return (
-    <section className={`py-16 md:py-20 ${bgClass}`}>
+    <section className={`py-12 sm:py-16 md:py-20 ${bgClass}`}>
       <div className="container-page text-center">
         {sectionLabel && <div className="text-[#0e7490] text-sm font-semibold mb-2 inline-flex items-center gap-1">+ {sectionLabel}</div>}
-        {title && <h2 className="text-3xl md:text-4xl font-bold text-slate-900 max-w-3xl mx-auto">{title}</h2>}
-        {subtitle && <p className="mt-3 text-slate-600 max-w-3xl mx-auto leading-relaxed">{subtitle}</p>}
+        {title && <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 max-w-3xl mx-auto">{title}</h2>}
+        {subtitle && <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-3xl mx-auto leading-relaxed">{subtitle}</p>}
 
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="mt-10 sm:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {items.map((c, i) => (
             <div key={i} className="bg-[#f0f9fb] rounded-2xl border border-[#cfe9f0] p-6 text-left">
               <div className="h-12 w-12 rounded-xl bg-[#0e7490] text-white inline-flex items-center justify-center mb-4">

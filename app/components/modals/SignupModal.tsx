@@ -60,17 +60,17 @@ export function SignupModal({
 
   return (
     <Modal open={open} onClose={onClose} size="md">
-      <div className="p-6 md:p-8">
-        <div className="flex flex-col items-center mb-6">
-          <Image src="/logo.svg" alt="Prophetic Pathway" width={160} height={42} className="h-10 w-auto" unoptimized onError={(e) => (e.currentTarget.style.display = "none")} />
+      <div className="p-5 sm:p-6 md:p-8">
+        <div className="flex flex-col items-center mb-5 sm:mb-6">
+          <Image src="/logo.svg" alt="Prophetic Pathway" width={160} height={42} className="h-8 sm:h-10 w-auto" unoptimized onError={(e) => (e.currentTarget.style.display = "none")} />
         </div>
 
         <div className="text-center mb-1">
-          <h2 className="text-2xl font-bold text-[#0e7490] inline-flex items-center gap-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#0e7490] inline-flex flex-wrap justify-center items-center gap-2">
             Welcome To Prophetic Pathway <SparkleIcon size={20} />
           </h2>
         </div>
-        <p className="text-center text-slate-600 mb-6">Let&apos;s Create an account</p>
+        <p className="text-center text-sm sm:text-base text-slate-600 mb-5 sm:mb-6">Let&apos;s Create an account</p>
 
         <form onSubmit={submit} className="space-y-3">
           <TextField type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} leftIcon={<MailIcon size={18} />} />

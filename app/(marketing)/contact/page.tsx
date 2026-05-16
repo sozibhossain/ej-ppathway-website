@@ -11,10 +11,10 @@ export default async function ContactPage() {
   const form = data.formSettings || {};
 
   return (
-    <div className="container-page py-10 md:py-14">
-      <div className="text-center mb-10">
-        {data.hero?.title && <h1 className="text-3xl md:text-5xl font-bold text-[#0e7490]">{data.hero.title}</h1>}
-        {data.hero?.subtitle && <p className="mt-3 text-slate-600 max-w-2xl mx-auto">{data.hero.subtitle}</p>}
+    <div className="container-page py-8 sm:py-10 md:py-14">
+      <div className="text-center mb-8 sm:mb-10">
+        {data.hero?.title && <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#0e7490]">{data.hero.title}</h1>}
+        {data.hero?.subtitle && <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">{data.hero.subtitle}</p>}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">

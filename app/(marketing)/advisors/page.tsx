@@ -15,18 +15,18 @@ export default async function AdvisorsListPage() {
 
   return (
     <>
-      <section className="py-14 bg-[#f0f9fb]">
+      <section className="py-10 sm:py-14 bg-[#f0f9fb]">
         <div className="container-page text-center max-w-3xl">
           {data.hero?.eyebrow && <div className="text-[#0e7490] text-sm font-semibold mb-2">+ {data.hero.eyebrow}</div>}
-          {data.hero?.title && <h1 className="text-3xl md:text-5xl font-bold text-slate-900">{data.hero.title}</h1>}
-          {data.hero?.subtitle && <p className="mt-3 text-slate-600">{data.hero.subtitle}</p>}
+          {data.hero?.title && <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-slate-900">{data.hero.title}</h1>}
+          {data.hero?.subtitle && <p className="mt-3 text-sm sm:text-base text-slate-600">{data.hero.subtitle}</p>}
         </div>
       </section>
 
-      <section className="py-12 md:py-16">
+      <section className="py-10 sm:py-12 md:py-16">
         <div className="container-page">
           {advisors.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
               {advisors.map((a) => (
                 <AdvisorCard key={a.user._id} advisor={a} />
               ))}

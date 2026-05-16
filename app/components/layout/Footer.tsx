@@ -8,8 +8,8 @@ export function Footer({ global }: { global: GlobalSections }) {
 
   return (
     <footer className="bg-[var(--footer-bg)] mt-12">
-      <div className="container-page pt-12 pb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+      <div className="container-page pt-10 md:pt-12 pb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
           <div className="lg:col-span-2">
             {global.logo ? (
               <Image src={global.logo} alt={global.siteName || "Prophetic Pathway"} width={180} height={44} className="h-10 w-auto" unoptimized />
@@ -68,9 +68,9 @@ export function Footer({ global }: { global: GlobalSections }) {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-4 mt-10 pt-6 border-t border-white/40">
-          <div className="text-xs text-slate-600">{f.copyright || "© Prophetic Pathway"}</div>
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-4 mt-10 pt-6 border-t border-white/40">
+          <div className="text-xs text-slate-600 order-2 sm:order-1">{f.copyright || "© Prophetic Pathway"}</div>
+          <div className="flex flex-wrap items-center gap-2 order-1 sm:order-2">
             {f.appStoreLink ? (
               <a href={f.appStoreLink} className="h-10 px-3 bg-black text-white text-xs rounded-md inline-flex items-center gap-2">
                 <span className="text-base">🍎</span>

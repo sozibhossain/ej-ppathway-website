@@ -35,14 +35,14 @@ export async function Testimonials({
   }
 
   return (
-    <section className="py-16 md:py-20">
+    <section className="py-12 sm:py-16 md:py-20">
       <div className="container-page text-center">
         {sectionLabel && <div className="text-[#0e7490] text-sm font-semibold mb-2 inline-flex items-center gap-1">+ {sectionLabel}</div>}
-        {title && <h2 className="text-3xl md:text-4xl font-bold text-slate-900">{title}</h2>}
-        {subtitle && <p className="mt-3 text-slate-600 max-w-2xl mx-auto">{subtitle}</p>}
+        {title && <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">{title}</h2>}
+        {subtitle && <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">{subtitle}</p>}
 
         {(trustpilotRating || totalReviews) && (
-          <div className="mt-4 inline-flex items-center gap-3 text-sm">
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs sm:text-sm">
             <span className="text-slate-700">Excellent</span>
             <span className="inline-flex items-center gap-1 px-3 py-1 rounded bg-emerald-500 text-white">
               {Array.from({ length: 5 }).map((_, i) => <StarIcon key={i} size={12} />)}
@@ -53,7 +53,7 @@ export async function Testimonials({
         )}
 
         {reviews.length > 0 ? (
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          <div className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             {reviews.slice(0, 5).map((r) => (
               <ReviewCard key={r._id} review={r} />
             ))}

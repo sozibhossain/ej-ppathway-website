@@ -28,10 +28,10 @@ export function AdvisorCard({ advisor }: { advisor: Advisor }) {
           ★ {tierLabel}
         </span>
       </div>
-      <div className="p-4 flex flex-col flex-1">
+      <div className="p-3 sm:p-4 flex flex-col flex-1">
         <div className="flex items-center justify-between gap-2 mb-1">
-          <div className="font-semibold text-slate-900 truncate">{user.name || "Advisor"}</div>
-          <div className="text-xs text-amber-500 inline-flex items-center gap-1">
+          <div className="font-semibold text-slate-900 truncate text-sm sm:text-base min-w-0">{user.name || "Advisor"}</div>
+          <div className="text-xs text-amber-500 inline-flex items-center gap-1 shrink-0">
             <StarIcon size={12} />
             {(profile?.avgRating || 0).toFixed(1)}
           </div>
@@ -43,7 +43,7 @@ export function AdvisorCard({ advisor }: { advisor: Advisor }) {
             ))}
           </div>
         )}
-        <div className="text-sm text-slate-700 mt-auto pt-3 border-t border-slate-100 mb-3">
+        <div className="text-xs sm:text-sm text-slate-700 mt-auto pt-3 border-t border-slate-100 mb-3">
           ${profile?.pricing?.chatPerMin?.toFixed(2) || "1.00"}/min
         </div>
         <Link href={`/advisors/${user._id}`} className="block">

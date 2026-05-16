@@ -24,20 +24,20 @@ export async function FeaturedAdvisors({
   }
 
   return (
-    <section className="py-16 md:py-20 bg-[#eaf4f8]">
+    <section className="py-12 sm:py-16 md:py-20 bg-[#eaf4f8]">
       <div className="container-page text-center">
         {sectionLabel && <div className="text-[#0e7490] text-sm font-semibold mb-2 inline-flex items-center gap-1">+ {sectionLabel}</div>}
-        {title && <h2 className="text-3xl md:text-4xl font-bold text-slate-900 max-w-3xl mx-auto">{title}</h2>}
-        {subtitle && <p className="mt-3 text-slate-600 max-w-2xl mx-auto">{subtitle}</p>}
+        {title && <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 max-w-3xl mx-auto">{title}</h2>}
+        {subtitle && <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">{subtitle}</p>}
 
         {advisors.length > 0 ? (
-          <div className="mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5">
+          <div className="mt-8 sm:mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-5">
             {advisors.map((a) => (
               <AdvisorCard key={a.user._id} advisor={a} />
             ))}
           </div>
         ) : (
-          <div className="mt-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5">
+          <div className="mt-8 sm:mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-5">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="bg-white rounded-2xl border border-slate-200 aspect-[3/4] flex flex-col">
                 <div className="bg-slate-100 rounded-t-2xl aspect-[4/3]" />

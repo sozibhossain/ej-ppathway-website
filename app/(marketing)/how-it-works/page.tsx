@@ -13,16 +13,16 @@ export default async function HowItWorksPage() {
   return (
     <>
       {/* Hero */}
-      <section className="py-16 md:py-20 bg-[#f0f9fb]">
+      <section className="py-12 sm:py-16 md:py-20 bg-[#f0f9fb]">
         <div className="container-page text-center max-w-3xl">
-          <div className="mx-auto h-14 w-14 rounded-xl bg-[#0e7490] text-white inline-flex items-center justify-center mb-5">
+          <div className="mx-auto h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-[#0e7490] text-white inline-flex items-center justify-center mb-4 sm:mb-5">
             <CalendarIcon size={26} />
           </div>
-          {hero.title && <h1 className="text-3xl md:text-5xl font-bold text-[#0e7490] leading-tight">{hero.title}</h1>}
-          {hero.subtitle && <p className="mt-4 text-slate-600">{hero.subtitle}</p>}
-          <div className="mt-6 flex flex-wrap gap-3 justify-center">
-            <CmsCtaButton link={hero.ctaPrimary} variant="primary" size="lg" />
-            <CmsCtaButton link={hero.ctaSecondary} variant="outline" size="lg" />
+          {hero.title && <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#0e7490] leading-tight">{hero.title}</h1>}
+          {hero.subtitle && <p className="mt-4 text-sm sm:text-base text-slate-600">{hero.subtitle}</p>}
+          <div className="mt-6 flex flex-col sm:flex-row sm:flex-wrap gap-3 justify-center">
+            <CmsCtaButton link={hero.ctaPrimary} variant="primary" size="lg" className="w-full sm:w-auto" />
+            <CmsCtaButton link={hero.ctaSecondary} variant="outline" size="lg" className="w-full sm:w-auto" />
           </div>
         </div>
       </section>
@@ -38,12 +38,12 @@ export default async function HowItWorksPage() {
 
       {/* Session Types */}
       {sessionTypes.length > 0 && (
-        <section className="py-16 md:py-20">
+        <section className="py-12 sm:py-16 md:py-20">
           <div className="container-page text-center">
-            {data.sessionTypes?.title && <h2 className="text-3xl md:text-4xl font-bold text-slate-900">{data.sessionTypes.title}</h2>}
-            {data.sessionTypes?.subtitle && <p className="mt-3 text-slate-600">{data.sessionTypes.subtitle}</p>}
+            {data.sessionTypes?.title && <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">{data.sessionTypes.title}</h2>}
+            {data.sessionTypes?.subtitle && <p className="mt-3 text-sm sm:text-base text-slate-600">{data.sessionTypes.subtitle}</p>}
 
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
               {sessionTypes.map((t, i) => {
                 const accent =
                   t.accentColor === "amber"
@@ -77,10 +77,10 @@ export default async function HowItWorksPage() {
 
       {/* Scheduling Made Simple — dark band */}
       {data.schedulingMadeSimple && (
-        <section className="py-14 bg-gradient-to-br from-[#0e7490] to-[#06495d] text-white">
+        <section className="py-10 sm:py-14 bg-gradient-to-br from-[#0e7490] to-[#06495d] text-white">
           <div className="container-page text-center">
-            {data.schedulingMadeSimple.title && <h2 className="text-2xl md:text-3xl font-bold">{data.schedulingMadeSimple.title}</h2>}
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {data.schedulingMadeSimple.title && <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">{data.schedulingMadeSimple.title}</h2>}
+            <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {(data.schedulingMadeSimple.cards || []).map((c, i) => (
                 <div key={i} className="bg-white text-slate-900 rounded-2xl p-5 text-left">
                   <div className="h-10 w-10 rounded-lg bg-[#0e7490] text-white inline-flex items-center justify-center mb-3">
@@ -97,12 +97,12 @@ export default async function HowItWorksPage() {
 
       {/* Cancellation Policy */}
       {data.cancellationPolicy && (
-        <section className="py-16 md:py-20">
+        <section className="py-12 sm:py-16 md:py-20">
           <div className="container-page max-w-3xl text-center">
-            {data.cancellationPolicy.title && <h2 className="text-3xl md:text-4xl font-bold text-slate-900">{data.cancellationPolicy.title}</h2>}
-            {data.cancellationPolicy.subtitle && <p className="mt-3 text-slate-600">{data.cancellationPolicy.subtitle}</p>}
+            {data.cancellationPolicy.title && <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">{data.cancellationPolicy.title}</h2>}
+            {data.cancellationPolicy.subtitle && <p className="mt-3 text-sm sm:text-base text-slate-600">{data.cancellationPolicy.subtitle}</p>}
 
-            <div className="mt-10 rounded-2xl bg-[#e6f4f8] border border-[#cfe9f0] p-6 text-left">
+            <div className="mt-8 sm:mt-10 rounded-2xl bg-[#e6f4f8] border border-[#cfe9f0] p-4 sm:p-6 text-left">
               {data.cancellationPolicy.sectionTitle && (
                 <div className="flex items-center gap-2 mb-4 text-[#0e7490] font-semibold">
                   <Icon name="calendar" size={18} /> {data.cancellationPolicy.sectionTitle}

@@ -15,10 +15,10 @@ export default async function JoinAsAdvisorPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative py-16 md:py-24 bg-[#0e7490] text-white overflow-hidden">
+      <section className="relative py-12 sm:py-16 md:py-24 bg-[#0e7490] text-white overflow-hidden">
         <div className="container-page text-center relative z-10">
-          {hero.title && <h1 className="text-4xl md:text-5xl font-bold leading-tight">{hero.title}</h1>}
-          {hero.subtitle && <p className="mt-4 text-white/90 max-w-2xl mx-auto">{hero.subtitle}</p>}
+          {hero.title && <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold leading-tight">{hero.title}</h1>}
+          {hero.subtitle && <p className="mt-4 text-sm sm:text-base text-white/90 max-w-2xl mx-auto">{hero.subtitle}</p>}
           <div className="mt-6 inline-block">
             <JoinHeroApplyButton label={hero.ctaPrimary?.label} />
           </div>
@@ -73,16 +73,16 @@ export default async function JoinAsAdvisorPage() {
 
       {/* Stats */}
       {data.reachStats && (
-        <section className="py-16 md:py-20 bg-gradient-to-br from-[#0e7490] to-[#06495d] text-white">
-          <div className="container-page grid lg:grid-cols-2 gap-10 items-center">
+        <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-[#0e7490] to-[#06495d] text-white">
+          <div className="container-page grid lg:grid-cols-2 gap-8 md:gap-10 items-center">
             <div>
               {data.reachStats.eyebrow && <div className="text-white/70 text-sm font-medium mb-2">+ {data.reachStats.eyebrow}</div>}
-              {data.reachStats.title && <h2 className="text-3xl md:text-4xl font-bold">{data.reachStats.title}</h2>}
-              {data.reachStats.subtitle && <p className="mt-3 text-white/85 max-w-xl">{data.reachStats.subtitle}</p>}
+              {data.reachStats.title && <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">{data.reachStats.title}</h2>}
+              {data.reachStats.subtitle && <p className="mt-3 text-sm sm:text-base text-white/85 max-w-xl">{data.reachStats.subtitle}</p>}
               <div className="mt-6 grid grid-cols-2 gap-3 max-w-md">
                 {(data.reachStats.items || []).map((s, i) => (
                   <div key={i} className="bg-white/10 rounded-xl px-4 py-3 backdrop-blur">
-                    <div className="text-2xl font-bold">{s.value}</div>
+                    <div className="text-xl sm:text-2xl font-bold">{s.value}</div>
                     <div className="text-xs text-white/80">{s.label}</div>
                   </div>
                 ))}
@@ -113,10 +113,10 @@ export default async function JoinAsAdvisorPage() {
 
       {/* Requirements */}
       {data.requirements && (
-        <section className="py-16 md:py-20">
-          <div className="container-page grid lg:grid-cols-2 gap-10 items-center">
+        <section className="py-12 sm:py-16 md:py-20">
+          <div className="container-page grid lg:grid-cols-2 gap-8 md:gap-10 items-center">
             <div>
-              {data.requirements.title && <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">{data.requirements.title}</h2>}
+              {data.requirements.title && <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-5 sm:mb-6">{data.requirements.title}</h2>}
               <ul className="space-y-3">
                 {(data.requirements.bullets || []).map((b, i) => (
                   <li key={i} className="flex items-start gap-2 text-slate-700">
@@ -141,12 +141,12 @@ export default async function JoinAsAdvisorPage() {
 
       {/* Advisor video testimonials */}
       {data.advisorTestimonials && (
-        <section className="py-16 md:py-20 bg-[#f0f9fb]">
+        <section className="py-12 sm:py-16 md:py-20 bg-[#f0f9fb]">
           <div className="container-page text-center">
             {data.advisorTestimonials.sectionLabel && <div className="text-[#0e7490] text-sm font-semibold mb-2">+ {data.advisorTestimonials.sectionLabel}</div>}
-            {data.advisorTestimonials.title && <h2 className="text-3xl md:text-4xl font-bold text-slate-900">{data.advisorTestimonials.title}</h2>}
+            {data.advisorTestimonials.title && <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">{data.advisorTestimonials.title}</h2>}
 
-            <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
               {(data.advisorTestimonials.videos || []).map((v, i) => (
                 <div key={i} className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
                   <div className="relative aspect-video bg-slate-900">
@@ -171,13 +171,13 @@ export default async function JoinAsAdvisorPage() {
 
       {/* Before You Apply */}
       {data.beforeYouApply && (
-        <section className="py-14 bg-gradient-to-br from-[#082e3a] to-[#0e5d75] text-white">
+        <section className="py-10 sm:py-14 bg-gradient-to-br from-[#082e3a] to-[#0e5d75] text-white">
           <div className="container-page text-center">
-            <div className="mx-auto h-14 w-14 rounded-xl bg-white text-[#0e7490] inline-flex items-center justify-center mb-5">
+            <div className="mx-auto h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-white text-[#0e7490] inline-flex items-center justify-center mb-4 sm:mb-5">
               <Icon name="shield-check" size={26} />
             </div>
-            {data.beforeYouApply.title && <h2 className="text-2xl md:text-3xl font-bold">{data.beforeYouApply.title}</h2>}
-            {data.beforeYouApply.body && <p className="mt-3 text-white/85 max-w-3xl mx-auto">{data.beforeYouApply.body}</p>}
+            {data.beforeYouApply.title && <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">{data.beforeYouApply.title}</h2>}
+            {data.beforeYouApply.body && <p className="mt-3 text-sm sm:text-base text-white/85 max-w-3xl mx-auto">{data.beforeYouApply.body}</p>}
             <div className="mt-6">
               {data.beforeYouApply.ctaPrimary?.href ? (
                 <Link href={data.beforeYouApply.ctaPrimary.href} className="inline-flex items-center gap-2 h-12 px-7 rounded-full bg-white text-[#0e7490] font-semibold">
@@ -215,8 +215,8 @@ function SplitSection({
   const text = (
     <div>
       {stepLabel && <div className="text-[#0e7490] text-sm font-semibold mb-2">+ {stepLabel}</div>}
-      {title && <h2 className="text-3xl md:text-4xl font-bold text-[#0e7490] mb-4">{title}</h2>}
-      {description && <p className="text-slate-700 leading-relaxed whitespace-pre-line">{description}</p>}
+      {title && <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0e7490] mb-4">{title}</h2>}
+      {description && <p className="text-sm sm:text-base text-slate-700 leading-relaxed whitespace-pre-line">{description}</p>}
       {bullets && bullets.length > 0 && (
         <ul className="mt-5 space-y-2">
           {bullets.map((b, i) => (
@@ -236,16 +236,16 @@ function SplitSection({
   );
 
   const img = image ? (
-    <div className="relative aspect-square rounded-full overflow-hidden max-w-md mx-auto">
+    <div className="relative aspect-square rounded-full overflow-hidden max-w-xs sm:max-w-sm md:max-w-md mx-auto">
       <Image src={image} alt={title || ""} fill className="object-cover" sizes="500px" unoptimized />
     </div>
   ) : (
-    <div className="aspect-square rounded-full bg-[#e6f4f8] max-w-md mx-auto" />
+    <div className="aspect-square rounded-full bg-[#e6f4f8] max-w-xs sm:max-w-sm md:max-w-md mx-auto" />
   );
 
   return (
-    <section className="py-12 md:py-16">
-      <div className="container-page grid lg:grid-cols-2 gap-10 items-center">
+    <section className="py-10 sm:py-12 md:py-16">
+      <div className="container-page grid lg:grid-cols-2 gap-8 md:gap-10 items-center">
         {imageRight ? (
           <>
             {text}

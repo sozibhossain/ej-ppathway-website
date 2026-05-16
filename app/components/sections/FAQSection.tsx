@@ -12,10 +12,10 @@ export async function FAQSection({ sectionLabel, title }: { sectionLabel?: strin
   }
 
   return (
-    <section className="py-16 md:py-20">
+    <section className="py-12 sm:py-16 md:py-20">
       <div className="container-page text-center max-w-3xl">
         {sectionLabel && <div className="text-[#0e7490] text-sm font-semibold mb-2 inline-flex items-center gap-1">+ {sectionLabel}</div>}
-        {title && <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-8">{title}</h2>}
+        {title && <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-6 sm:mb-8">{title}</h2>}
 
         <div className="text-left">
           {faqs.length > 0 ? (

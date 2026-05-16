@@ -27,13 +27,13 @@ export function WatchInAction({
   };
 
   return (
-    <section className="py-16 md:py-20">
+    <section className="py-12 sm:py-16 md:py-20">
       <div className="container-page text-center">
         {sectionLabel && <div className="text-[#0e7490] text-sm font-semibold mb-2 inline-flex items-center gap-1">+ {sectionLabel}</div>}
-        {title && <h2 className="text-3xl md:text-4xl font-bold text-slate-900">{title}</h2>}
-        {subtitle && <p className="mt-3 text-slate-600 max-w-2xl mx-auto">{subtitle}</p>}
+        {title && <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">{title}</h2>}
+        {subtitle && <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">{subtitle}</p>}
 
-        <div className="mt-10 relative rounded-2xl overflow-hidden bg-slate-900 max-w-4xl mx-auto aspect-video">
+        <div className="mt-8 sm:mt-10 relative rounded-2xl overflow-hidden bg-slate-900 max-w-4xl mx-auto aspect-video">
           {videoUrl ? (
             <video
               ref={ref}
@@ -50,9 +50,9 @@ export function WatchInAction({
               type="button"
               onClick={play}
               aria-label="Play video"
-              className="absolute inset-0 m-auto h-20 w-20 rounded-full bg-white/95 text-[#0e7490] inline-flex items-center justify-center hover:scale-105 transition-transform shadow-2xl"
+              className="absolute inset-0 m-auto h-14 w-14 sm:h-20 sm:w-20 rounded-full bg-white/95 text-[#0e7490] inline-flex items-center justify-center hover:scale-105 transition-transform shadow-2xl"
             >
-              <PlayIcon size={32} />
+              <PlayIcon size={28} />
             </button>
           )}
         </div>

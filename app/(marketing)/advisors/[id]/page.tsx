@@ -37,16 +37,16 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
       <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">
         <div className="space-y-6">
           {/* Profile header card */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 flex items-start gap-5">
-            <div className="relative h-20 w-20 rounded-full overflow-hidden bg-slate-200 shrink-0">
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row items-start gap-4 sm:gap-5">
+            <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden bg-slate-200 shrink-0">
               {user.profilePhoto ? (
                 <Image src={user.profilePhoto} alt={user.name || "Advisor"} fill className="object-cover" sizes="80px" unoptimized />
               ) : null}
             </div>
-            <div className="flex-1">
-              <h1 className="text-2xl font-bold text-slate-900">{user.name || "Advisor"}</h1>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900">{user.name || "Advisor"}</h1>
               {profile?.professionalTitle && <p className="text-slate-600 text-sm">{profile.professionalTitle}</p>}
-              <div className="flex items-center gap-3 mt-3 flex-wrap">
+              <div className="flex items-center gap-2 sm:gap-3 mt-3 flex-wrap">
                 <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-semibold">
                   ★ {tierLabel}
                 </span>
@@ -63,16 +63,16 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
           </div>
 
           {profile?.bio && (
-            <div className="bg-white border border-slate-200 rounded-2xl p-6">
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-slate-900 mb-3">{labels.aboutMe || "About me"}</h2>
               <p className="text-sm text-slate-700 leading-relaxed">{profile.bio}</p>
             </div>
           )}
 
           {/* Expertise */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6">
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6">
             <h2 className="text-lg font-semibold text-slate-900 mb-4">{labels.expertiseCategories || "Expertise & Categories"}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
               <div>
                 <div className="text-sm font-medium text-slate-600 mb-2">{labels.skills || "Skills/Expertise"}</div>
                 <div className="flex flex-wrap gap-2">
@@ -102,7 +102,7 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
 
           {/* Weekly schedule */}
           {profile?.weeklySchedule && (
-            <div className="bg-white border border-slate-200 rounded-2xl p-6">
+            <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-slate-900 mb-4 inline-flex items-center gap-2">
                 <span>📅</span> {labels.weeklySchedule || "Weekly Schedule"}
               </h2>
@@ -123,17 +123,17 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
           )}
 
           {/* Reviews */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6">
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6">
             <h2 className="text-lg font-semibold text-slate-900 mb-4">{labels.reviewsAndRatings || "Reviews & Ratings"}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-              <div className="rounded-xl border border-slate-200 p-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mb-6">
+              <div className="rounded-xl border border-slate-200 p-4 sm:p-5">
                 <div className="text-sm text-slate-600 mb-1">{labels.averageRating || "Average Rating"}</div>
-                <div className="text-3xl font-bold text-slate-900 inline-flex items-center gap-2">
+                <div className="text-2xl sm:text-3xl font-bold text-slate-900 inline-flex items-center gap-2">
                   {(profile?.avgRating || 0).toFixed(1)} <StarIcon size={20} className="text-amber-500" />
                 </div>
                 <div className="text-xs text-slate-500 mt-1">Based on {profile?.ratingsCount || 0} reviews</div>
               </div>
-              <div className="rounded-xl border border-slate-200 p-5">
+              <div className="rounded-xl border border-slate-200 p-4 sm:p-5">
                 <div className="text-sm text-slate-600 mb-3">{labels.performanceHighlights || "Performance Highlights"}</div>
                 {(["communication", "expertise", "professionalism", "valueForMoney"] as const).map((k) => {
                   const v = profile?.ratingBreakdown?.[k] || 0;
@@ -154,7 +154,7 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
             <div className="space-y-3">
               {reviews.slice(0, 6).map((r) => (
                 <div key={r._id} className="rounded-xl border border-slate-200 p-4">
-                  <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap">
                     {r.user?.profilePhoto ? (
                       <Image src={r.user.profilePhoto} alt={r.user.name || ""} width={32} height={32} className="rounded-full" unoptimized />
                     ) : (
@@ -165,7 +165,7 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
                       {Array.from({ length: r.rating }).map((_, i) => <StarIcon key={i} size={12} />)}
                     </div>
                     {r.sessionType && <span className="text-xs text-slate-500">{r.sessionType} session</span>}
-                    <span className="ml-auto text-xs text-slate-500">{new Date(r.createdAt).toLocaleDateString()}</span>
+                    <span className="sm:ml-auto text-xs text-slate-500">{new Date(r.createdAt).toLocaleDateString()}</span>
                   </div>
                   <p className="text-sm text-slate-700">{r.comment || "—"}</p>
                 </div>

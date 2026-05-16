@@ -53,17 +53,17 @@ export function LoginModal({
 
   return (
     <Modal open={open} onClose={onClose} size="md">
-      <div className="p-6 md:p-8">
-        <div className="flex flex-col items-center mb-6">
-          <Image src="/logo.svg" alt="Prophetic Pathway" width={160} height={42} className="h-10 w-auto" unoptimized onError={(e) => (e.currentTarget.style.display = "none")} />
+      <div className="p-5 sm:p-6 md:p-8">
+        <div className="flex flex-col items-center mb-5 sm:mb-6">
+          <Image src="/logo.svg" alt="Prophetic Pathway" width={160} height={42} className="h-8 sm:h-10 w-auto" unoptimized onError={(e) => (e.currentTarget.style.display = "none")} />
         </div>
 
         <div className="text-center mb-1">
-          <h2 className="text-2xl font-bold text-[#0e7490] inline-flex items-center gap-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#0e7490] inline-flex flex-wrap justify-center items-center gap-2">
             Welcome Back <SparkleIcon size={20} />
           </h2>
         </div>
-        <p className="text-center text-slate-600 mb-6">Sign in to continue your spiritual journey.</p>
+        <p className="text-center text-sm sm:text-base text-slate-600 mb-5 sm:mb-6">Sign in to continue your spiritual journey.</p>
 
         <form onSubmit={submit} className="space-y-3">
           <TextField
@@ -86,7 +86,7 @@ export function LoginModal({
             }
           />
 
-          <div className="flex items-center justify-between text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
             <Checkbox label="Remember me" checked={remember} onChange={setRemember} />
             <Link href="/forgot-password" className="text-[#0e7490] font-medium hover:underline">
               Forgot Password?
@@ -116,14 +116,14 @@ export function LoginModal({
 export function ModalFooterMeta() {
   return (
     <div className="mt-6 pt-6 border-t border-slate-100 text-center space-y-4">
-      <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-slate-700">
+      <nav className="flex flex-wrap items-center justify-center gap-x-4 sm:gap-x-5 gap-y-2 text-xs sm:text-sm text-slate-700">
         <Link href="/about" className="hover:text-[#0e7490]">About Us</Link>
         <Link href="/join-as-advisor" className="hover:text-[#0e7490]">Join as Advisor</Link>
         <Link href="/contact" className="hover:text-[#0e7490]">Contact Us</Link>
         <Link href="/privacy" className="hover:text-[#0e7490]">Privacy policy</Link>
         <Link href="/terms" className="hover:text-[#0e7490]">Terms &amp; service</Link>
       </nav>
-      <div className="flex items-center justify-center gap-3">
+      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
         {[FacebookIcon, TwitterIcon, InstagramIcon, LinkedInIcon].map((I, i) => (
           <a key={i} href="#" className="h-9 w-9 rounded-full bg-white border border-slate-200 inline-flex items-center justify-center text-[#0e7490] hover:bg-slate-50">
             <I size={16} />

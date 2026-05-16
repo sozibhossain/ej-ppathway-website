@@ -53,8 +53,8 @@ export function ContactForm({
   };
 
   return (
-    <section className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8">
-      {title && <h2 className="text-2xl font-bold text-slate-900 mb-1">{title}</h2>}
+    <section className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 md:p-8">
+      {title && <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-1">{title}</h2>}
       {subtitle && <p className="text-sm text-slate-600 mb-6">{subtitle}</p>}
 
       {done ? (

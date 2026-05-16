@@ -28,10 +28,10 @@ export function BlogCard({ blog, featured }: { blog: Blog; featured?: boolean })
             </span>
           )}
         </div>
-        <div className="p-6 flex flex-col">
-          <h3 className="text-xl md:text-2xl font-bold text-slate-900 mb-2">{blog.title}</h3>
+        <div className="p-4 sm:p-6 flex flex-col">
+          <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-900 mb-2">{blog.title}</h3>
           {blog.excerpt && <p className="text-sm text-slate-600 mb-4">{blog.excerpt}</p>}
-          <div className="flex items-center gap-4 text-xs text-slate-500 mb-3">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mb-3">
             <span className="inline-flex items-center gap-1"><CalendarIcon size={12} /> {date}</span>
             <span className="inline-flex items-center gap-1"><ClockIcon size={12} /> {blog.readMinutes || 6} min read</span>
           </div>
@@ -72,7 +72,7 @@ export function BlogCard({ blog, featured }: { blog: Blog; featured?: boolean })
       <div className="p-4">
         <h3 className="font-bold text-slate-900 mb-1 line-clamp-2">{blog.title}</h3>
         {blog.excerpt && <p className="text-sm text-slate-600 mb-3 line-clamp-2">{blog.excerpt}</p>}
-        <div className="flex items-center gap-4 text-xs text-slate-500 mb-3">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mb-3">
           <span className="inline-flex items-center gap-1"><CalendarIcon size={12} /> {date}</span>
           <span className="inline-flex items-center gap-1"><ClockIcon size={12} /> {blog.readMinutes || 6} min read</span>
         </div>
