@@ -18,32 +18,47 @@ export const TextField = forwardRef<HTMLInputElement, InputProps>(function TextF
 ) {
   return (
     <label className="block">
-      {label ? <span className="block mb-1.5 text-sm font-medium text-slate-700">{label}</span> : null}
+      {label ? (
+        <span className="block mb-1.5 text-sm font-medium text-slate-700">{label}</span>
+      ) : null}
       <div className="relative">
-        {leftIcon ? <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">{leftIcon}</span> : null}
+        {leftIcon ? (
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
+            {leftIcon}
+          </span>
+        ) : null}
         <input
           ref={ref}
           className={`${baseClasses} ${leftIcon ? "pl-11" : ""} ${rightIcon ? "pr-11" : ""} ${className}`}
           {...rest}
         />
-        {rightIcon ? <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500">{rightIcon}</span> : null}
+        {rightIcon ? (
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500">
+            {rightIcon}
+          </span>
+        ) : null}
       </div>
       {error ? <span className="block mt-1 text-xs text-red-600">{error}</span> : null}
     </label>
   );
 });
 
-type TextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & { label?: string; error?: string };
+type TextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
+  label?: string;
+  error?: string;
+};
 export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(function TextArea(
   { label, error, className = "", ...rest },
   ref
 ) {
   return (
     <label className="block">
-      {label ? <span className="block mb-1.5 text-sm font-medium text-slate-700">{label}</span> : null}
+      {label ? (
+        <span className="block mb-1.5 text-sm font-medium text-slate-700">{label}</span>
+      ) : null}
       <textarea
         ref={ref}
-        className={`${baseClasses} h-auto min-h-[120px] py-3 ${className}`}
+        className={`${baseClasses} h-auto min-h-30 py-3 ${className}`}
         {...rest}
       />
       {error ? <span className="block mt-1 text-xs text-red-600">{error}</span> : null}
@@ -58,10 +73,32 @@ export const SelectField = forwardRef<HTMLSelectElement, SelectProps>(function S
 ) {
   return (
     <label className="block">
-      {label ? <span className="block mb-1.5 text-sm font-medium text-slate-700">{label}</span> : null}
-      <select ref={ref} className={`${baseClasses} ${className}`} {...rest}>
-        {children}
-      </select>
+      {label ? (
+        <span className="block mb-1.5 text-sm font-medium text-slate-700">{label}</span>
+      ) : null}
+      <div className="relative">
+        <select
+          ref={ref}
+          className={`${baseClasses} appearance-none pr-10 cursor-pointer ${className}`}
+          {...rest}
+        >
+          {children}
+        </select>
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
+          aria-hidden="true"
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </div>
       {error ? <span className="block mt-1 text-xs text-red-600">{error}</span> : null}
     </label>
   );
@@ -71,7 +108,7 @@ export function Checkbox({
   label,
   checked,
   onChange,
-  className = ""
+  className = "",
 }: {
   label: ReactNode;
   checked: boolean;
@@ -79,12 +116,12 @@ export function Checkbox({
   className?: string;
 }) {
   return (
-    <label className={`inline-flex items-center gap-2 cursor-pointer text-sm ${className}`}>
+    <label className={`inline-flex items-start gap-2 cursor-pointer text-sm ${className}`}>
       <input
         type="checkbox"
         checked={checked}
         onChange={(e) => onChange(e.target.checked)}
-        className="h-4 w-4 accent-[#0e7490]"
+        className="mt-0.5 h-4 w-4 accent-[#0e7490] shrink-0"
       />
       <span className="text-slate-700">{label}</span>
     </label>

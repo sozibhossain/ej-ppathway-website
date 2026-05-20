@@ -10,7 +10,7 @@ export function ContactForm({
   subtitle,
   categories,
   successMessage,
-  footnote
+  footnote,
 }: {
   title?: string;
   subtitle?: string;
@@ -31,7 +31,8 @@ export function ContactForm({
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(""); setDone(null);
+    setError("");
+    setDone(null);
     if (!firstName || !email || !message) {
       setError("First name, email and message are required.");
       return;
@@ -44,7 +45,12 @@ export function ContactForm({
         { skipAuth: true }
       );
       setDone(successMessage || r.message || "Thanks! Your message was sent.");
-      setFirstName(""); setLastName(""); setEmail(""); setPhone(""); setSubject(""); setMessage("");
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPhone("");
+      setSubject("");
+      setMessage("");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Submission failed");
     } finally {
@@ -53,28 +59,69 @@ export function ContactForm({
   };
 
   return (
-    <section className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 md:p-8">
+    <section className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 md:p-8 shadow-sm">
       {title && <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-1">{title}</h2>}
       {subtitle && <p className="text-sm text-slate-600 mb-6">{subtitle}</p>}
 
       {done ? (
-        <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-5 text-emerald-700">
+        <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-4 sm:p-5 text-emerald-700 mb-4">
           {done}
         </div>
       ) : null}
 
       <form onSubmit={submit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <TextField label="First Name" placeholder="Type name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-          <TextField label="Last Name" placeholder="Type name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+          <TextField
+            label="First Name"
+            placeholder="Type name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+          />
+          <TextField
+            label="Last Name"
+            placeholder="Type name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+          />
         </div>
-        <TextField label="Email Address" type="email" placeholder="hello@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-        <TextField label="Phone Number" type="tel" placeholder="+1234567890" value={phone} onChange={(e) => setPhone(e.target.value)} />
-        <TextField label="Subject" placeholder="What is this regarding?" value={subject} onChange={(e) => setSubject(e.target.value)} />
-        <SelectField label="Category *" value={category} onChange={(e) => setCategory(e.target.value)}>
-          {(categories.length ? categories : ["General Inquiry"]).map((c) => <option key={c} value={c}>{c}</option>)}
+        <TextField
+          label="Email Address"
+          type="email"
+          placeholder="hello@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <TextField
+          label="Phone Number"
+          type="tel"
+          placeholder="+1234567890"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+        <TextField
+          label="Subject"
+          placeholder="What is this regarding?"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+        />
+        <SelectField
+          label="Category *"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          {(categories.length ? categories : ["General Inquiry"]).map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
         </SelectField>
-        <TextArea label="Message" placeholder="Write your message here…" rows={6} value={message} onChange={(e) => setMessage(e.target.value)} />
+        <TextArea
+          label="Message"
+          placeholder="Write your message here…"
+          rows={6}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
 
         {error && <div className="text-sm text-red-600">{error}</div>}
 
@@ -82,7 +129,9 @@ export function ContactForm({
           {submitting ? "Sending…" : "Send Message"}
         </Button>
 
-        {footnote && <p className="text-xs text-slate-500 text-center">{footnote}</p>}
+        {footnote && (
+          <p className="text-xs text-slate-500 text-center mt-2">{footnote}</p>
+        )}
       </form>
     </section>
   );
