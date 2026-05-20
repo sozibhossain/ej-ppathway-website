@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Image from "next/image";
 import { BlogCard } from "../../components/cards/BlogCard";
 import { BlogCardSkeleton, Skeleton } from "../../components/ui/Skeleton";
 import { BlogsFilter } from "./blogs-filter";
@@ -7,7 +8,7 @@ import { getSiteContent } from "../../lib/site-content";
 import type { Blog } from "../../lib/types";
 
 export default async function BlogsPage({
-  searchParams
+  searchParams,
 }: {
   searchParams: Promise<{ q?: string; category?: string }>;
 }) {
@@ -20,11 +21,28 @@ export default async function BlogsPage({
   return (
     <>
       {/* Hero */}
-      <section className="py-10 sm:py-14 md:py-20 bg-[#eaf4f8]">
-        <div className="container-page text-center max-w-3xl">
-          {data.hero?.eyebrow && <div className="text-[#0e7490] text-sm font-semibold mb-2">+ {data.hero.eyebrow}</div>}
-          {data.hero?.title && <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#0e7490]">{data.hero.title}</h1>}
-          {data.hero?.subtitle && <p className="mt-3 text-sm sm:text-base text-slate-600">{data.hero.subtitle}</p>}
+      <section className="relative py-10 sm:py-14 md:py-20 bg-[#eaf4f8] overflow-hidden">
+        {data.hero?.backgroundImage && (
+          <Image
+            src={data.hero.backgroundImage}
+            alt=""
+            fill
+            className="object-cover -z-10 opacity-30"
+            unoptimized
+          />
+        )}
+        <div className="container-page text-center max-w-3xl relative">
+          {data.hero?.eyebrow && (
+            <div className="text-[#0e7490] text-sm font-semibold mb-2">+ {data.hero.eyebrow}</div>
+          )}
+          {data.hero?.title && (
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#0e7490] leading-tight">
+              {data.hero.title}
+            </h1>
+          )}
+          {data.hero?.subtitle && (
+            <p className="mt-3 text-sm sm:text-base text-slate-600">{data.hero.subtitle}</p>
+          )}
 
           <BlogsFilter
             categories={categories}
@@ -35,7 +53,7 @@ export default async function BlogsPage({
         </div>
       </section>
 
-      <section className="py-12">
+      <section className="py-12 bg-white">
         <div className="container-page">
           <Suspense key={`${q}::${active}`} fallback={<BlogsGridSkeleton />}>
             <BlogsGrid q={q} active={active} />
@@ -43,22 +61,47 @@ export default async function BlogsPage({
         </div>
       </section>
 
-      {/* Newsletter CTA */}{/* (helpers defined below) */}
+      {/* Newsletter CTA */}
       {data.newsletterCta && (
-        <section className="py-10 sm:py-14 bg-gradient-to-br from-[#0e7490] to-[#06495d] text-white">
-          <div className="container-page text-center max-w-2xl">
-            <div className="mx-auto h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-white text-[#0e7490] inline-flex items-center justify-center mb-4 sm:mb-5">
-              ✉
+        <section className="py-10 sm:py-14 bg-linear-to-br from-[#082e3a] to-[#0e5d75] text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-dots opacity-40 pointer-events-none" aria-hidden="true" />
+          <div className="container-page text-center max-w-2xl relative">
+            <div className="mx-auto h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-white text-[#0e7490] inline-flex items-center justify-center mb-4 sm:mb-5 shadow-lg">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
             </div>
-            {data.newsletterCta.title && <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">{data.newsletterCta.title}</h2>}
-            {data.newsletterCta.subtitle && <p className="mt-3 text-sm sm:text-base text-white/85">{data.newsletterCta.subtitle}</p>}
+            {data.newsletterCta.title && (
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">
+                {data.newsletterCta.title}
+              </h2>
+            )}
+            {data.newsletterCta.subtitle && (
+              <p className="mt-3 text-sm sm:text-base text-white/85">
+                {data.newsletterCta.subtitle}
+              </p>
+            )}
             <form className="mt-6 flex flex-col sm:flex-row gap-2 justify-center max-w-md mx-auto">
               <input
                 type="email"
                 placeholder={data.newsletterCta.placeholder || "Enter your email"}
-                className="flex-1 h-12 px-4 rounded-lg bg-white text-slate-900 placeholder:text-slate-500"
+                className="flex-1 h-12 px-4 rounded-lg bg-white text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[#0e7490]"
               />
-              <button type="submit" className="h-12 px-6 rounded-lg bg-[#0e7490] text-white font-semibold border border-white/30">
+              <button
+                type="submit"
+                className="h-12 px-6 rounded-lg bg-[#0e7490] hover:bg-[#085a72] transition-colors text-white font-semibold border border-white/30"
+              >
                 {data.newsletterCta.buttonLabel || "Subscribe"}
               </button>
             </form>
@@ -94,14 +137,24 @@ async function BlogsGrid({ q, active }: { q: string; active: string }) {
   return (
     <>
       {featured && (
-        <div className="mb-8">
-          <div className="text-center text-[#0e7490] text-sm font-semibold mb-3">+ Featured Blog</div>
+        <div className="mb-10 sm:mb-12">
+          <div className="text-center mb-4">
+            <div className="text-[#0e7490] text-sm font-semibold mb-2">+ Featured Blog</div>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900">
+              Featured Article
+            </h2>
+          </div>
           <BlogCard blog={featured} featured />
         </div>
       )}
       {rest.length > 0 && (
         <>
-          <div className="text-center text-[#0e7490] text-sm font-semibold mb-4">+ All Blogs</div>
+          <div className="text-center mb-6">
+            <div className="text-[#0e7490] text-sm font-semibold mb-2">+ All Blogs</div>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900">
+              Latest Articles
+            </h2>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {rest.map((b) => (
               <BlogCard key={b._id} blog={b} />

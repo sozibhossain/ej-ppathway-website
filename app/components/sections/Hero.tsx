@@ -7,17 +7,46 @@ export function Hero({ hero }: { hero: NonNullable<HomeSections["hero"]> }) {
   const highlight = hero.highlightedWord || "";
   const titleParts = highlight && title.includes(highlight) ? title.split(highlight) : null;
 
+  const bg = hero.backgroundImage;
+
   return (
-    <section className="relative overflow-hidden bg-[#f5fbfd]">
-      <div className="container-page grid lg:grid-cols-2 gap-8 md:gap-10 items-center py-10 sm:py-12 md:py-20">
-        <div className="order-2 lg:order-1">
+    <section className="relative overflow-hidden isolate">
+      {/* Fallback gradient — always rendered so we never get a blank section */}
+      <div
+        className="absolute inset-0 bg-linear-to-br from-[#f0f9fb] via-[#eaf4f8] to-[#cfe9f0]"
+        aria-hidden="true"
+      />
+
+      {/* Full-bleed background image */}
+      {bg ? (
+        <Image
+          src={bg}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-right"
+          unoptimized
+        />
+      ) : null}
+
+      {/* Left-anchored white overlay so the headline stays readable */}
+      {bg ? (
+        <div
+          className="absolute inset-0 bg-linear-to-r from-white/95 via-white/75 to-transparent sm:via-white/65 lg:via-white/45 lg:to-transparent pointer-events-none"
+          aria-hidden="true"
+        />
+      ) : null}
+
+      <div className="container-page relative z-10 py-14 sm:py-20 md:py-28 lg:py-32 min-h-120 sm:min-h-140 lg:min-h-160 flex items-center">
+        <div className="max-w-xl lg:max-w-2xl">
           {hero.badge && (
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200 text-xs sm:text-sm text-slate-700 mb-4 sm:mb-6">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/90 border border-slate-200 text-xs sm:text-sm text-slate-700 mb-4 sm:mb-6 shadow-sm backdrop-blur-sm">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               {hero.badge}
             </span>
           )}
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.15] text-[#0b3b4d]">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.08] text-[#0b3b4d] tracking-tight">
             {titleParts ? (
               <>
                 {titleParts[0]}
@@ -33,19 +62,20 @@ export function Hero({ hero }: { hero: NonNullable<HomeSections["hero"]> }) {
               {hero.subtitle}
             </p>
           )}
-          <div className="mt-6 sm:mt-7 flex flex-col sm:flex-row sm:flex-wrap gap-3">
-            <CmsCtaButton link={hero.ctaPrimary} variant="secondary" size="lg" className="w-full sm:w-auto" />
-            <CmsCtaButton link={hero.ctaSecondary} variant="outline" size="lg" className="w-full sm:w-auto" />
+          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row sm:flex-wrap gap-3">
+            <CmsCtaButton
+              link={hero.ctaPrimary}
+              variant="secondary"
+              size="lg"
+              className="w-full sm:w-auto"
+            />
+            <CmsCtaButton
+              link={hero.ctaSecondary}
+              variant="outline"
+              size="lg"
+              className="w-full sm:w-auto bg-white/80 backdrop-blur-sm"
+            />
           </div>
-        </div>
-        <div className="relative order-1 lg:order-2">
-          {hero.backgroundImage ? (
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
-              <Image src={hero.backgroundImage} alt={title} fill className="object-cover" sizes="(min-width: 1024px) 600px, 100vw" unoptimized />
-            </div>
-          ) : (
-            <div className="aspect-[4/3] rounded-2xl bg-gradient-to-br from-[#cfe9f0] to-[#e7f5f8]" />
-          )}
         </div>
       </div>
     </section>

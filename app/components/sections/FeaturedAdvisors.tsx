@@ -17,21 +17,33 @@ export function FeaturedAdvisors({ sectionLabel, title, subtitle, viewAllLabel }
   return (
     <section className="py-12 sm:py-16 md:py-20 bg-[#eaf4f8]">
       <div className="container-page text-center">
-        {sectionLabel && <div className="text-[#0e7490] text-sm font-semibold mb-2 inline-flex items-center gap-1">+ {sectionLabel}</div>}
-        {title && <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 max-w-3xl mx-auto">{title}</h2>}
-        {subtitle && <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">{subtitle}</p>}
+        {sectionLabel && (
+          <div className="text-[#0e7490] text-sm font-semibold mb-2 inline-flex items-center gap-1">
+            + {sectionLabel}
+          </div>
+        )}
+        {title && (
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 max-w-3xl mx-auto leading-tight">
+            {title}
+          </h2>
+        )}
+        {subtitle && (
+          <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">{subtitle}</p>
+        )}
 
         <Suspense fallback={<FeaturedAdvisorsSkeletonGrid />}>
           <FeaturedAdvisorsGrid />
         </Suspense>
 
         {viewAllLabel && (
-          <Link
-            href="/advisors"
-            className="mt-8 inline-flex items-center gap-2 h-11 px-6 rounded-full bg-white border border-slate-200 text-slate-800 font-medium hover:border-[#0e7490] hover:text-[#0e7490]"
-          >
-            {viewAllLabel} <ArrowRightIcon size={16} />
-          </Link>
+          <div className="mt-8 sm:mt-10">
+            <Link
+              href="/advisors"
+              className="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-white border border-slate-200 text-slate-800 font-medium hover:border-[#0e7490] hover:text-[#0e7490] transition-colors"
+            >
+              {viewAllLabel} <ArrowRightIcon size={16} />
+            </Link>
+          </div>
         )}
       </div>
     </section>

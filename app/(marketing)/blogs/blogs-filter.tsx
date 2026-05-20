@@ -23,7 +23,8 @@ export function BlogsFilter({
   const push = (next: { q?: string; category?: string }) => {
     const params = new URLSearchParams(sp.toString());
     if (typeof next.q === "string") {
-      if (next.q) params.set("q", next.q); else params.delete("q");
+      if (next.q) params.set("q", next.q);
+      else params.delete("q");
     }
     if (typeof next.category === "string") {
       if (next.category && next.category !== "All") params.set("category", next.category);
@@ -37,7 +38,10 @@ export function BlogsFilter({
   return (
     <div className="mt-6 max-w-2xl mx-auto">
       <form
-        onSubmit={(e) => { e.preventDefault(); push({ q }); }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          push({ q });
+        }}
         className="flex flex-col sm:flex-row gap-2"
       >
         <div className="relative flex-1">
@@ -46,10 +50,13 @@ export function BlogsFilter({
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder={searchPlaceholder || "Search articles…"}
-            className="w-full h-12 pl-11 pr-4 rounded-lg bg-white border border-slate-200 text-sm"
+            className="w-full h-12 pl-11 pr-4 rounded-lg bg-white border border-slate-200 focus:border-[#0e7490] focus:outline-none text-sm transition-colors"
           />
         </div>
-        <button type="submit" className="h-12 px-6 rounded-lg bg-[#0e7490] text-white font-semibold w-full sm:w-auto">
+        <button
+          type="submit"
+          className="h-12 px-6 rounded-lg bg-[#0e7490] hover:bg-[#085a72] text-white font-semibold w-full sm:w-auto transition-colors"
+        >
           Search
         </button>
       </form>
@@ -62,10 +69,10 @@ export function BlogsFilter({
               key={c}
               type="button"
               onClick={() => push({ category: c })}
-              className={`px-4 py-1.5 rounded-full text-sm border transition ${
+              className={`px-4 py-1.5 rounded-full text-xs sm:text-sm border transition-colors ${
                 active
                   ? "bg-[#0e7490] text-white border-[#0e7490]"
-                  : "bg-white text-slate-700 border-slate-200 hover:border-[#0e7490]"
+                  : "bg-white text-slate-700 border-slate-200 hover:border-[#0e7490] hover:text-[#0e7490]"
               }`}
             >
               {c}

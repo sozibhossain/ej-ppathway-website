@@ -6,12 +6,33 @@ import Image from "next/image";
 import { Modal } from "../ui/Modal";
 import { TextField, TextArea, SelectField, Checkbox } from "../ui/Input";
 import { Button } from "../ui/Button";
-import { SparkleIcon, MailIcon, LockIcon, EyeIcon, EyeOffIcon, PhoneIcon, CalendarIcon, MapPinIcon, UserIcon } from "../ui/Icons";
+import {
+  SparkleIcon,
+  MailIcon,
+  LockIcon,
+  EyeIcon,
+  EyeOffIcon,
+  PhoneIcon,
+  CalendarIcon,
+  MapPinIcon,
+  UserIcon,
+  CheckIcon,
+} from "../ui/Icons";
 import { api, ApiError } from "../../lib/api";
 
 function UploadIconInline({ size = 18 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
       <polyline points="17 8 12 3 7 8" />
       <line x1="12" y1="3" x2="12" y2="15" />
@@ -19,13 +40,19 @@ function UploadIconInline({ size = 18 }: { size?: number }) {
   );
 }
 
-const STEPS = ["Application", "Pre-recorded Interview", "Live Interview", "Contract Signed", "Onboarding & Activation"];
+const STEPS = [
+  "Application",
+  "Pre-recorded Interview",
+  "Live Interview",
+  "Contract Signed",
+  "Onboarding & Activation",
+];
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 export function AdvisorApplyModal({
   open,
   onClose,
-  onSubmitted
+  onSubmitted,
 }: {
   open: boolean;
   onClose: () => void;
@@ -60,9 +87,18 @@ export function AdvisorApplyModal({
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (!name || !email || !password) { setError("Name, email and password are required"); return; }
-    if (password !== confirmPassword) { setError("Passwords do not match"); return; }
-    if (!agree) { setError("You must agree to the Advisors' Ethical Standards"); return; }
+    if (!name || !email || !password) {
+      setError("Name, email and password are required");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    if (!agree) {
+      setError("You must agree to the Advisors' Ethical Standards");
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -83,9 +119,7 @@ export function AdvisorApplyModal({
       await api.post("/auth/advisor-apply", fd, { isFormData: true, skipAuth: true });
       onSubmitted();
     } catch (err) {
-      // Backend route may not yet exist on a fresh project — fall through to "submitted" so the UI flow still works.
       const msg = err instanceof ApiError ? err.message : "Submit failed";
-      // Still treat as success for the modal transition (admin only cares about real data via approval workflow).
       if (msg.includes("404") || msg.includes("Not Found")) {
         onSubmitted();
         return;
@@ -100,7 +134,15 @@ export function AdvisorApplyModal({
     <Modal open={open} onClose={onClose} size="xl">
       <div className="p-4 sm:p-6 md:p-10">
         <div className="flex justify-center mb-4 sm:mb-6">
-          <Image src="/logo.svg" alt="Prophetic Pathway" width={160} height={42} className="h-8 sm:h-9 w-auto" unoptimized onError={(e) => (e.currentTarget.style.display = "none")} />
+          <Image
+            src="/logo.svg"
+            alt="Prophetic Pathway"
+            width={160}
+            height={42}
+            className="h-8 sm:h-9 w-auto"
+            unoptimized
+            onError={(e) => (e.currentTarget.style.display = "none")}
+          />
         </div>
 
         <Stepper currentIdx={0} />
@@ -109,60 +151,133 @@ export function AdvisorApplyModal({
           <h2 className="text-xl sm:text-2xl font-bold text-[#0e7490] inline-flex flex-wrap items-center justify-center gap-2">
             Welcome to Prophetic Pathway <SparkleIcon size={20} />
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 mt-1">Fill your information here to complete the application Step</p>
+          <p className="text-sm sm:text-base text-slate-600 mt-1">
+            Fill your information here to complete the application Step
+          </p>
         </div>
 
         <form onSubmit={submit} className="space-y-6 sm:space-y-7">
           <section>
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Personal Information</h3>
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">
+              Personal Information
+            </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <TextField label="Enter Your Full Name" placeholder="Enter full name" value={name}
-                onChange={(e) => setName(e.target.value)} leftIcon={<UserIcon size={18} />} />
-              <TextField label="Enter Your Email" type="email" placeholder="Enter Email" value={email}
-                onChange={(e) => setEmail(e.target.value)} leftIcon={<MailIcon size={18} />} />
-              <TextField label="Enter Your Phone Number" type="tel" placeholder="Enter phone number" value={phone}
-                onChange={(e) => setPhone(e.target.value)} leftIcon={<PhoneIcon size={18} />} />
-              <TextField label="Date of Birth" type="date" value={dob} onChange={(e) => setDob(e.target.value)}
-                leftIcon={<CalendarIcon size={18} />} />
+              <TextField
+                label="Enter Your Full Name"
+                placeholder="Enter full name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                leftIcon={<UserIcon size={18} />}
+              />
+              <TextField
+                label="Enter Your Email"
+                type="email"
+                placeholder="Enter Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                leftIcon={<MailIcon size={18} />}
+              />
+              <TextField
+                label="Enter Your Phone Number"
+                type="tel"
+                placeholder="Enter phone number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                leftIcon={<PhoneIcon size={18} />}
+              />
+              <TextField
+                label="Date of Birth"
+                type="date"
+                value={dob}
+                onChange={(e) => setDob(e.target.value)}
+                leftIcon={<CalendarIcon size={18} />}
+              />
             </div>
           </section>
 
           <section>
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Address Information</h3>
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">
+              Address Information
+            </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <TextField label="Enter Your Address" placeholder="Enter address" value={address}
-                onChange={(e) => setAddress(e.target.value)} leftIcon={<MapPinIcon size={18} />} />
-              <TextField label="City" placeholder="Enter city" value={city} onChange={(e) => setCity(e.target.value)} />
-              <TextField label="ZIP / Postal Code" placeholder="Postal code" value={zip} onChange={(e) => setZip(e.target.value)} />
-              <TextField label="Country" placeholder="Country" value={country} onChange={(e) => setCountry(e.target.value)} />
+              <TextField
+                label="Enter Your Address"
+                placeholder="Enter address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                leftIcon={<MapPinIcon size={18} />}
+              />
+              <TextField
+                label="City"
+                placeholder="Enter city"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              />
+              <TextField
+                label="ZIP / Postal Code"
+                placeholder="Postal code"
+                value={zip}
+                onChange={(e) => setZip(e.target.value)}
+              />
+              <SelectField
+                label="Country"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+              >
+                <option value="">Select Country</option>
+                <option value="us">United States</option>
+                <option value="uk">United Kingdom</option>
+                <option value="ca">Canada</option>
+                <option value="au">Australia</option>
+                <option value="other">Other</option>
+              </SelectField>
             </div>
           </section>
 
           <section>
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Experience</h3>
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">
+              Experience
+            </h3>
             <div className="grid grid-cols-1 gap-4">
-              <TextField label="Years of Experience *" placeholder="e.g. 5" value={yearsExperience}
-                onChange={(e) => setYearsExperience(e.target.value)} />
-              <TextArea label="Area of Brief Description *" placeholder="Describe your background in spiritual guidance…"
-                value={bio} onChange={(e) => setBio(e.target.value)} />
+              <TextField
+                label="Years of Experience *"
+                placeholder="e.g. 5"
+                value={yearsExperience}
+                onChange={(e) => setYearsExperience(e.target.value)}
+              />
+              <TextArea
+                label="Area of Brief Description *"
+                placeholder="Describe your background in spiritual guidance…"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+              />
             </div>
           </section>
 
           <section>
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Availability</h3>
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">
+              Availability
+            </h3>
             <div className="rounded-xl border border-slate-200 overflow-hidden">
               {DAYS.map((d) => (
-                <div key={d} className="grid grid-cols-2 px-3 sm:px-4 py-2.5 sm:py-3 border-t border-slate-100 first:border-0 text-xs sm:text-sm">
+                <div
+                  key={d}
+                  className="grid grid-cols-2 px-3 sm:px-4 py-2.5 sm:py-3 border-t border-slate-100 first:border-0 text-xs sm:text-sm"
+                >
                   <div className="text-slate-800">{d}</div>
                   <div className="text-right text-slate-600">09:00 - 17:00</div>
                 </div>
               ))}
             </div>
-            <p className="mt-2 text-xs text-slate-500">Availability is editable in your advisor dashboard after approval.</p>
+            <p className="mt-2 text-xs text-slate-500">
+              Availability is editable in your advisor dashboard after approval.
+            </p>
           </section>
 
           <section>
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Introduction Video</h3>
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">
+              Introduction Video
+            </h3>
             <FileDrop
               label="Upload an Intro video"
               accept="video/*"
@@ -173,7 +288,9 @@ export function AdvisorApplyModal({
           </section>
 
           <section>
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Upload a Profile photo</h3>
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">
+              Upload a Profile photo
+            </h3>
             <FileDrop
               label="Upload an image"
               accept="image/*"
@@ -184,7 +301,9 @@ export function AdvisorApplyModal({
           </section>
 
           <section>
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Create Password</h3>
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">
+              Create Password
+            </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <TextField
                 label="Create Password *"
@@ -193,7 +312,15 @@ export function AdvisorApplyModal({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 leftIcon={<LockIcon size={18} />}
-                rightIcon={<button type="button" onClick={() => setShowPwd((s) => !s)}>{showPwd ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}</button>}
+                rightIcon={
+                  <button
+                    type="button"
+                    onClick={() => setShowPwd((s) => !s)}
+                    aria-label={showPwd ? "Hide password" : "Show password"}
+                  >
+                    {showPwd ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
+                  </button>
+                }
               />
               <TextField
                 label="Confirm Password *"
@@ -210,10 +337,14 @@ export function AdvisorApplyModal({
             label={
               <span>
                 I have read and agree to follow the{" "}
-                <Link href="/join-as-advisor/ethical-standards" className="text-[#0e7490] font-medium hover:underline">
+                <Link
+                  href="/join-as-advisor/ethical-standards"
+                  className="text-[#0e7490] font-medium hover:underline"
+                >
                   Advisors&apos; Ethical Standards
                 </Link>
-                . I understand that violating these standards may result in suspension or removal from the platform.
+                . I understand that violating these standards may result in suspension or removal
+                from the platform.
               </span>
             }
             checked={agree}
@@ -221,7 +352,8 @@ export function AdvisorApplyModal({
           />
 
           <p className="text-xs text-slate-500">
-            <b>Note:</b> By submitting this application, you consent to the use of your personal data for the purpose of evaluating your suitability for employment in our organization.
+            <b>Note:</b> By submitting this application, you consent to the use of your personal
+            data for the purpose of evaluating your suitability for employment in our organization.
           </p>
 
           {error && <div className="text-sm text-red-600">{error}</div>}
@@ -237,17 +369,35 @@ export function AdvisorApplyModal({
 
 function Stepper({ currentIdx }: { currentIdx: number }) {
   return (
-    <div className="-mx-4 sm:mx-0 overflow-x-auto">
-      <div className="flex items-start gap-2 min-w-[480px] sm:min-w-0 sm:max-w-3xl sm:mx-auto px-4 sm:px-0">
+    <div className="-mx-4 sm:mx-0 overflow-x-auto no-scrollbar">
+      <div className="flex items-start gap-1.5 sm:gap-2 min-w-120 sm:min-w-0 sm:max-w-3xl sm:mx-auto px-4 sm:px-0">
         {STEPS.map((s, i) => {
           const active = i === currentIdx;
           const done = i < currentIdx;
           return (
             <div key={s} className="flex-1 flex flex-col items-center text-center min-w-0">
-              <div className={`h-9 w-9 sm:h-10 sm:w-10 rounded-full inline-flex items-center justify-center text-[10px] sm:text-xs font-semibold ${active ? "bg-[#0e7490] text-white ring-4 ring-[#cfe9f0]" : done ? "bg-[#cfe9f0] text-[#0e7490]" : "bg-slate-100 text-slate-400"}`}>
-                Step {i + 1}
+              <div
+                className={`h-10 w-10 sm:h-12 sm:w-12 rounded-full inline-flex flex-col items-center justify-center font-semibold ${
+                  active
+                    ? "bg-[#0e7490] text-white ring-4 ring-[#cfe9f0]"
+                    : done
+                      ? "bg-[#cfe9f0] text-[#0e7490]"
+                      : "bg-slate-100 text-slate-400"
+                }`}
+              >
+                {done ? (
+                  <CheckIcon size={16} />
+                ) : (
+                  <span className="text-[10px] sm:text-xs leading-none">Step {i + 1}</span>
+                )}
               </div>
-              <div className={`mt-2 text-[10px] sm:text-xs leading-tight px-1 ${active ? "text-slate-900 font-semibold" : "text-slate-500"}`}>{s}</div>
+              <div
+                className={`mt-2 text-[10px] sm:text-xs leading-tight px-1 ${
+                  active ? "text-slate-900 font-semibold" : "text-slate-500"
+                }`}
+              >
+                {s}
+              </div>
             </div>
           );
         })}
@@ -261,7 +411,7 @@ function FileDrop({
   accept,
   file,
   onChange,
-  hint
+  hint,
 }: {
   label: string;
   accept: string;
@@ -276,13 +426,21 @@ function FileDrop({
       <button
         type="button"
         onClick={() => ref.current?.click()}
-        className="w-full h-32 rounded-xl bg-[#f3fafd] border border-dashed border-slate-300 inline-flex flex-col items-center justify-center gap-2 text-slate-500 hover:text-[#0e7490] hover:border-[#0e7490]"
+        className="w-full h-32 rounded-xl bg-[#f3fafd] border border-dashed border-slate-300 inline-flex flex-col items-center justify-center gap-2 text-slate-500 hover:text-[#0e7490] hover:border-[#0e7490] transition-colors"
       >
         <UploadIconInline size={22} />
-        <span className="text-sm font-medium">{file ? file.name : `Upload ${accept.startsWith("video") ? "an intro video" : "an image"}`}</span>
+        <span className="text-sm font-medium">
+          {file ? file.name : `Upload ${accept.startsWith("video") ? "an intro video" : "an image"}`}
+        </span>
         {hint && <span className="text-xs text-slate-400">{hint}</span>}
       </button>
-      <input ref={ref} type="file" accept={accept} className="hidden" onChange={(e) => onChange(e.target.files?.[0] || null)} />
+      <input
+        ref={ref}
+        type="file"
+        accept={accept}
+        className="hidden"
+        onChange={(e) => onChange(e.target.files?.[0] || null)}
+      />
     </div>
   );
 }

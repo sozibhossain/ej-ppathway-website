@@ -6,14 +6,22 @@ import Link from "next/link";
 import { Modal } from "../ui/Modal";
 import { TextField, Checkbox } from "../ui/Input";
 import { Button } from "../ui/Button";
-import { SparkleIcon, MailIcon, LockIcon, EyeIcon, EyeOffIcon, PhoneIcon, CalendarIcon } from "../ui/Icons";
+import {
+  SparkleIcon,
+  MailIcon,
+  LockIcon,
+  EyeIcon,
+  EyeOffIcon,
+  PhoneIcon,
+  CalendarIcon,
+} from "../ui/Icons";
 import { api, ApiError, setAuthCookies } from "../../lib/api";
 import { ModalFooterMeta } from "./LoginModal";
 
 export function SignupModal({
   open,
   onClose,
-  onSwitchToLogin
+  onSwitchToLogin,
 }: {
   open: boolean;
   onClose: () => void;
@@ -62,7 +70,15 @@ export function SignupModal({
     <Modal open={open} onClose={onClose} size="md">
       <div className="p-5 sm:p-6 md:p-8">
         <div className="flex flex-col items-center mb-5 sm:mb-6">
-          <Image src="/logo.svg" alt="Prophetic Pathway" width={160} height={42} className="h-8 sm:h-10 w-auto" unoptimized onError={(e) => (e.currentTarget.style.display = "none")} />
+          <Image
+            src="/logo.svg"
+            alt="Prophetic Pathway"
+            width={160}
+            height={42}
+            className="h-8 sm:h-10 w-auto"
+            unoptimized
+            onError={(e) => (e.currentTarget.style.display = "none")}
+          />
         </div>
 
         <div className="text-center mb-1">
@@ -70,20 +86,48 @@ export function SignupModal({
             Welcome To Prophetic Pathway <SparkleIcon size={20} />
           </h2>
         </div>
-        <p className="text-center text-sm sm:text-base text-slate-600 mb-5 sm:mb-6">Let&apos;s Create an account</p>
+        <p className="text-center text-sm sm:text-base text-slate-600 mb-5 sm:mb-6">
+          Let&apos;s Create an account
+        </p>
 
         <form onSubmit={submit} className="space-y-3">
-          <TextField type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} leftIcon={<MailIcon size={18} />} />
-          <TextField type="tel" placeholder="Enter Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} leftIcon={<PhoneIcon size={18} />} />
+          <TextField
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            leftIcon={<MailIcon size={18} />}
+          />
+          <TextField
+            type="tel"
+            placeholder="Enter Phone Number"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            leftIcon={<PhoneIcon size={18} />}
+          />
           <TextField
             type={showPwd ? "text" : "password"}
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             leftIcon={<LockIcon size={18} />}
-            rightIcon={<button type="button" onClick={() => setShowPwd((s) => !s)}>{showPwd ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}</button>}
+            rightIcon={
+              <button
+                type="button"
+                onClick={() => setShowPwd((s) => !s)}
+                aria-label={showPwd ? "Hide password" : "Show password"}
+              >
+                {showPwd ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
+              </button>
+            }
           />
-          <TextField type="date" placeholder="Date of Birth" value={dob} onChange={(e) => setDob(e.target.value)} leftIcon={<CalendarIcon size={18} />} />
+          <TextField
+            type="date"
+            placeholder="Date of Birth"
+            value={dob}
+            onChange={(e) => setDob(e.target.value)}
+            leftIcon={<CalendarIcon size={18} />}
+          />
 
           <Checkbox
             label={
@@ -106,7 +150,11 @@ export function SignupModal({
 
           <div className="text-center text-sm text-slate-600">
             Already have an account?{" "}
-            <button type="button" onClick={onSwitchToLogin} className="text-[#0e7490] font-semibold hover:underline">
+            <button
+              type="button"
+              onClick={onSwitchToLogin}
+              className="text-[#0e7490] font-semibold hover:underline"
+            >
               Log in
             </button>
           </div>
