@@ -9,7 +9,7 @@ export default function AdvisorDetailLoading() {
         <div className="space-y-6">
           {/* Profile header */}
           <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row items-start gap-4 sm:gap-5">
-            <Skeleton className="h-16 w-16 sm:h-20 sm:w-20" rounded="full" />
+            <Skeleton className="h-16 w-16 sm:h-20 sm:w-20 rounded-full" />
             <div className="flex-1 min-w-0 space-y-2 w-full">
               <Skeleton className="h-6 w-1/2" />
               <Skeleton className="h-3 w-1/3" />

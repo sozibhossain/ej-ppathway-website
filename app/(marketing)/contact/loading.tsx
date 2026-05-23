@@ -14,7 +14,7 @@ export default function ContactLoading() {
             <Skeleton className="h-5 w-2/3" />
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="flex items-start gap-3">
-                <Skeleton className="h-4 w-4 mt-1" rounded="full" />
+                <Skeleton className="h-4 w-4 mt-1 rounded-full" />
                 <div className="flex-1 space-y-1.5">
                   <Skeleton className="h-3 w-1/3" />
                   <Skeleton className="h-3 w-3/4" />

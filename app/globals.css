@@ -9,6 +9,7 @@
   --brand-pale: #e6f4f8;
   --brand-pale-2: #f0f9fb;
   --footer-bg: #d9f0f6;
+  --muted: oklch(0.92 0.01 240);
 }
 
 @theme inline {
@@ -19,6 +20,7 @@
   --color-brand-pale: var(--brand-pale);
   --color-brand-pale-2: var(--brand-pale-2);
   --color-footer-bg: var(--footer-bg);
+  --color-muted: var(--muted);
   --font-sans: var(--font-outfit);
 }
 
