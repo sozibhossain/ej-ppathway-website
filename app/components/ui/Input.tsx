@@ -10,7 +10,7 @@ type InputProps = InputHTMLAttributes<HTMLInputElement> & {
 };
 
 const baseClasses =
-  "w-full h-12 px-4 rounded-xl bg-[#f3fafd] text-slate-900 placeholder:text-slate-500 border border-transparent focus:border-[#0e7490] focus:bg-white outline-none transition-colors text-sm";
+  "w-full h-12 px-4 rounded-xl bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200 hover:border-slate-300 focus:border-[#0e7490] focus:ring-2 focus:ring-[#0e7490]/10 outline-none transition-all text-sm";
 
 export const TextField = forwardRef<HTMLInputElement, InputProps>(function TextField(
   { label, error, leftIcon, rightIcon, className = "", ...rest },
