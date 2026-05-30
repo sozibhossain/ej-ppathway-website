@@ -1,0 +1,10 @@
+# Force LF for config + source files so Turbopack's ESM parser doesn't choke on
+# CRLF (core.autocrlf=true was rewriting these on checkout).
+* text=auto eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.css text eol=lf

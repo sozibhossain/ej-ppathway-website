@@ -21,19 +21,32 @@ export default async function BlogsPage({
   return (
     <>
       {/* Hero */}
-      <section className="relative py-10 sm:py-14 md:py-20 bg-[#eaf4f8] overflow-hidden">
+      <section className="relative py-16 sm:py-24 md:py-32 lg:py-40 bg-[#E4FAFF] overflow-hidden">
         {data.hero?.backgroundImage && (
           <Image
             src={data.hero.backgroundImage}
             alt=""
             fill
-            className="object-cover -z-10 opacity-30"
+            priority
+            sizes="100vw"
+            className="object-cover"
             unoptimized
           />
         )}
-        <div className="container-page text-center max-w-3xl relative">
+        {/* Gradient overlay — keeps the headline readable over the photo */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(0deg, #FFFFFF 0%, rgba(255, 255, 255, 0.47) 27.84%, #E4FAFF 99.8%)",
+          }}
+          aria-hidden="true"
+        />
+        <div className="container-page text-center max-w-3xl relative z-10">
           {data.hero?.eyebrow && (
-            <div className="text-[#0e7490] text-sm font-semibold mb-2">+ {data.hero.eyebrow}</div>
+            <div className="inline-flex items-center gap-1 rounded-full bg-black/10 text-[#0e7490] text-sm font-semibold px-4 py-2 mb-3">
+              + {data.hero.eyebrow}
+            </div>
           )}
           {data.hero?.title && (
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#0e7490] leading-tight">
