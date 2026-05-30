@@ -8,7 +8,13 @@ export default async function AboutPage() {
   const data = await getSiteContent("about");
   return (
     <>
-      <section className="py-12 sm:py-16 md:py-20 bg-white">
+      <section
+        className="py-14 sm:py-20 md:py-24"
+        style={{
+          background:
+            "linear-gradient(0deg, #FFFFFF 0%, rgba(255, 255, 255, 0.47) 27.84%, #D3F6FF 99.8%)",
+        }}
+      >
         <div className="container-page text-center max-w-4xl">
           {data.hero?.title && (
             <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#0e7490] leading-tight">
@@ -26,7 +32,10 @@ export default async function AboutPage() {
       {data.story && (
         <section className="py-8 md:py-12 bg-white">
           <div className="container-page max-w-3xl">
-            <div className="rounded-2xl border border-[#cfe9f0] bg-[#f0f9fb] p-5 sm:p-6 md:p-8">
+            <div
+              className="rounded-2xl border border-[#027B98] p-5 sm:p-6 md:p-8"
+              style={{ background: "linear-gradient(90deg, #E6FAFF 0%, #EFFCFF 100%)" }}
+            >
               {data.story.title && (
                 <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4">
                   {data.story.title}
@@ -54,7 +63,8 @@ export default async function AboutPage() {
               {(data.values.cards || []).map((c, i) => (
                 <div
                   key={i}
-                  className="bg-[#f0f9fb] border border-[#cfe9f0] rounded-2xl p-5 text-left hover:shadow-md transition-shadow"
+                  className="border border-[#027B98] rounded-2xl p-5 text-left hover:shadow-md transition-shadow"
+                  style={{ background: "linear-gradient(90deg, #E6FAFF 0%, #EFFCFF 100%)" }}
                 >
                   <div className="flex items-start gap-4">
                     <div className="h-12 w-12 rounded-xl bg-[#0e7490] text-white inline-flex items-center justify-center shrink-0 shadow-sm">
@@ -91,6 +101,7 @@ export default async function AboutPage() {
           title={data.whyChoose.title}
           subtitle={data.whyChoose.subtitle}
           cards={data.whyChoose.cards}
+          gradient
         />
       )}
 
