@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { MailIcon, PhoneIcon, MapPinIcon, ClockIcon } from "../../components/ui/Icons";
+import { MailIcon, PhoneIcon, ClockIcon } from "../../components/ui/Icons";
+import { MapPin } from "lucide-react";
 import { ContactForm } from "./contact-form";
 import { FAQSection } from "../../components/sections/FAQSection";
 import { getSiteContent } from "../../lib/site-content";
@@ -51,7 +52,7 @@ export default async function ContactPage() {
                 )}
                 {info.office && (
                   <Item
-                    icon={<MapPinIcon size={16} />}
+                    icon={<MapPin size={16} />}
                     label={info.officeLabel || "Office"}
                     value={info.office}
                   />

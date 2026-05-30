@@ -50,7 +50,7 @@ export function Header({ global }: { global: GlobalSections }) {
         <div className="hidden lg:flex items-center gap-3 shrink-0">
           <button
             onClick={() => auth.open("login")}
-            className="h-10 xl:h-11 px-5 rounded-full border border-[#0e7490] text-[#0e7490] font-semibold text-sm hover:bg-[#e6f4f8] transition-colors"
+            className="h-10 xl:h-11 px-5 rounded-xl border border-[#0e7490] text-[#0e7490] font-semibold text-sm hover:bg-[#e6f4f8] transition-colors"
           >
             {loginLabel}
           </button>

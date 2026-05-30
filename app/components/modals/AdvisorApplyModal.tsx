@@ -14,10 +14,10 @@ import {
   EyeOffIcon,
   PhoneIcon,
   CalendarIcon,
-  MapPinIcon,
   UserIcon,
   CheckIcon,
 } from "../ui/Icons";
+import { MapPin } from "lucide-react";
 import { api, ApiError } from "../../lib/api";
 
 function UploadIconInline({ size = 18 }: { size?: number }) {
@@ -205,7 +205,7 @@ export function AdvisorApplyModal({
                 placeholder="Enter address"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                leftIcon={<MapPinIcon size={18} />}
+                leftIcon={<MapPin size={18} />}
               />
               <TextField
                 label="City"

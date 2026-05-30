@@ -9,8 +9,8 @@ import {
   PhoneIcon,
   VideoIcon,
   CalendarIcon,
-  MapPinIcon,
 } from "../../../components/ui/Icons";
+import { MapPin } from "lucide-react";
 import { api } from "../../../lib/api";
 import { getSiteContent } from "../../../lib/site-content";
 import type { Advisor, Review } from "../../../lib/types";
@@ -101,7 +101,7 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
               </div>
               <div className="flex items-center gap-3 mt-2 flex-wrap text-sm text-slate-600">
                 <span className="inline-flex items-center gap-1">
-                  <MapPinIcon size={14} className="text-slate-400" />
+                  <MapPin size={14} className="text-slate-400" />
                   {user.location || "Worldwide"}
                 </span>
                 {profile?.avgRating ? (

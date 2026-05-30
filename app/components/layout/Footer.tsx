@@ -1,13 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
-import { SocialIcon, SparkleIcon, MailIcon, PhoneIcon, MapPinIcon } from "../ui/Icons";
+import { SocialIcon, SparkleIcon, MailIcon, PhoneIcon } from "../ui/Icons";
+import { MapPin } from "lucide-react";
 import type { GlobalSections } from "../../lib/types";
 
 export function Footer({ global }: { global: GlobalSections }) {
   const f = global.footer || {};
 
   return (
-    <footer className="bg-[var(--footer-bg)] mt-12">
+    <footer className="bg-[var(--footer-bg)]">
       <div className="container-page pt-10 md:pt-14 pb-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-10">
           <div className="lg:col-span-1">
@@ -66,7 +67,7 @@ export function Footer({ global }: { global: GlobalSections }) {
               )}
               {f.contact?.address && (
                 <li className="inline-flex items-start gap-2">
-                  <MapPinIcon size={14} className="mt-0.5 shrink-0" />
+                  <MapPin size={14} className="mt-0.5 shrink-0" />
                   <span>{f.contact.address}</span>
                 </li>
               )}

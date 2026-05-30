@@ -82,7 +82,7 @@ export type AdvisorDetailSections = {
 };
 
 export type JoinAsAdvisorSections = {
-  hero?: { title?: string; subtitle?: string; ctaPrimary?: LinkValue };
+  hero?: { title?: string; subtitle?: string; backgroundImage?: string; ctaPrimary?: LinkValue };
   joiningProcess?: { sectionLabel?: string; title?: string; subtitle?: string; steps?: Step[] };
   application?: { stepLabel?: string; title?: string; description?: string; bullets?: string[]; image?: string; ctaPrimary?: LinkValue };
   interview?: { stepLabel?: string; title?: string; description?: string; image?: string; ctaPrimary?: LinkValue };
@@ -90,7 +90,7 @@ export type JoinAsAdvisorSections = {
   reachStats?: { eyebrow?: string; title?: string; subtitle?: string; image?: string; items?: StatItem[] };
   whyJoin?: { sectionLabel?: string; title?: string; subtitle?: string; cards?: CardItem[] };
   requirements?: { title?: string; bullets?: string[]; image?: string };
-  advisorTestimonials?: { sectionLabel?: string; title?: string; videos?: { name?: string; videoUrl?: string; thumbnail?: string }[] };
+  advisorTestimonials?: { sectionLabel?: string; title?: string; videos?: { name?: string; quote?: string; videoUrl?: string; thumbnail?: string }[] };
   beforeYouApply?: { eyebrow?: string; title?: string; body?: string; ctaPrimary?: LinkValue; footnote?: string };
 };
 

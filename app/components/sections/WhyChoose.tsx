@@ -6,13 +6,15 @@ export function WhyChoose({
   title,
   subtitle,
   cards,
-  bgClass = "bg-white"
+  bgClass = "bg-white",
+  centered = false
 }: {
   sectionLabel?: string;
   title?: string;
   subtitle?: string;
   cards?: CardItem[];
   bgClass?: string;
+  centered?: boolean;
 }) {
   const items = cards || [];
   return (
@@ -34,13 +36,24 @@ export function WhyChoose({
           </p>
         )}
 
-        <div className="mt-10 sm:mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+        <div className={`mt-10 sm:mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 ${items.length === 4 ? "lg:grid-cols-2" : "lg:grid-cols-3"}`}>
           {items.map((c, i) => (
             <div
               key={i}
-              className="bg-[#f0f9fb] rounded-2xl border border-[#cfe9f0] p-5 sm:p-6 text-center sm:text-left transition-all hover:shadow-md hover:border-[#9ed3df]"
+              className={`rounded-2xl border border-[#cfe9f0] p-6 sm:p-8 transition-all hover:shadow-md hover:border-[#9ed3df] ${
+                centered ? "text-center" : "bg-[#f0f9fb] text-center sm:text-left"
+              }`}
+              style={
+                centered
+                  ? { background: "linear-gradient(90deg, #E6FAFF 0%, #EFFCFF 100%)" }
+                  : undefined
+              }
             >
-              <div className="mx-auto sm:mx-0 h-12 w-12 rounded-xl bg-[#0e7490] text-white inline-flex items-center justify-center mb-4 shadow-sm">
+              <div
+                className={`h-12 w-12 rounded-xl bg-[#0e7490] text-white inline-flex items-center justify-center mb-4 shadow-sm ${
+                  centered ? "mx-auto" : "mx-auto sm:mx-0"
+                }`}
+              >
                 <Icon name={c.icon} size={22} />
               </div>
               {c.title && (

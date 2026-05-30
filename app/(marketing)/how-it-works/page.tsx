@@ -12,13 +12,16 @@ export default async function HowItWorksPage() {
   return (
     <>
       {/* Hero */}
-      <section className="py-12 sm:py-16 md:py-20 bg-[#f0f9fb]">
+      <section
+        className="py-14 sm:py-20 md:py-24"
+        style={{ background: "linear-gradient(180deg, #E4FAFF 0%, #F4FCFF 60%, #FFFFFF 100%)" }}
+      >
         <div className="container-page text-center max-w-3xl">
-          <div className="mx-auto h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-[#0e7490] text-white inline-flex items-center justify-center mb-4 sm:mb-5 shadow-lg">
-            <CalendarIcon size={26} />
+          <div className="mx-auto h-14 w-14 sm:h-16 sm:w-16 rounded-2xl bg-[#027B98] text-white inline-flex items-center justify-center mb-4 sm:mb-5 shadow-lg">
+            <CalendarIcon size={28} />
           </div>
           {hero.title && (
-            <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#0e7490] leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#027B98] leading-tight">
               {hero.title}
             </h1>
           )}
@@ -115,10 +118,12 @@ export default async function HowItWorksPage() {
                         {t.description}
                       </p>
                     )}
-                    <ul className="space-y-2 mb-4 flex-1">
+                    <ul className="space-y-2.5 mb-4 flex-1">
                       {(t.bullets || []).map((b, bi) => (
-                        <li key={bi} className="flex items-start gap-2 text-xs sm:text-sm text-slate-700">
-                          <CheckIcon size={14} className={`mt-0.5 ${accent.text} shrink-0`} />
+                        <li key={bi} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700">
+                          <span className={`mt-0.5 h-4.5 w-4.5 rounded-full ${accent.chip} text-white inline-flex items-center justify-center shrink-0`}>
+                            <CheckIcon size={11} />
+                          </span>
                           {b}
                         </li>
                       ))}
@@ -136,7 +141,10 @@ export default async function HowItWorksPage() {
 
       {/* Scheduling Made Simple — dark band */}
       {data.schedulingMadeSimple && (
-        <section className="py-10 sm:py-14 bg-linear-to-br from-[#0e7490] to-[#06495d] text-white relative overflow-hidden">
+        <section
+          className="py-12 sm:py-16 text-white relative overflow-hidden"
+          style={{ background: "linear-gradient(90deg, #002E3A 0%, #027B98 100%)" }}
+        >
           <div className="absolute inset-0 bg-dots opacity-40 pointer-events-none" aria-hidden="true" />
           <div className="container-page text-center relative">
             {data.schedulingMadeSimple.title && (
@@ -170,7 +178,7 @@ export default async function HowItWorksPage() {
       {/* Cancellation Policy */}
       {data.cancellationPolicy && (
         <section className="py-12 sm:py-16 md:py-20 bg-white">
-          <div className="container-page max-w-3xl text-center">
+          <div className="container-page max-w-4xl text-center">
             {data.cancellationPolicy.title && (
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">
                 {data.cancellationPolicy.title}

@@ -15,16 +15,57 @@ export default async function JoinAsAdvisorPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative py-12 sm:py-16 md:py-24 bg-linear-to-br from-[#0e7490] to-[#06495d] text-white overflow-hidden">
-        <div className="absolute inset-0 bg-dots opacity-30 pointer-events-none" aria-hidden="true" />
-        <div className="container-page text-center relative z-10">
+      <section className="relative overflow-hidden min-h-[60vh] flex items-center">
+        {/* Fallback when no image */}
+        <div className="absolute inset-0 bg-[#E4FAFF]" aria-hidden="true" />
+
+        {hero.backgroundImage && (
+          <Image
+            src={hero.backgroundImage}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+            unoptimized
+          />
+        )}
+
+        {/* Light gradient overlay — white at bottom, light teal at top */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(0deg, #FFFFFF 0%, rgba(255, 255, 255, 0.47) 27.84%, #E4FAFF 99.8%)",
+          }}
+          aria-hidden="true"
+        />
+
+        <div className="container-page text-center relative z-10 py-16 sm:py-20 md:py-28">
           {hero.title && (
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold leading-tight">
+            <h1
+              className="font-bold text-[#1A1A1A]"
+              style={{
+                fontFamily: "var(--font-outfit), Outfit, sans-serif",
+                fontSize: "clamp(2.5rem, 5.5vw, 4.5rem)",
+                lineHeight: 1,
+                letterSpacing: 0,
+                fontWeight: 700,
+              }}
+            >
               {hero.title}
             </h1>
           )}
           {hero.subtitle && (
-            <p className="mt-4 text-sm sm:text-base text-white/90 max-w-2xl mx-auto">
+            <p
+              className="mt-4 text-slate-600 max-w-2xl mx-auto"
+              style={{
+                fontFamily: "var(--font-outfit), Outfit, sans-serif",
+                fontSize: "16px",
+                lineHeight: 1.5,
+                fontWeight: 400,
+              }}
+            >
               {hero.subtitle}
             </p>
           )}
@@ -41,6 +82,7 @@ export default async function JoinAsAdvisorPage() {
           title={data.joiningProcess.title}
           subtitle={data.joiningProcess.subtitle}
           steps={data.joiningProcess.steps}
+          numbered
         />
       )}
 
@@ -82,13 +124,16 @@ export default async function JoinAsAdvisorPage() {
 
       {/* Stats */}
       {data.reachStats && (
-        <section className="py-12 sm:py-16 md:py-20 bg-linear-to-br from-[#0e7490] to-[#06495d] text-white relative overflow-hidden">
+        <section
+          className="py-12 sm:py-16 md:py-20 text-white relative overflow-hidden"
+          style={{ background: "linear-gradient(90deg, #002E3A 0%, #027B98 100%)" }}
+        >
           <div className="absolute inset-0 bg-dots opacity-30 pointer-events-none" aria-hidden="true" />
           <div className="container-page grid lg:grid-cols-2 gap-8 md:gap-10 items-center relative">
             <div>
               {data.reachStats.eyebrow && (
-                <div className="text-white/70 text-sm font-medium mb-2">
-                  + {data.reachStats.eyebrow}
+                <div className="text-white/80 text-sm font-medium mb-2">
+                  ✦ {data.reachStats.eyebrow}
                 </div>
               )}
               {data.reachStats.title && (
@@ -101,25 +146,30 @@ export default async function JoinAsAdvisorPage() {
                   {data.reachStats.subtitle}
                 </p>
               )}
-              <div className="mt-6 grid grid-cols-2 gap-3 max-w-md">
-                {(data.reachStats.items || []).map((s, i) => (
-                  <div key={i} className="bg-white/10 rounded-xl px-4 py-3 backdrop-blur-sm border border-white/10">
-                    <div className="text-xl sm:text-2xl font-bold">{s.value}</div>
-                    <div className="text-xs text-white/80 mt-0.5">{s.label}</div>
-                  </div>
-                ))}
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 max-w-md">
+                {(data.reachStats.items || []).map((s, i) => {
+                  const palette = ["#027B98", "#027B98", "#16a34a", "#ea8a0b"];
+                  const valueColor = palette[i % palette.length];
+                  return (
+                    <div key={i} className="bg-white rounded-xl px-4 py-3.5 shadow-sm">
+                      <div className="text-xl sm:text-2xl font-bold" style={{ color: valueColor }}>
+                        {s.value}
+                      </div>
+                      <div className="text-xs text-slate-600 mt-0.5">{s.label}</div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
             <div className="relative">
               {data.reachStats.image ? (
-                <div className="relative aspect-4/3 rounded-2xl overflow-hidden shadow-2xl">
-                  <Image
+                <div className="aspect-4/3 rounded-2xl overflow-hidden shadow-2xl">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
                     src={data.reachStats.image}
                     alt={data.reachStats.title || ""}
-                    fill
-                    className="object-cover"
-                    sizes="600px"
-                    unoptimized
+                    className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 </div>
               ) : (
@@ -137,6 +187,7 @@ export default async function JoinAsAdvisorPage() {
           title={data.whyJoin.title}
           subtitle={data.whyJoin.subtitle}
           cards={data.whyJoin.cards}
+          centered
         />
       )}
 
@@ -162,14 +213,13 @@ export default async function JoinAsAdvisorPage() {
               </ul>
             </div>
             {data.requirements.image ? (
-              <div className="relative aspect-4/3 rounded-2xl overflow-hidden shadow-md">
-                <Image
+              <div className="aspect-4/3 rounded-2xl overflow-hidden shadow-md">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={data.requirements.image}
                   alt={data.requirements.title || ""}
-                  fill
-                  className="object-cover"
-                  sizes="600px"
-                  unoptimized
+                  className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               </div>
             ) : (
@@ -204,9 +254,10 @@ export default async function JoinAsAdvisorPage() {
                     {v.videoUrl ? (
                       <video
                         src={v.videoUrl}
-                        poster={v.thumbnail}
+                        poster={v.thumbnail || undefined}
                         controls
-                        className="w-full h-full object-cover"
+                        preload="metadata"
+                        className="absolute inset-0 w-full h-full object-cover"
                       />
                     ) : v.thumbnail ? (
                       <Image
@@ -219,15 +270,22 @@ export default async function JoinAsAdvisorPage() {
                       />
                     ) : null}
                     {!v.videoUrl && (
-                      <div className="absolute inset-0 grid place-items-center text-white">
+                      <div className="absolute inset-0 grid place-items-center text-white pointer-events-none">
                         <span className="h-14 w-14 rounded-full bg-white/95 text-[#0e7490] inline-flex items-center justify-center shadow-xl">
                           <PlayIcon size={24} />
                         </span>
                       </div>
                     )}
                   </div>
-                  {v.name && (
-                    <div className="px-4 py-3 text-left font-semibold text-slate-900">{v.name}</div>
+                  {(v.name || v.quote) && (
+                    <div className="px-4 py-3 text-left">
+                      {v.name && <div className="font-semibold text-slate-900">{v.name}</div>}
+                      {v.quote && (
+                        <p className="mt-1 text-xs sm:text-sm text-slate-500 leading-relaxed">
+                          {v.quote}
+                        </p>
+                      )}
+                    </div>
                   )}
                 </div>
               ))}
@@ -238,12 +296,20 @@ export default async function JoinAsAdvisorPage() {
 
       {/* Before You Apply */}
       {data.beforeYouApply && (
-        <section className="py-10 sm:py-14 bg-linear-to-br from-[#082e3a] to-[#0e5d75] text-white relative overflow-hidden">
+        <section
+          className="py-12 sm:py-16 text-white relative overflow-hidden"
+          style={{ background: "linear-gradient(90deg, #002E3A 0%, #015267 100%)" }}
+        >
           <div className="absolute inset-0 bg-dots opacity-40 pointer-events-none" aria-hidden="true" />
           <div className="container-page text-center relative">
-            <div className="mx-auto h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-white text-[#0e7490] inline-flex items-center justify-center mb-4 sm:mb-5 shadow-lg">
-              <Icon name="shield-check" size={26} />
+            <div className="mx-auto h-14 w-14 sm:h-16 sm:w-16 rounded-2xl bg-white text-[#027B98] inline-flex items-center justify-center mb-4 sm:mb-5 shadow-lg">
+              <Icon name="shield-check" size={28} />
             </div>
+            {data.beforeYouApply.eyebrow && (
+              <div className="text-white/70 text-sm font-semibold mb-2">
+                + {data.beforeYouApply.eyebrow}
+              </div>
+            )}
             {data.beforeYouApply.title && (
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">
                 {data.beforeYouApply.title}
@@ -258,7 +324,7 @@ export default async function JoinAsAdvisorPage() {
               {data.beforeYouApply.ctaPrimary?.href ? (
                 <Link
                   href={data.beforeYouApply.ctaPrimary.href}
-                  className="inline-flex items-center gap-2 h-12 px-7 rounded-full bg-white hover:bg-slate-50 transition-colors text-[#0e7490] font-semibold shadow-lg"
+                  className="inline-flex items-center gap-2 h-13 px-8 rounded-xl bg-white hover:bg-slate-50 transition-colors text-[#0e7490] font-semibold shadow-lg"
                 >
                   <Icon name="shield-check" size={18} /> {data.beforeYouApply.ctaPrimary.label}
                 </Link>
@@ -327,14 +393,13 @@ function SplitSection({
   );
 
   const img = image ? (
-    <div className="relative aspect-square rounded-full overflow-hidden max-w-xs sm:max-w-sm md:max-w-md mx-auto shadow-lg">
-      <Image
+    <div className="aspect-square rounded-full overflow-hidden max-w-xs sm:max-w-sm md:max-w-md mx-auto shadow-lg">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
         src={image}
         alt={title || ""}
-        fill
-        className="object-cover"
-        sizes="500px"
-        unoptimized
+        className="w-full h-full object-cover"
+        loading="lazy"
       />
     </div>
   ) : (

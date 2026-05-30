@@ -36,7 +36,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   return (
     <button
       ref={ref}
-      className={`inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-colors ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
       {...rest}
     >
       {children}
@@ -45,7 +45,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 });
 
 export function LinkButton({ href, variant = "primary", size = "md", className = "", children, target, rel }: AnchorProps) {
-  const cls = `inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
+  const cls = `inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-colors ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
   if (href.startsWith("http") || target === "_blank") {
     return (
       <a href={href} target={target} rel={rel || "noopener noreferrer"} className={cls}>

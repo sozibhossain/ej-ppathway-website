@@ -115,7 +115,7 @@ const SOCIAL: Record<string, React.FC<IconProps>> = {
 
 /** Render a registered icon by name, falling back to a sparkle if unknown. */
 export function Icon({ name, size = 24, className }: { name?: string; size?: number; className?: string }) {
-  const C = (name && REG[name]) || SparkleIcon;
+  const C = (name && (REG[name] || REG[name.toLowerCase()])) || SparkleIcon;
   return <C size={size} className={className} />;
 }
 

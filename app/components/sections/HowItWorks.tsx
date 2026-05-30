@@ -6,11 +6,13 @@ export function HowItWorks({
   title,
   subtitle,
   steps,
+  numbered = false,
 }: {
   sectionLabel?: string;
   title?: string;
   subtitle?: string;
   steps?: Step[];
+  numbered?: boolean;
 }) {
   const items = steps || [];
   const count = items.length || 1;
@@ -30,7 +32,7 @@ export function HowItWorks({
           <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">{subtitle}</p>
         )}
 
-        <div className="mt-10 sm:mt-12 relative max-w-6xl mx-auto">
+        <div className={`mt-10 sm:mt-12 relative ${numbered ? "w-full" : "max-w-6xl mx-auto"}`}>
           <div
             className={`grid grid-cols-1 sm:grid-cols-2 gap-y-10 sm:gap-y-12 lg:gap-y-0 ${
               count >= 5
@@ -53,7 +55,7 @@ export function HowItWorks({
                   {!isLast && (
                     <div
                       aria-hidden="true"
-                      className="hidden lg:flex absolute top-7 left-1/2 right-[-50%] items-center pl-10 pr-10 z-0"
+                      className={`hidden lg:flex absolute ${numbered ? "top-8" : "top-7"} left-1/2 right-[-50%] items-center pl-10 pr-10 z-0`}
                     >
                       <span className="h-1.5 w-1.5 rounded-full bg-[#0e7490]" />
                       <span className="flex-1 border-t-2 border-dashed border-[#0e7490]/40" />
@@ -61,8 +63,17 @@ export function HowItWorks({
                     </div>
                   )}
 
-                  <div className="relative z-10 h-14 w-14 sm:h-16 sm:w-16 rounded-2xl bg-[#0e7490] text-white inline-flex items-center justify-center mb-4 shadow-lg shadow-[#0e7490]/25">
-                    <Icon name={s.icon} size={26} />
+                  <div
+                    className={`relative z-10 rounded-full bg-[#0e7490] text-white inline-flex flex-col items-center justify-center mb-4 shadow-lg shadow-[#0e7490]/25 ${
+                      numbered ? "h-16 w-16" : "h-14 w-14 sm:h-16 sm:w-16"
+                    }`}
+                  >
+                    <Icon name={s.icon} size={numbered ? 20 : 26} />
+                    {numbered && (
+                      <span className="text-[10px] leading-none font-semibold mt-0.5">
+                        Step {i + 1}
+                      </span>
+                    )}
                   </div>
 
                   {s.title && (
