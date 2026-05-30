@@ -7,7 +7,8 @@ export function WhyChoose({
   subtitle,
   cards,
   bgClass = "bg-white",
-  centered = false
+  centered = false,
+  gradient = false
 }: {
   sectionLabel?: string;
   title?: string;
@@ -15,8 +16,10 @@ export function WhyChoose({
   cards?: CardItem[];
   bgClass?: string;
   centered?: boolean;
+  gradient?: boolean;
 }) {
   const items = cards || [];
+  const useGradient = gradient || centered;
   return (
     <section className={`py-12 sm:py-16 md:py-20 ${bgClass}`}>
       <div className="container-page text-center">
@@ -40,11 +43,13 @@ export function WhyChoose({
           {items.map((c, i) => (
             <div
               key={i}
-              className={`rounded-2xl border border-[#cfe9f0] p-6 sm:p-8 transition-all hover:shadow-md hover:border-[#9ed3df] ${
-                centered ? "text-center" : "bg-[#f0f9fb] text-center sm:text-left"
-              }`}
+              className={`rounded-2xl border p-6 sm:p-8 transition-all hover:shadow-md ${
+                useGradient
+                  ? "border-[#027B98]"
+                  : "bg-[#f0f9fb] border-[#cfe9f0] hover:border-[#9ed3df]"
+              } ${centered ? "text-center" : "text-center sm:text-left"}`}
               style={
-                centered
+                useGradient
                   ? { background: "linear-gradient(90deg, #E6FAFF 0%, #EFFCFF 100%)" }
                   : undefined
               }

@@ -85,9 +85,15 @@ export default async function PrivacyPage() {
 
   return (
     <>
-      <section className="py-10 sm:py-14 md:py-20 bg-linear-to-b from-[#f0f9fb] to-white">
+      <section
+        className="py-14 sm:py-20 md:py-24"
+        style={{
+          background:
+            "linear-gradient(0deg, #FFFFFF 0%, rgba(255, 255, 255, 0.47) 27.84%, #D3F6FF 99.8%)",
+        }}
+      >
         <div className="container-page text-center max-w-3xl mx-auto">
-          <div className="mx-auto h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-[#0e7490] text-white inline-flex items-center justify-center mb-4 sm:mb-5 shadow-md">
+          <div className="mx-auto h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-[#027B98] text-white inline-flex items-center justify-center mb-4 sm:mb-5 shadow-md">
             <LockIcon size={26} />
           </div>
           <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-[#0e7490] leading-tight">
@@ -159,7 +165,10 @@ export default async function PrivacyPage() {
 
 function InfoCard({ card }: { card: Card }) {
   return (
-    <div className="bg-[#f0f9fb] border border-[#cfe9f0] rounded-2xl p-5 sm:p-6">
+    <div
+      className="border border-[#027B98] rounded-2xl p-5 sm:p-6"
+      style={{ background: "linear-gradient(90deg, #E6FAFF 0%, #EFFCFF 100%)" }}
+    >
       <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-3">{card.title}</h2>
       {card.description && <p className="text-sm text-slate-600 mb-3">{card.description}</p>}
       {card.bullets && card.bullets.length > 0 && (
@@ -178,7 +187,10 @@ function InfoCard({ card }: { card: Card }) {
 
 function DetailCard({ card }: { card: Card }) {
   return (
-    <div className="bg-[#f0f9fb] border border-[#cfe9f0] rounded-2xl p-5 sm:p-6 flex items-start gap-4">
+    <div
+      className="border border-[#027B98] rounded-2xl p-5 sm:p-6 flex items-start gap-4"
+      style={{ background: "linear-gradient(90deg, #E6FAFF 0%, #EFFCFF 100%)" }}
+    >
       <div className="h-12 w-12 rounded-xl bg-[#0e7490] text-white inline-flex items-center justify-center shrink-0 shadow-sm">
         <Icon name={card.icon} size={22} />
       </div>
