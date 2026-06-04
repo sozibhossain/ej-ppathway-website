@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Modal } from "../ui/Modal";
-import { TextField, TextArea, SelectField, Checkbox } from "../ui/Input";
+import { TextField, TextArea, Checkbox } from "../ui/Input";
+import { Combobox } from "../ui/Combobox";
 import { Button } from "../ui/Button";
 import {
   SparkleIcon,
@@ -19,6 +20,7 @@ import {
 } from "../ui/Icons";
 import { MapPin } from "lucide-react";
 import { api, ApiError } from "../../lib/api";
+import { useCountries, useCities } from "../../lib/countries";
 
 function UploadIconInline({ size = 18 }: { size?: number }) {
   return (
@@ -65,7 +67,9 @@ export function AdvisorApplyModal({
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [zip, setZip] = useState("");
-  const [country, setCountry] = useState("");
+  const [countryCode, setCountryCode] = useState("");
+  const countries = useCountries();
+  const cities = useCities(countryCode);
   const [yearsExperience, setYearsExperience] = useState("");
   const [bio, setBio] = useState("");
   const [password, setPassword] = useState("");
@@ -111,7 +115,7 @@ export function AdvisorApplyModal({
       fd.append("address", address);
       fd.append("city", city);
       fd.append("zip", zip);
-      fd.append("country", country);
+      fd.append("country", countryCode);
       fd.append("yearsOfExperience", yearsExperience);
       fd.append("bio", bio);
       if (intro) fd.append("introVideo", intro);
@@ -207,30 +211,48 @@ export function AdvisorApplyModal({
                 onChange={(e) => setAddress(e.target.value)}
                 leftIcon={<MapPin size={18} />}
               />
-              <TextField
-                label="City"
-                placeholder="Enter city"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-              />
+              <label className="block">
+                <span className="block mb-1.5 text-sm font-medium text-slate-700">
+                  Country
+                </span>
+                <Combobox
+                  options={countries.map((c) => ({
+                    value: c.iso2,
+                    label: c.name,
+                  }))}
+                  value={countryCode}
+                  onChange={(v) => {
+                    setCountryCode(v);
+                    setCity("");
+                  }}
+                  placeholder="Select Country"
+                  searchPlaceholder="Search countries…"
+                  emptyText="No country found."
+                  triggerClassName="h-12 px-4 bg-white border-slate-200 hover:border-slate-300 focus:border-[#0e7490] focus:outline-none"
+                />
+              </label>
+              <label className="block">
+                <span className="block mb-1.5 text-sm font-medium text-slate-700">
+                  City
+                </span>
+                <Combobox
+                  options={cities.map((c) => ({ value: c, label: c }))}
+                  value={city}
+                  onChange={(v) => setCity(v)}
+                  placeholder={countryCode ? "Select City" : "Select a country first"}
+                  searchPlaceholder="Search cities…"
+                  emptyText="No city found."
+                  disabled={!countryCode}
+                  allowCustom
+                  triggerClassName="h-12 px-4 bg-white border-slate-200 hover:border-slate-300 focus:border-[#0e7490] focus:outline-none"
+                />
+              </label>
               <TextField
                 label="ZIP / Postal Code"
                 placeholder="Postal code"
                 value={zip}
                 onChange={(e) => setZip(e.target.value)}
               />
-              <SelectField
-                label="Country"
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-              >
-                <option value="">Select Country</option>
-                <option value="us">United States</option>
-                <option value="uk">United Kingdom</option>
-                <option value="ca">Canada</option>
-                <option value="au">Australia</option>
-                <option value="other">Other</option>
-              </SelectField>
             </div>
           </section>
 
