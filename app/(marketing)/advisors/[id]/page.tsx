@@ -13,6 +13,11 @@ import {
 import { MapPin } from "lucide-react";
 import { api } from "../../../lib/api";
 import { getSiteContent } from "../../../lib/site-content";
+import {
+  fetchCountries,
+  countryNameFrom,
+  formatLocation,
+} from "../../../lib/countries-data";
 import type { Advisor, Review } from "../../../lib/types";
 
 type Detail = {
@@ -47,6 +52,11 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
   if (!advisor || !advisor.user) notFound();
 
   const { user, profile, reviews } = advisor!;
+  const countries = await fetchCountries();
+  const userLocation = formatLocation(
+    user.city,
+    countryNameFrom(countries, user.country),
+  );
   const tierLabel =
     profile?.tier === "gold"
       ? "Gold Advisor"
@@ -102,7 +112,7 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
               <div className="flex items-center gap-3 mt-2 flex-wrap text-sm text-slate-600">
                 <span className="inline-flex items-center gap-1">
                   <MapPin size={14} className="text-slate-400" />
-                  {user.location || "Worldwide"}
+                  {userLocation || "Worldwide"}
                 </span>
                 {profile?.avgRating ? (
                   <span className="inline-flex items-center gap-1 text-slate-700">

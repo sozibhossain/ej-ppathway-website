@@ -7,12 +7,14 @@ import { usePathname } from "next/navigation";
 import { MenuIcon, XIcon, SparkleIcon } from "../ui/Icons";
 import { Button } from "../ui/Button";
 import { useAuthModal } from "./AuthModalProvider";
+import { UserMenu, UserMenuMobile, useAuthUser } from "./UserMenu";
 import type { GlobalSections } from "../../lib/types";
 
 export function Header({ global }: { global: GlobalSections }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const auth = useAuthModal();
+  const { user, ready } = useAuthUser();
 
   const nav = global.nav || [];
   const loginLabel = global.auth?.loginLabel || "Log in";
@@ -48,15 +50,24 @@ export function Header({ global }: { global: GlobalSections }) {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3 shrink-0">
-          <button
-            onClick={() => auth.open("login")}
-            className="h-10 xl:h-11 px-5 rounded-xl border border-[#0e7490] text-[#0e7490] font-semibold text-sm hover:bg-[#e6f4f8] transition-colors"
-          >
-            {loginLabel}
-          </button>
-          <Button onClick={() => auth.open("signup")} size="md">
-            {signupLabel}
-          </Button>
+          {/* Avoid SSR/CSR flash: render auth controls only after the cookie is read */}
+          {!ready ? (
+            <div className="h-10 w-10 rounded-full bg-slate-100 animate-pulse" aria-hidden="true" />
+          ) : user ? (
+            <UserMenu user={user} />
+          ) : (
+            <>
+              <button
+                onClick={() => auth.open("login")}
+                className="h-10 xl:h-11 px-5 rounded-xl border border-[#0e7490] text-[#0e7490] font-semibold text-sm hover:bg-[#e6f4f8] transition-colors"
+              >
+                {loginLabel}
+              </button>
+              <Button onClick={() => auth.open("signup")} size="md">
+                {signupLabel}
+              </Button>
+            </>
+          )}
         </div>
 
         <button
@@ -85,20 +96,24 @@ export function Header({ global }: { global: GlobalSections }) {
                 </Link>
               );
             })}
-            <div className="grid grid-cols-2 gap-2 mt-3">
-              <button
-                onClick={() => { setMobileOpen(false); auth.open("login"); }}
-                className="h-11 rounded-full border border-[#0e7490] text-[#0e7490] font-semibold text-sm"
-              >
-                {loginLabel}
-              </button>
-              <button
-                onClick={() => { setMobileOpen(false); auth.open("signup"); }}
-                className="h-11 rounded-full bg-[#0e7490] text-white font-semibold text-sm hover:bg-[#085a72]"
-              >
-                {signupLabel}
-              </button>
-            </div>
+            {ready && user ? (
+              <UserMenuMobile user={user} />
+            ) : (
+              <div className="grid grid-cols-2 gap-2 mt-3">
+                <button
+                  onClick={() => { setMobileOpen(false); auth.open("login"); }}
+                  className="h-11 rounded-full border border-[#0e7490] text-[#0e7490] font-semibold text-sm"
+                >
+                  {loginLabel}
+                </button>
+                <button
+                  onClick={() => { setMobileOpen(false); auth.open("signup"); }}
+                  className="h-11 rounded-full bg-[#0e7490] text-white font-semibold text-sm hover:bg-[#085a72]"
+                >
+                  {signupLabel}
+                </button>
+              </div>
+            )}
           </nav>
         </div>
       )}

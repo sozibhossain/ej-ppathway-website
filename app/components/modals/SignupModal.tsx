@@ -16,7 +16,7 @@ import {
   CalendarIcon,
   UserIcon,
 } from "../ui/Icons";
-import { api, ApiError, setAuthCookies } from "../../lib/api";
+import { api, ApiError } from "../../lib/api";
 
 export function SignupModal({
   open,
@@ -50,16 +50,14 @@ export function SignupModal({
     }
     setSubmitting(true);
     try {
-      const r = await api.post<{ accessToken: string; refreshToken: string; user: unknown }>(
+      await api.post(
         "/auth/signup",
         { name, email, phone, password, dateOfBirth: dob },
         { skipAuth: true }
       );
-      if (r.data?.accessToken) {
-        setAuthCookies(r.data.accessToken, r.data.refreshToken, r.data.user);
-      }
-      onClose();
-      if (typeof window !== "undefined") window.location.reload();
+      // Don't auto-login on signup — take the user to the login screen so they
+      // sign in, after which the header shows their profile image.
+      onSwitchToLogin();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Signup failed");
     } finally {

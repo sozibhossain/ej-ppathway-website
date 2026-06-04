@@ -222,6 +222,8 @@ export type Advisor = {
     name?: string;
     email?: string;
     profilePhoto?: string;
+    country?: string;
+    city?: string;
     location?: string;
   };
 };
