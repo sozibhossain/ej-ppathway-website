@@ -64,6 +64,15 @@ export function countryNameFrom(
   return countries.find((c) => c.iso2 === iso2)?.name ?? iso2;
 }
 
+/** Resolve a country's default ISO-4217 currency code using a loaded list. */
+export function currencyCodeFrom(
+  countries: CountryOption[],
+  iso2?: string,
+): string {
+  if (!iso2) return "";
+  return countries.find((c) => c.iso2 === iso2)?.currency ?? "";
+}
+
 /** Build a readable "City, Country" label from discrete fields. */
 export function formatLocation(city?: string, countryName?: string): string {
   return [city, countryName].filter(Boolean).join(", ");

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Modal } from "../ui/Modal";
 import { TextField, Checkbox } from "../ui/Input";
 import { Button } from "../ui/Button";
+import { Combobox } from "../ui/Combobox";
 import {
   SparkleIcon,
   MailIcon,
@@ -17,6 +18,7 @@ import {
   UserIcon,
 } from "../ui/Icons";
 import { api, ApiError } from "../../lib/api";
+import { useCountries, useCities } from "../../lib/countries";
 
 export function SignupModal({
   open,
@@ -32,6 +34,10 @@ export function SignupModal({
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [dob, setDob] = useState("");
+  const [countryCode, setCountryCode] = useState("");
+  const [city, setCity] = useState("");
+  const countries = useCountries();
+  const cities = useCities(countryCode);
   const [agree, setAgree] = useState(false);
   const [showPwd, setShowPwd] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -44,6 +50,10 @@ export function SignupModal({
       setError("All fields are required");
       return;
     }
+    if (!countryCode) {
+      setError("Please select your country");
+      return;
+    }
     if (!agree) {
       setError("You must agree to the Terms and Conditions");
       return;
@@ -52,7 +62,16 @@ export function SignupModal({
     try {
       await api.post(
         "/auth/signup",
-        { name, email, phone, password, dateOfBirth: dob },
+        {
+          name,
+          email,
+          phone,
+          phoneNumber: phone,
+          password,
+          dateOfBirth: dob,
+          country: countryCode,
+          city,
+        },
         { skipAuth: true }
       );
       // Don't auto-login on signup — take the user to the login screen so they
@@ -147,6 +166,46 @@ export function SignupModal({
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
                 leftIcon={<CalendarIcon size={17} />}
+              />
+            </div>
+          </div>
+
+          {/* Country + City */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                Country
+              </label>
+              <Combobox
+                options={countries.map((c) => ({
+                  value: c.iso2,
+                  label: c.name,
+                }))}
+                value={countryCode}
+                onChange={(v) => {
+                  setCountryCode(v);
+                  setCity("");
+                }}
+                placeholder="Select Country"
+                searchPlaceholder="Search countries…"
+                emptyText="No country found."
+                triggerClassName="h-12 px-4 bg-white border-slate-200 hover:border-slate-300 focus:border-[#0e7490] focus:outline-none"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                City
+              </label>
+              <Combobox
+                options={cities.map((c) => ({ value: c, label: c }))}
+                value={city}
+                onChange={(v) => setCity(v)}
+                placeholder={countryCode ? "Select City" : "Select a country first"}
+                searchPlaceholder="Search cities…"
+                emptyText="No city found."
+                disabled={!countryCode}
+                allowCustom
+                triggerClassName="h-12 px-4 bg-white border-slate-200 hover:border-slate-300 focus:border-[#0e7490] focus:outline-none"
               />
             </div>
           </div>

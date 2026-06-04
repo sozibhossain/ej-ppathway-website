@@ -224,6 +224,7 @@ export type Advisor = {
     profilePhoto?: string;
     country?: string;
     city?: string;
+    currency?: string;
     location?: string;
   };
 };
