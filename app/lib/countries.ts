@@ -13,6 +13,7 @@ export {
   fetchCountries,
   fetchCities,
   countryNameFrom,
+  currencyCodeFrom,
   formatLocation,
 } from "./countries-data";
 export type { CountryOption } from "./countries-data";

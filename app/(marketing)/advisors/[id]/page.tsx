@@ -16,8 +16,10 @@ import { getSiteContent } from "../../../lib/site-content";
 import {
   fetchCountries,
   countryNameFrom,
+  currencyCodeFrom,
   formatLocation,
 } from "../../../lib/countries-data";
+import { fetchCurrencyCatalog, symbolFrom } from "../../../lib/currency-data";
 import type { Advisor, Review } from "../../../lib/types";
 
 type Detail = {
@@ -56,6 +58,12 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
   const userLocation = formatLocation(
     user.city,
     countryNameFrom(countries, user.country),
+  );
+  const catalog = await fetchCurrencyCatalog();
+  // Symbol follows the advisor's selected country (fall back to stored currency).
+  const currencySymbol = symbolFrom(
+    catalog,
+    currencyCodeFrom(countries, user.country) || user.currency,
   );
   const tierLabel =
     profile?.tier === "gold"
@@ -353,7 +361,7 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
           <div className="bg-white border border-slate-200 rounded-2xl p-5">
             <h3 className="font-semibold text-slate-900 mb-4 inline-flex items-center gap-2">
               <span className="h-6 w-6 rounded-full bg-[#0e7490] text-white inline-flex items-center justify-center text-xs">
-                $
+                {currencySymbol}
               </span>
               {labels.pricing || "Pricing"}
             </h3>
@@ -362,16 +370,19 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
                 icon={<ChatIcon size={16} />}
                 label="Chat"
                 price={profile?.pricing?.chatPerMin}
+                symbol={currencySymbol}
               />
               <PriceRow
                 icon={<PhoneIcon size={16} />}
                 label="Call"
                 price={profile?.pricing?.callPerMin}
+                symbol={currencySymbol}
               />
               <PriceRow
                 icon={<VideoIcon size={16} />}
                 label="Video"
                 price={profile?.pricing?.videoPerMin}
+                symbol={currencySymbol}
               />
             </div>
             <div className="mt-5 space-y-2">
@@ -396,17 +407,22 @@ function PriceRow({
   icon,
   label,
   price,
+  symbol = "$",
 }: {
   icon: React.ReactNode;
   label: string;
   price?: number;
+  symbol?: string;
 }) {
   return (
     <div className="flex items-center justify-between text-sm">
       <span className="inline-flex items-center gap-2 text-slate-700">
         <span className="text-[#0e7490]">{icon}</span> {label}
       </span>
-      <span className="font-semibold text-slate-900">${(price || 0).toFixed(2)}/hr</span>
+      <span className="font-semibold text-slate-900">
+        {symbol}
+        {(price || 0).toFixed(2)}/min
+      </span>
     </div>
   );
 }
