@@ -4,10 +4,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "../ui/Button";
 import { StarIcon } from "../ui/Icons";
+import { useCurrencyCatalog, symbolFor } from "../../lib/currency";
+import { useCountries, currencyCodeFrom } from "../../lib/countries";
 import type { Advisor } from "../../lib/types";
 
 export function AdvisorCard({ advisor }: { advisor: Advisor }) {
   const { user, profile } = advisor;
+  useCurrencyCatalog();
+  const countries = useCountries();
+  // Symbol follows the advisor's selected country (fall back to stored currency).
+  const symbol = symbolFor(
+    currencyCodeFrom(countries, user.country) || user.currency,
+  );
   const tierLabel =
     profile?.tier === "gold" ? "Top Rated" : profile?.tier === "silver" ? "Verified" : "New";
   const tierClass =
@@ -69,7 +77,10 @@ export function AdvisorCard({ advisor }: { advisor: Advisor }) {
           </div>
         )}
         <div className="text-xs sm:text-sm text-slate-700 mt-auto pt-3 border-t border-slate-100 mb-3">
-          <span className="font-semibold">${profile?.pricing?.chatPerMin?.toFixed(2) || "1.00"}</span>
+          <span className="font-semibold">
+            {symbol}
+            {profile?.pricing?.chatPerMin?.toFixed(2) || "1.00"}
+          </span>
           <span className="text-slate-500">/min</span>
         </div>
         <Link href={`/advisors/${user._id}`} className="block">
