@@ -22,7 +22,7 @@ export function CTA({
       ? "bg-linear-to-br from-[#082e3a] to-[#0e5d75]"
       : "bg-linear-to-br from-[#0e7490] to-[#085a72]";
   return (
-    <section className={`py-12 sm:py-16 ${bg} text-white relative overflow-hidden`}>
+    <section className={`py-8 sm:py-10 ${bg} text-white relative overflow-hidden`}>
       <div className="absolute inset-0 bg-dots opacity-40 pointer-events-none" aria-hidden="true" />
       <div className="container-page text-center relative">
         <div className="mx-auto h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-white text-[#0e7490] inline-flex items-center justify-center mb-4 sm:mb-5 shadow-lg">

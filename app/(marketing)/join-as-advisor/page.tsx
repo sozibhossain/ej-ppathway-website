@@ -8,6 +8,8 @@ import { FAQSection } from "../../components/sections/FAQSection";
 import { getSiteContent } from "../../lib/site-content";
 import { JoinHeroApplyButton } from "./apply-button";
 
+const APPLY_HREF = "/join-as-advisor/apply";
+
 export default async function JoinAsAdvisorPage() {
   const data = await getSiteContent("join-as-advisor");
   const hero = data.hero || {};
@@ -15,7 +17,7 @@ export default async function JoinAsAdvisorPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden min-h-[60vh] flex items-center">
+      <section className="relative overflow-hidden min-h-[46vh] flex items-center">
         {/* Fallback when no image */}
         <div className="absolute inset-0 bg-[#E4FAFF]" aria-hidden="true" />
 
@@ -41,7 +43,7 @@ export default async function JoinAsAdvisorPage() {
           aria-hidden="true"
         />
 
-        <div className="container-page text-center relative z-10 py-16 sm:py-20 md:py-28">
+        <div className="container-page text-center relative z-10 py-7 sm:py-9 md:py-11">
           {hero.title && (
             <h1
               className="font-bold text-[#1A1A1A]"
@@ -94,7 +96,7 @@ export default async function JoinAsAdvisorPage() {
           description={data.application.description}
           bullets={data.application.bullets}
           image={data.application.image}
-          ctaLink={data.application.ctaPrimary}
+          ctaLink={{ label: data.application.ctaPrimary?.label || "Apply & Join With Our Team", href: APPLY_HREF }}
           imageRight
         />
       )}
@@ -106,7 +108,7 @@ export default async function JoinAsAdvisorPage() {
           title={data.interview.title}
           description={data.interview.description}
           image={data.interview.image}
-          ctaLink={data.interview.ctaPrimary}
+          ctaLink={{ label: data.interview.ctaPrimary?.label || "Join Our Team", href: APPLY_HREF }}
         />
       )}
 
@@ -117,7 +119,7 @@ export default async function JoinAsAdvisorPage() {
           title={data.contractOnboarding.title}
           description={data.contractOnboarding.description}
           image={data.contractOnboarding.image}
-          ctaLink={data.contractOnboarding.ctaPrimary}
+          ctaLink={{ label: data.contractOnboarding.ctaPrimary?.label || "Apply Now to Become an Advisor", href: APPLY_HREF }}
           imageRight
         />
       )}
@@ -125,7 +127,7 @@ export default async function JoinAsAdvisorPage() {
       {/* Stats */}
       {data.reachStats && (
         <section
-          className="py-12 sm:py-16 md:py-20 text-white relative overflow-hidden"
+          className="py-8 sm:py-10 md:py-12 text-white relative overflow-hidden"
           style={{ background: "linear-gradient(90deg, #002E3A 0%, #027B98 100%)" }}
         >
           <div className="absolute inset-0 bg-dots opacity-30 pointer-events-none" aria-hidden="true" />
@@ -193,7 +195,7 @@ export default async function JoinAsAdvisorPage() {
 
       {/* Requirements */}
       {data.requirements && (
-        <section className="py-12 sm:py-16 md:py-20 bg-white">
+        <section className="py-8 sm:py-10 md:py-12 bg-white">
           <div className="container-page grid lg:grid-cols-2 gap-8 md:gap-10 items-center">
             <div>
               {data.requirements.title && (
@@ -231,7 +233,7 @@ export default async function JoinAsAdvisorPage() {
 
       {/* Advisor video testimonials */}
       {data.advisorTestimonials && (
-        <section className="py-12 sm:py-16 md:py-20 bg-[#f0f9fb]">
+        <section className="py-8 sm:py-10 md:py-12 bg-[#f0f9fb]">
           <div className="container-page text-center">
             {data.advisorTestimonials.sectionLabel && (
               <div className="text-[#0e7490] text-sm font-semibold mb-2">
@@ -297,7 +299,7 @@ export default async function JoinAsAdvisorPage() {
       {/* Before You Apply */}
       {data.beforeYouApply && (
         <section
-          className="py-12 sm:py-16 text-white relative overflow-hidden"
+          className="py-8 sm:py-10 text-white relative overflow-hidden"
           style={{ background: "linear-gradient(90deg, #002E3A 0%, #015267 100%)" }}
         >
           <div className="absolute inset-0 bg-dots opacity-40 pointer-events-none" aria-hidden="true" />
@@ -407,7 +409,7 @@ function SplitSection({
   );
 
   return (
-    <section className="py-10 sm:py-12 md:py-16 bg-white">
+    <section className="py-7 sm:py-9 md:py-11 bg-white">
       <div className="container-page grid lg:grid-cols-2 gap-8 md:gap-10 items-center">
         {imageRight ? (
           <>

@@ -9,7 +9,7 @@ export default async function AboutPage() {
   return (
     <>
       <section
-        className="py-14 sm:py-20 md:py-24"
+        className="py-9 sm:py-12 md:py-14"
         style={{
           background:
             "linear-gradient(0deg, #FFFFFF 0%, rgba(255, 255, 255, 0.47) 27.84%, #D3F6FF 99.8%)",
@@ -52,7 +52,7 @@ export default async function AboutPage() {
       )}
 
       {data.values && (
-        <section className="py-10 sm:py-12 md:py-16 bg-white">
+        <section className="py-7 sm:py-9 md:py-11 bg-white">
           <div className="container-page text-center">
             {data.values.title && (
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-8 sm:mb-10">

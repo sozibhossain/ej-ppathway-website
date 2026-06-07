@@ -3,7 +3,7 @@ import { Skeleton, BlogCardSkeleton } from "../../components/ui/Skeleton";
 export default function BlogsLoading() {
   return (
     <>
-      <section className="py-10 sm:py-14 md:py-20 bg-[#eaf4f8]">
+      <section className="py-7 sm:py-9 md:py-12 bg-[#eaf4f8]">
         <div className="container-page text-center max-w-3xl space-y-3">
           <Skeleton className="h-4 w-32 mx-auto" />
           <Skeleton className="h-10 w-2/3 mx-auto" />

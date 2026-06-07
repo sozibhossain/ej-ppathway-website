@@ -10,7 +10,7 @@ export default async function AdvisorsListPage() {
 
   return (
     <>
-      <section className="py-10 sm:py-14 bg-[#f0f9fb]">
+      <section className="py-7 sm:py-10 bg-[#f0f9fb]">
         <div className="container-page text-center max-w-3xl mx-auto">
           {data.hero?.eyebrow && (
             <div className="text-[#0e7490] text-sm font-semibold mb-2">+ {data.hero.eyebrow}</div>
@@ -28,7 +28,7 @@ export default async function AdvisorsListPage() {
         </div>
       </section>
 
-      <section className="py-10 sm:py-12 md:py-16 bg-white">
+      <section className="py-7 sm:py-9 md:py-11 bg-white">
         <div className="container-page">
           <Suspense fallback={<AdvisorsGridSkeleton />}>
             <AdvisorsGrid emptyStateText={data.listSettings?.emptyStateText} />

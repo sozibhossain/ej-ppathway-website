@@ -6,7 +6,7 @@ import type { Faq } from "../../lib/types";
 
 export function FAQSection({ sectionLabel, title }: { sectionLabel?: string; title?: string }) {
   return (
-    <section className="py-12 sm:py-16 md:py-20 bg-white">
+    <section className="py-8 sm:py-10 md:py-12 bg-white">
       <div className="container-page max-w-4xl">
         <div className="text-center mb-8 sm:mb-10">
           {sectionLabel && (

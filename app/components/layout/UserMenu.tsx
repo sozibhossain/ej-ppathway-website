@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDownIcon, UserIcon } from "../ui/Icons";
 import { clearAuthCookies, getCurrentUser } from "../../lib/api";
+import { disconnectSocket } from "../../lib/socket";
 
 export type AuthUser = {
   _id?: string;
@@ -32,6 +33,7 @@ function initials(name?: string, email?: string) {
 }
 
 function logout() {
+  disconnectSocket();
   clearAuthCookies();
   if (typeof window !== "undefined") window.location.href = "/";
 }

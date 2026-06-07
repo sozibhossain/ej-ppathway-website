@@ -36,7 +36,7 @@ export function Hero({ hero }: { hero: NonNullable<HomeSections["hero"]> }) {
         />
       )}
 
-      <div className="container-page relative z-10 py-14 sm:py-20 md:py-28 lg:py-32 min-h-120 sm:min-h-140 lg:min-h-160 flex items-center">
+      <div className="container-page relative z-10 py-9 sm:py-12 md:py-16 lg:py-20 min-h-96 sm:min-h-120 lg:min-h-140 flex items-center">
         <div className="max-w-xl lg:max-w-2xl">
           {hero.badge && (
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-gray-200 text-sm text-gray-700 font-medium mb-5 sm:mb-7">

@@ -2,7 +2,7 @@ import { Skeleton } from "../../components/ui/Skeleton";
 
 export default function TermsLoading() {
   return (
-    <div className="container-page py-10 sm:py-14">
+    <div className="container-page py-7 sm:py-10">
       <header className="text-center max-w-3xl mx-auto mb-8 sm:mb-12 space-y-3">
         <Skeleton className="h-12 w-12 sm:h-14 sm:w-14 rounded-xl mx-auto mb-4 sm:mb-5" />
         <Skeleton className="h-10 w-2/3 mx-auto" />

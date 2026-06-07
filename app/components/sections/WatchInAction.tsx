@@ -27,7 +27,7 @@ export function WatchInAction({
   };
 
   return (
-    <section className="py-10 sm:py-14 md:py-16 bg-white">
+    <section className="py-7 sm:py-9 md:py-11 bg-white">
       <div className="container-page text-center">
         {sectionLabel && (
           <div className="text-[#0e7490] text-sm font-semibold mb-2 inline-flex items-center gap-1">

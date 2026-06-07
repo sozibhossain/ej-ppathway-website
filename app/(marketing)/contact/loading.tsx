@@ -46,7 +46,7 @@ export default function ContactLoading() {
         </section>
       </div>
 
-      <section className="py-12 sm:py-16 md:py-20">
+      <section className="py-8 sm:py-10 md:py-12">
         <div className="container-page text-center max-w-3xl">
           <Skeleton className="h-7 w-64 mx-auto mb-6 sm:mb-8" />
           <div className="text-left">

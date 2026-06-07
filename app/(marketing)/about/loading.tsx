@@ -3,7 +3,7 @@ import { Skeleton } from "../../components/ui/Skeleton";
 export default function AboutLoading() {
   return (
     <>
-      <section className="py-12 sm:py-16 md:py-20 bg-white">
+      <section className="py-8 sm:py-10 md:py-12 bg-white">
         <div className="container-page text-center max-w-4xl space-y-4">
           <Skeleton className="h-10 sm:h-12 w-3/4 mx-auto" />
           <Skeleton className="h-4 w-5/6 mx-auto" />
@@ -22,7 +22,7 @@ export default function AboutLoading() {
         </div>
       </section>
 
-      <section className="py-10 sm:py-12 md:py-16">
+      <section className="py-7 sm:py-9 md:py-11">
         <div className="container-page text-center">
           <Skeleton className="h-8 w-64 mx-auto mb-8 sm:mb-10" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl mx-auto">
@@ -40,7 +40,7 @@ export default function AboutLoading() {
         </div>
       </section>
 
-      <section className="py-12 sm:py-16 md:py-20">
+      <section className="py-8 sm:py-10 md:py-12">
         <div className="container-page text-center">
           <Skeleton className="h-7 w-64 mx-auto mb-3" />
           <Skeleton className="h-4 w-80 max-w-full mx-auto" />
