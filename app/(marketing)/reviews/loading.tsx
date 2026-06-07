@@ -3,7 +3,7 @@ import { Skeleton, ReviewCardSkeleton, FaqItemSkeleton } from "../../components/
 export default function ReviewsLoading() {
   return (
     <>
-      <section className="py-12 sm:py-16 md:py-20 bg-[#f0f9fb]">
+      <section className="py-8 sm:py-10 md:py-12 bg-[#f0f9fb]">
         <div className="container-page text-center max-w-3xl space-y-3">
           <Skeleton className="h-12 w-12 sm:h-14 sm:w-14 rounded-xl mx-auto mb-4 sm:mb-5" />
           <Skeleton className="h-10 w-3/4 mx-auto" />
@@ -11,7 +11,7 @@ export default function ReviewsLoading() {
         </div>
       </section>
 
-      <section className="py-10 sm:py-14">
+      <section className="py-7 sm:py-10">
         <div className="container-page text-center">
           <Skeleton className="h-8 w-1/2 mx-auto mb-8 sm:mb-10" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
@@ -29,7 +29,7 @@ export default function ReviewsLoading() {
         </div>
       </section>
 
-      <section className="py-12 sm:py-16 md:py-20">
+      <section className="py-8 sm:py-10 md:py-12">
         <div className="container-page text-center">
           <Skeleton className="h-7 w-64 mx-auto mb-3" />
           <div className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
@@ -40,7 +40,7 @@ export default function ReviewsLoading() {
         </div>
       </section>
 
-      <section className="py-12 sm:py-16 md:py-20">
+      <section className="py-8 sm:py-10 md:py-12">
         <div className="container-page text-center max-w-3xl">
           <Skeleton className="h-7 w-64 mx-auto mb-6 sm:mb-8" />
           <div className="text-left">

@@ -13,7 +13,7 @@ export default async function HowItWorksPage() {
     <>
       {/* Hero */}
       <section
-        className="py-14 sm:py-20 md:py-24"
+        className="py-9 sm:py-12 md:py-14"
         style={{ background: "linear-gradient(180deg, #E4FAFF 0%, #F4FCFF 60%, #FFFFFF 100%)" }}
       >
         <div className="container-page text-center max-w-3xl">
@@ -37,7 +37,7 @@ export default async function HowItWorksPage() {
 
       {/* Booking Steps with numbered circles */}
       {data.bookingSteps && (
-        <section className="py-12 sm:py-16 md:py-20 bg-white">
+        <section className="py-8 sm:py-10 md:py-12 bg-white">
           <div className="container-page text-center">
             {data.bookingSteps.title && (
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">
@@ -79,7 +79,7 @@ export default async function HowItWorksPage() {
 
       {/* Session Types */}
       {sessionTypes.length > 0 && (
-        <section className="py-12 sm:py-16 md:py-20 bg-white">
+        <section className="py-8 sm:py-10 md:py-12 bg-white">
           <div className="container-page text-center">
             {data.sessionTypes?.title && (
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">
@@ -142,7 +142,7 @@ export default async function HowItWorksPage() {
       {/* Scheduling Made Simple — dark band */}
       {data.schedulingMadeSimple && (
         <section
-          className="py-12 sm:py-16 text-white relative overflow-hidden"
+          className="py-8 sm:py-10 text-white relative overflow-hidden"
           style={{ background: "linear-gradient(90deg, #002E3A 0%, #027B98 100%)" }}
         >
           <div className="absolute inset-0 bg-dots opacity-40 pointer-events-none" aria-hidden="true" />
@@ -177,7 +177,7 @@ export default async function HowItWorksPage() {
 
       {/* Cancellation Policy */}
       {data.cancellationPolicy && (
-        <section className="py-12 sm:py-16 md:py-20 bg-white">
+        <section className="py-8 sm:py-10 md:py-12 bg-white">
           <div className="container-page max-w-4xl text-center">
             {data.cancellationPolicy.title && (
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">

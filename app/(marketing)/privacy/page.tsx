@@ -86,7 +86,7 @@ export default async function PrivacyPage() {
   return (
     <>
       <section
-        className="py-14 sm:py-20 md:py-24"
+        className="py-9 sm:py-12 md:py-14"
         style={{
           background:
             "linear-gradient(0deg, #FFFFFF 0%, rgba(255, 255, 255, 0.47) 27.84%, #D3F6FF 99.8%)",
@@ -139,7 +139,7 @@ export default async function PrivacyPage() {
         </>
       )}
 
-      <section className="py-12 sm:py-16 bg-linear-to-br from-[#082e3a] to-[#0e5d75] text-white relative overflow-hidden">
+      <section className="py-8 sm:py-10 bg-linear-to-br from-[#082e3a] to-[#0e5d75] text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-dots opacity-40 pointer-events-none" aria-hidden="true" />
         <div className="container-page text-center max-w-2xl relative">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">

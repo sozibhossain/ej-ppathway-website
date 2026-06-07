@@ -3,7 +3,7 @@ import { Skeleton, FaqItemSkeleton } from "../../components/ui/Skeleton";
 export default function HowItWorksLoading() {
   return (
     <>
-      <section className="py-12 sm:py-16 md:py-20 bg-[#f0f9fb]">
+      <section className="py-8 sm:py-10 md:py-12 bg-[#f0f9fb]">
         <div className="container-page text-center max-w-3xl space-y-3">
           <Skeleton className="h-12 w-12 sm:h-14 sm:w-14 rounded-xl mx-auto mb-4 sm:mb-5" />
           <Skeleton className="h-10 w-3/4 mx-auto" />
@@ -11,7 +11,7 @@ export default function HowItWorksLoading() {
         </div>
       </section>
 
-      <section className="py-12 sm:py-16 md:py-20">
+      <section className="py-8 sm:py-10 md:py-12">
         <div className="container-page text-center">
           <Skeleton className="h-7 w-64 mx-auto mb-8 sm:mb-10" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -26,7 +26,7 @@ export default function HowItWorksLoading() {
         </div>
       </section>
 
-      <section className="py-12 sm:py-16 md:py-20">
+      <section className="py-8 sm:py-10 md:py-12">
         <div className="container-page text-center">
           <Skeleton className="h-7 w-64 mx-auto mb-8 sm:mb-10" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
@@ -42,7 +42,7 @@ export default function HowItWorksLoading() {
         </div>
       </section>
 
-      <section className="py-12 sm:py-16 md:py-20">
+      <section className="py-8 sm:py-10 md:py-12">
         <div className="container-page text-center max-w-3xl">
           <Skeleton className="h-7 w-64 mx-auto mb-6 sm:mb-8" />
           <div className="text-left">

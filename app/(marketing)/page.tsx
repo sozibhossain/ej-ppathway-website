@@ -11,9 +11,15 @@ import { getSiteContent } from "../lib/site-content";
 
 export default async function HomePage() {
   const home = await getSiteContent("home");
+  const hero = home.hero || {};
+  // Primary hero CTA ("Talk to Someone Now") should take users to the login page.
+  const heroWithLogin = {
+    ...hero,
+    ctaPrimary: hero.ctaPrimary ? { ...hero.ctaPrimary, href: "/login" } : hero.ctaPrimary,
+  };
   return (
     <>
-      <Hero hero={home.hero || {}} />
+      <Hero hero={heroWithLogin} />
 
       {home.howItWorks && (
         <HowItWorks
@@ -74,8 +80,7 @@ export default async function HomePage() {
         <CTA
           title={home.cta.title}
           subtitle={home.cta.subtitle}
-          buttonPrimary={home.cta.buttonPrimary}
-          buttonSecondary={home.cta.buttonSecondary}
+          buttonPrimary={{ label: home.cta.buttonPrimary?.label || "Start Your First Session", href: "/login" }}
           iconName="sparkle"
           tone="deep"
         />

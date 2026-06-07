@@ -15,7 +15,7 @@ type Props = {
 
 export function FeaturedAdvisors({ sectionLabel, title, subtitle, viewAllLabel }: Props) {
   return (
-    <section className="py-12 sm:py-16 md:py-20 bg-[#eaf4f8]">
+    <section className="py-8 sm:py-10 md:py-12 bg-[#eaf4f8]">
       <div className="container-page text-center">
         {sectionLabel && (
           <div className="text-[#0e7490] text-sm font-semibold mb-2 inline-flex items-center gap-1">

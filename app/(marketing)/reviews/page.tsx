@@ -12,7 +12,7 @@ export default async function ReviewsPage() {
   return (
     <>
       {/* Hero */}
-      <section className="py-12 sm:py-16 md:py-20 bg-[#f0f9fb]">
+      <section className="py-8 sm:py-10 md:py-12 bg-[#f0f9fb]">
         <div className="container-page text-center max-w-3xl mx-auto">
           <div className="mx-auto h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-[#0e7490] text-white inline-flex items-center justify-center mb-4 sm:mb-5 shadow-md">
             <Icon name="shield-check" size={26} />
@@ -32,7 +32,7 @@ export default async function ReviewsPage() {
 
       {/* Commitment cards */}
       {data.commitment && (
-        <section className="py-10 sm:py-14 bg-white">
+        <section className="py-7 sm:py-10 bg-white">
           <div className="container-page text-center">
             {data.commitment.title && (
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0e7490] mb-8 sm:mb-10">
@@ -81,7 +81,7 @@ export default async function ReviewsPage() {
 
       {/* Trusted by Thousands */}
       {data.trustedByThousands && (
-        <section className="py-10 sm:py-14 bg-linear-to-br from-[#0e7490] to-[#06495d] text-white relative overflow-hidden">
+        <section className="py-7 sm:py-10 bg-linear-to-br from-[#0e7490] to-[#06495d] text-white relative overflow-hidden">
           <div className="absolute inset-0 bg-dots opacity-40 pointer-events-none" aria-hidden="true" />
           <div className="container-page text-center relative">
             {data.trustedByThousands.title && (
@@ -103,7 +103,7 @@ export default async function ReviewsPage() {
 
       {/* Fair resolution */}
       {data.fairResolution && (
-        <section className="py-10 sm:py-14 bg-white">
+        <section className="py-7 sm:py-10 bg-white">
           <div className="container-page max-w-3xl text-center">
             {data.fairResolution.title && (
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">
@@ -159,7 +159,7 @@ export default async function ReviewsPage() {
       <FAQSection sectionLabel="FAQ" title="Frequently Asked Questions" />
 
       {data.contactBlock && (
-        <section className="py-10 sm:py-14 bg-linear-to-br from-[#082e3a] to-[#0e5d75] text-white relative overflow-hidden">
+        <section className="py-7 sm:py-10 bg-linear-to-br from-[#082e3a] to-[#0e5d75] text-white relative overflow-hidden">
           <div className="absolute inset-0 bg-dots opacity-40 pointer-events-none" aria-hidden="true" />
           <div className="container-page text-center max-w-3xl relative">
             <div className="mx-auto h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-white text-[#0e7490] inline-flex items-center justify-center mb-4 sm:mb-5 shadow-lg">

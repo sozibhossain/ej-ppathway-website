@@ -20,7 +20,7 @@ export function AppPromo({
 }) {
   const shots = (screenshotImages || []).filter(Boolean);
   return (
-    <section className="py-12 sm:py-16 md:py-20 bg-linear-to-br from-[#0e7490] to-[#06495d] text-white relative overflow-hidden">
+    <section className="py-8 sm:py-10 md:py-12 bg-linear-to-br from-[#0e7490] to-[#06495d] text-white relative overflow-hidden">
       <div className="absolute inset-0 bg-dots opacity-40 pointer-events-none" aria-hidden="true" />
       <div className="container-page grid lg:grid-cols-2 gap-10 md:gap-12 items-center relative">
         <div>

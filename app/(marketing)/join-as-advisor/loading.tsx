@@ -3,7 +3,7 @@ import { Skeleton, FaqItemSkeleton } from "../../components/ui/Skeleton";
 export default function JoinAsAdvisorLoading() {
   return (
     <>
-      <section className="relative py-12 sm:py-16 md:py-24 bg-[#0e7490]">
+      <section className="relative py-8 sm:py-10 md:py-14 bg-[#0e7490]">
         <div className="container-page text-center space-y-4">
           <Skeleton className="h-10 sm:h-12 w-3/4 mx-auto bg-white/20" />
           <Skeleton className="h-4 w-2/3 mx-auto bg-white/20" />
@@ -11,7 +11,7 @@ export default function JoinAsAdvisorLoading() {
         </div>
       </section>
 
-      <section className="py-12 sm:py-16 md:py-20">
+      <section className="py-8 sm:py-10 md:py-12">
         <div className="container-page text-center">
           <Skeleton className="h-7 w-64 mx-auto mb-8 sm:mb-10" />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -26,7 +26,7 @@ export default function JoinAsAdvisorLoading() {
         </div>
       </section>
 
-      <section className="py-10 sm:py-12 md:py-16">
+      <section className="py-7 sm:py-9 md:py-11">
         <div className="container-page grid lg:grid-cols-2 gap-8 md:gap-10 items-center">
           <div className="space-y-3">
             <Skeleton className="h-4 w-32" />
@@ -40,7 +40,7 @@ export default function JoinAsAdvisorLoading() {
         </div>
       </section>
 
-      <section className="py-12 sm:py-16 md:py-20">
+      <section className="py-8 sm:py-10 md:py-12">
         <div className="container-page text-center max-w-3xl">
           <Skeleton className="h-7 w-64 mx-auto mb-6 sm:mb-8" />
           <div className="text-left">

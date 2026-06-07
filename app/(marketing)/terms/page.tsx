@@ -22,7 +22,7 @@ export default async function TermsPage() {
 
   return (
     <>
-      <section className="py-10 sm:py-14 md:py-20 bg-linear-to-b from-[#f0f9fb] to-white">
+      <section className="py-7 sm:py-9 md:py-12 bg-linear-to-b from-[#f0f9fb] to-white">
         <div className="container-page text-center max-w-3xl mx-auto">
           <div className="mx-auto h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-[#0e7490] text-white inline-flex items-center justify-center mb-4 sm:mb-5 shadow-md">
             <DocIcon size={26} />

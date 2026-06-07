@@ -21,7 +21,7 @@ export function WhyChoose({
   const items = cards || [];
   const useGradient = gradient || centered;
   return (
-    <section className={`py-12 sm:py-16 md:py-20 ${bgClass}`}>
+    <section className={`py-8 sm:py-10 md:py-12 ${bgClass}`}>
       <div className="container-page text-center">
         {sectionLabel && (
           <div className="text-[#0e7490] text-sm font-semibold mb-2 inline-flex items-center gap-1">

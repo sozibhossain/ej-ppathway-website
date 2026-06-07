@@ -62,6 +62,12 @@ export const getCurrentUser = <T = unknown>(): T | null => {
   try { return JSON.parse(raw) as T; } catch { return null; }
 };
 
+/** Client-side access token (from cookie). Used e.g. for the support-chat socket handshake. */
+export const getAccessToken = (): string | null => getCookie(ACCESS_TOKEN_COOKIE);
+
+/** Socket.io server origin = API base URL without the trailing /api/v* path. */
+export const SOCKET_ORIGIN = (API_BASE_URL || "").replace(/\/api\/v\d+\/?$/i, "");
+
 type RequestOptions = {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;

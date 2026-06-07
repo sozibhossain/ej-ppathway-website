@@ -72,7 +72,7 @@ export function CmsCtaButton({
   size?: Size;
   className?: string;
 }) {
-  if (!link?.label) return null;
+  if (!link?.label || !link.label.trim()) return null;
   const href = link.href || "#";
   return (
     <LinkButton href={href} variant={variant} size={size} className={className}>

@@ -21,7 +21,7 @@ export default async function BlogsPage({
   return (
     <>
       {/* Hero */}
-      <section className="relative py-16 sm:py-24 md:py-32 lg:py-40 bg-[#E4FAFF] overflow-hidden">
+      <section className="relative py-7 sm:py-9 md:py-12 lg:py-24 bg-[#E4FAFF] overflow-hidden">
         {data.hero?.backgroundImage && (
           <Image
             src={data.hero.backgroundImage}
@@ -76,7 +76,7 @@ export default async function BlogsPage({
 
       {/* Newsletter CTA */}
       {data.newsletterCta && (
-        <section className="py-10 sm:py-14 bg-linear-to-br from-[#082e3a] to-[#0e5d75] text-white relative overflow-hidden">
+        <section className="py-7 sm:py-10 bg-linear-to-br from-[#082e3a] to-[#0e5d75] text-white relative overflow-hidden">
           <div className="absolute inset-0 bg-dots opacity-40 pointer-events-none" aria-hidden="true" />
           <div className="container-page text-center max-w-2xl relative">
             <div className="mx-auto h-12 w-12 sm:h-14 sm:w-14 rounded-xl bg-white text-[#0e7490] inline-flex items-center justify-center mb-4 sm:mb-5 shadow-lg">

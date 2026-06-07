@@ -18,7 +18,7 @@ export function HowItWorks({
   const count = items.length || 1;
 
   return (
-    <section className="py-12 sm:py-16 md:py-20 bg-white">
+    <section className="py-8 sm:py-10 md:py-12 bg-white">
       <div className="container-page text-center">
         {sectionLabel && (
           <div className="text-[#0e7490] text-sm font-semibold mb-2 inline-flex items-center gap-1">
