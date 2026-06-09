@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,7 +19,7 @@ import {
   UserIcon,
 } from "../../components/ui/Icons";
 import { api, ApiError } from "../../lib/api";
-import { useCountries, useCities } from "../../lib/countries";
+import { useCountries } from "../../lib/countries";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -30,12 +30,20 @@ export default function SignupPage() {
   const [dob, setDob] = useState("");
   const [countryCode, setCountryCode] = useState("");
   const [city, setCity] = useState("");
+  const [stateName, setStateName] = useState("");
   const countries = useCountries();
-  const cities = useCities(countryCode);
   const [agree, setAgree] = useState(false);
   const [showPwd, setShowPwd] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [redirect, setRedirect] = useState("");
+
+  useEffect(() => {
+    const r = new URLSearchParams(window.location.search).get("redirect");
+    if (r && r.startsWith("/") && !r.startsWith("//")) setRedirect(r);
+  }, []);
+
+  const loginHref = redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : "/login";
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,11 +73,13 @@ export default function SignupPage() {
           dateOfBirth: dob,
           country: countryCode,
           city,
+          state: stateName,
         },
         { skipAuth: true }
       );
-      // Don't auto-login on signup — send the user to the login page to sign in.
-      router.push("/login");
+      // Don't auto-login on signup — send the user to the login page to sign in
+      // (carrying any ?redirect= so they land on the page they came from).
+      router.push(loginHref);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Signup failed");
       setSubmitting(false);
@@ -162,13 +172,11 @@ export default function SignupPage() {
                   <Combobox
                     options={countries.map((c) => ({ value: c.iso2, label: c.name }))}
                     value={countryCode}
-                    onChange={(v) => {
-                      setCountryCode(v);
-                      setCity("");
-                    }}
+                    onChange={(v) => setCountryCode(v)}
                     placeholder="Select Country"
                     searchPlaceholder="Search countries…"
                     emptyText="No country found."
+                    maxResults={300}
                     triggerClassName="h-12 px-4 bg-white border-slate-200 hover:border-slate-300 focus:border-[#0e7490] focus:outline-none"
                   />
                 </div>
@@ -176,16 +184,22 @@ export default function SignupPage() {
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide">
                     City
                   </label>
-                  <Combobox
-                    options={cities.map((c) => ({ value: c, label: c }))}
+                  <TextField
+                    type="text"
+                    placeholder="Enter your city"
                     value={city}
-                    onChange={(v) => setCity(v)}
-                    placeholder={countryCode ? "Select City" : "Select a country first"}
-                    searchPlaceholder="Search cities…"
-                    emptyText="No city found."
-                    disabled={!countryCode}
-                    allowCustom
-                    triggerClassName="h-12 px-4 bg-white border-slate-200 hover:border-slate-300 focus:border-[#0e7490] focus:outline-none"
+                    onChange={(e) => setCity(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                    State
+                  </label>
+                  <TextField
+                    type="text"
+                    placeholder="Enter your state / province"
+                    value={stateName}
+                    onChange={(e) => setStateName(e.target.value)}
                   />
                 </div>
               </div>
@@ -257,7 +271,7 @@ export default function SignupPage() {
 
               <p className="text-center text-sm text-slate-500">
                 Already have an account?{" "}
-                <Link href="/login" className="text-[#0e7490] font-bold hover:underline">
+                <Link href={loginHref} className="text-[#0e7490] font-bold hover:underline">
                   Log in
                 </Link>
               </p>

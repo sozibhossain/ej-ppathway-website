@@ -18,7 +18,7 @@ export function Combobox({
   emptyText = "No results.",
   disabled = false,
   allowCustom = false,
-  maxResults = 100,
+  maxResults = 300,
   triggerClassName = "",
   id,
 }: {

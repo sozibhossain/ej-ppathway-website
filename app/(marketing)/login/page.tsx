@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { TextField, Checkbox } from "../../components/ui/Input";
@@ -22,6 +22,13 @@ export default function LoginPage() {
   const [remember, setRemember] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [redirect, setRedirect] = useState("");
+
+  // Carry an optional ?redirect= path (e.g. coming from the gated advisor apply page).
+  useEffect(() => {
+    const r = new URLSearchParams(window.location.search).get("redirect");
+    if (r && r.startsWith("/") && !r.startsWith("//")) setRedirect(r);
+  }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +47,7 @@ export default function LoginPage() {
       if (r.data) {
         setAuthCookies(r.data.accessToken, r.data.refreshToken, r.data.user);
       }
-      if (typeof window !== "undefined") window.location.href = "/";
+      if (typeof window !== "undefined") window.location.href = redirect || "/";
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Login failed");
       setSubmitting(false);
@@ -113,7 +120,10 @@ export default function LoginPage() {
 
             <div className="text-center text-sm text-slate-600">
               Don&apos;t have an account?{" "}
-              <Link href="/signup" className="text-[#0e7490] font-semibold hover:underline">
+              <Link
+                href={redirect ? `/signup?redirect=${encodeURIComponent(redirect)}` : "/signup"}
+                className="text-[#0e7490] font-semibold hover:underline"
+              >
                 Create An Account
               </Link>
             </div>

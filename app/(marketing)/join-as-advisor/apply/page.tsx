@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { TextField, SelectField, Checkbox } from "../../../components/ui/Input";
 import { Combobox } from "../../../components/ui/Combobox";
 import { Button, LinkButton } from "../../../components/ui/Button";
@@ -15,16 +16,30 @@ import {
   CheckIcon,
 } from "../../../components/ui/Icons";
 import { MapPin } from "lucide-react";
-import { api, ApiError } from "../../../lib/api";
-import { useCountries, useCities } from "../../../lib/countries";
+import { api, ApiError, getCurrentUser } from "../../../lib/api";
+import { useCountries } from "../../../lib/countries";
+
+const APPLY_PATH = "/join-as-advisor/apply";
+type AccountInfo = {
+  name?: string;
+  email?: string;
+  phone?: string;
+  country?: string;
+  state?: string;
+  city?: string;
+  dateOfBirth?: string;
+};
 
 const STEPS = [
   "Application",
-  "Pre-recorded Interview",
   "Live Interview",
   "Contract Signed",
   "Onboarding & Activation",
 ];
+
+const ADVISOR_DASHBOARD_URL =
+  process.env.NEXT_PUBLIC_ADVISOR_DASHBOARD_URL ||
+  "https://ej-ppathway-advisor-dashboard.vercel.app";
 
 export default function AdvisorApplyPage() {
   const [name, setName] = useState("");
@@ -32,11 +47,10 @@ export default function AdvisorApplyPage() {
   const [phone, setPhone] = useState("");
   const [dob, setDob] = useState("");
   const [address, setAddress] = useState("");
+  const [stateName, setStateName] = useState("");
   const [city, setCity] = useState("");
-  const [zip, setZip] = useState("");
   const [countryCode, setCountryCode] = useState("");
   const countries = useCountries();
-  const cities = useCities(countryCode);
   const [yearsExperience, setYearsExperience] = useState("");
   const [availableFiveHours, setAvailableFiveHours] = useState("");
   const [agree, setAgree] = useState(false);
@@ -44,6 +58,65 @@ export default function AdvisorApplyPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+
+  const router = useRouter();
+  const [checking, setChecking] = useState(true);
+  const [prefilled, setPrefilled] = useState(false);
+  // Account-derived fields are locked here — they can only be changed from the
+  // user's account, not the application.
+  const [locked, setLocked] = useState({
+    name: false,
+    email: false,
+    phone: false,
+    dob: false,
+    country: false,
+    state: false,
+    city: false,
+  });
+
+  // Applying as an advisor requires an account. Gate the page: send logged-out
+  // visitors to login (returning here after), and pre-fill the form from the
+  // signed-in user's account details.
+  useEffect(() => {
+    const apply = (u: AccountInfo) => {
+      if (u.name) setName(u.name);
+      if (u.email) setEmail(u.email);
+      if (u.phone) setPhone(u.phone);
+      if (u.country) setCountryCode(u.country);
+      if (u.state) setStateName(u.state);
+      if (u.city) setCity(u.city);
+      if (u.dateOfBirth) setDob(u.dateOfBirth);
+      setLocked({
+        name: !!u.name,
+        email: !!u.email,
+        phone: !!u.phone,
+        dob: !!u.dateOfBirth,
+        country: !!u.country,
+        state: !!u.state,
+        city: !!u.city,
+      });
+      setPrefilled(true);
+    };
+
+    const cached = getCurrentUser<AccountInfo>();
+    if (!cached) {
+      router.replace(`/login?redirect=${encodeURIComponent(APPLY_PATH)}`);
+      return;
+    }
+    apply(cached);
+    setChecking(false);
+
+    // Refresh from the server so the latest profile details are used.
+    (async () => {
+      try {
+        const r = await api.get<AccountInfo>("/auth/me");
+        if (r.data) apply(r.data);
+      } catch {
+        /* keep the cached prefill */
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,8 +130,8 @@ export default function AdvisorApplyPage() {
       !dob ||
       !address ||
       !countryCode ||
+      !stateName ||
       !city ||
-      !zip ||
       !yearsExperience ||
       !availableFiveHours
     ) {
@@ -82,8 +155,8 @@ export default function AdvisorApplyPage() {
       fd.append("phone", phone);
       fd.append("dateOfBirth", dob);
       fd.append("address", address);
+      fd.append("state", stateName);
       fd.append("city", city);
-      fd.append("zip", zip);
       fd.append("country", countryCode);
       fd.append("yearsOfExperience", yearsExperience);
       fd.append("availableFiveHoursPerDay", availableFiveHours);
@@ -101,32 +174,19 @@ export default function AdvisorApplyPage() {
     }
   };
 
-  if (submitted) {
+  if (checking) {
     return (
-      <section className="bg-[#f0f9fb] py-8 sm:py-10 min-h-[46vh] flex items-center">
-        <div className="container-page">
-          <div className="mx-auto w-full max-w-xl bg-white rounded-2xl border border-slate-100 shadow-sm p-8 text-center">
-            <div className="mx-auto h-16 w-16 rounded-full bg-emerald-100 text-emerald-600 inline-flex items-center justify-center mb-5">
-              <CheckIcon size={30} />
-            </div>
-            <h1 className="text-2xl font-bold text-[#0e7490]">Application Submitted</h1>
-            <p className="mt-3 text-slate-600 leading-relaxed">
-              Thank you for applying to join Prophetic Pathway. Our team will review your
-              application and introduction video and reach out with the next steps. If you pass the
-              interview and sign the advisor agreement, you&apos;ll receive an onboarding link by
-              email to complete your advisor profile.
-            </p>
-            <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-              <LinkButton href="/" variant="outline" size="md">Back to Home</LinkButton>
-              <LinkButton href="/join-as-advisor" size="md">Learn More</LinkButton>
-            </div>
-          </div>
-        </div>
+      <section className="bg-[#f0f9fb] py-20 min-h-[60vh] flex items-center justify-center">
+        <div
+          className="h-10 w-10 rounded-full border-2 border-[#0e7490]/30 border-t-[#0e7490] animate-spin"
+          aria-label="Loading"
+        />
       </section>
     );
   }
 
   return (
+    <>
     <section className="relative overflow-hidden bg-linear-to-b from-[#f0f9fb] to-[#eaf6f9] py-8 sm:py-12">
       <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-[#0e7490]/10 blur-3xl" aria-hidden="true" />
       <div className="pointer-events-none absolute -bottom-32 -right-10 h-80 w-80 rounded-full bg-[#0e7490]/10 blur-3xl" aria-hidden="true" />
@@ -162,6 +222,13 @@ export default function AdvisorApplyPage() {
           <div className="p-5 sm:p-8 md:p-10">
             <Stepper currentIdx={0} />
 
+            {prefilled && (
+              <p className="mt-6 text-center text-xs text-slate-500">
+                Your account details are pre-filled and locked below. To change them, update your
+                account profile.
+              </p>
+            )}
+
             <form onSubmit={submit} className="mt-8 space-y-6 sm:space-y-7">
             <section>
               <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-4 pl-3 border-l-[3px] border-[#0e7490] leading-tight">
@@ -174,6 +241,7 @@ export default function AdvisorApplyPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   leftIcon={<UserIcon size={18} />}
+                  disabled={locked.name}
                   required
                 />
                 <TextField
@@ -183,6 +251,7 @@ export default function AdvisorApplyPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   leftIcon={<MailIcon size={18} />}
+                  disabled={locked.email}
                   required
                 />
                 <TextField
@@ -192,6 +261,7 @@ export default function AdvisorApplyPage() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   leftIcon={<PhoneIcon size={18} />}
+                  disabled={locked.phone}
                   required
                 />
                 <TextField
@@ -200,6 +270,7 @@ export default function AdvisorApplyPage() {
                   value={dob}
                   onChange={(e) => setDob(e.target.value)}
                   leftIcon={<CalendarIcon size={18} />}
+                  disabled={locked.dob}
                   required
                 />
               </div>
@@ -223,35 +294,29 @@ export default function AdvisorApplyPage() {
                   <Combobox
                     options={countries.map((c) => ({ value: c.iso2, label: c.name }))}
                     value={countryCode}
-                    onChange={(v) => {
-                      setCountryCode(v);
-                      setCity("");
-                    }}
+                    onChange={(v) => setCountryCode(v)}
+                    disabled={locked.country}
                     placeholder="Select Country"
                     searchPlaceholder="Search countries…"
                     emptyText="No country found."
-                    triggerClassName="h-12 px-4 bg-white border-slate-200 hover:border-slate-300 focus:border-[#0e7490] focus:outline-none"
-                  />
-                </label>
-                <label className="block">
-                  <span className="block mb-1.5 text-sm font-medium text-slate-700">City *</span>
-                  <Combobox
-                    options={cities.map((c) => ({ value: c, label: c }))}
-                    value={city}
-                    onChange={(v) => setCity(v)}
-                    placeholder={countryCode ? "Select City" : "Select a country first"}
-                    searchPlaceholder="Search cities…"
-                    emptyText="No city found."
-                    disabled={!countryCode}
-                    allowCustom
+                    maxResults={300}
                     triggerClassName="h-12 px-4 bg-white border-slate-200 hover:border-slate-300 focus:border-[#0e7490] focus:outline-none"
                   />
                 </label>
                 <TextField
-                  label="ZIP / Postal Code *"
-                  placeholder="Postal code"
-                  value={zip}
-                  onChange={(e) => setZip(e.target.value)}
+                  label="State *"
+                  placeholder="Enter your state / province"
+                  value={stateName}
+                  onChange={(e) => setStateName(e.target.value)}
+                  disabled={locked.state}
+                  required
+                />
+                <TextField
+                  label="City *"
+                  placeholder="Enter your city"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  disabled={locked.city}
                   required
                 />
               </div>
@@ -333,6 +398,93 @@ export default function AdvisorApplyPage() {
         </div>
       </div>
     </section>
+
+      {submitted && <ThankYouModal dashboardUrl={ADVISOR_DASHBOARD_URL} />}
+    </>
+  );
+}
+
+function ThankYouModal({ dashboardUrl }: { dashboardUrl: string }) {
+  return (
+    <div className="fixed inset-0 z-100 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 sm:p-8 text-center max-h-[92vh] overflow-y-auto">
+        <div className="mx-auto h-16 w-16 rounded-full bg-emerald-500 text-white inline-flex items-center justify-center mb-5">
+          <CheckIcon size={30} />
+        </div>
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Thank You for Applying!</h2>
+        <p className="mt-2 text-sm text-slate-600 leading-relaxed">
+          Your application has been successfully submitted and is now under review by our team. If
+          your application matches our current advisor requirements, we&apos;ll contact you regarding
+          the next stage of the interview process.
+        </p>
+
+        <div className="mt-5 rounded-xl bg-slate-50 border border-slate-100 p-4 text-left">
+          <div className="text-sm font-bold text-slate-900 mb-3">Application Progress</div>
+          <div className="space-y-2.5">
+            <div className="flex items-center gap-2.5 text-sm text-slate-700">
+              <span className="h-5 w-5 rounded-full bg-emerald-500 text-white inline-flex items-center justify-center shrink-0">
+                <CheckIcon size={12} />
+              </span>
+              Application Submitted
+            </div>
+            <div className="flex items-center gap-2.5 text-sm text-slate-700">
+              <span className="h-5 w-5 rounded-full bg-amber-400 text-white inline-flex items-center justify-center shrink-0">
+                <ClockIcon size={11} />
+              </span>
+              Review in Progress
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3 rounded-xl bg-slate-50 border border-slate-100 px-4 py-3 flex items-center gap-2 text-left text-sm text-slate-600">
+          <ClockIcon size={15} className="text-[#0e7490] shrink-0" />
+          <span>
+            Estimated Review Time: <b className="text-slate-800">3-5 business days</b>
+          </span>
+        </div>
+
+        <p className="mt-3 text-xs text-slate-500 text-left">
+          <b>Note:</b> Please monitor your email and dashboard for updates regarding your
+          application status.
+        </p>
+
+        <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <LinkButton href="/" variant="outline" size="md" className="w-full">
+            Back to Home
+          </LinkButton>
+          <LinkButton href={dashboardUrl} target="_blank" size="md" className="w-full">
+            Go to Application Dashboard
+          </LinkButton>
+        </div>
+
+        <p className="mt-4 text-xs text-slate-500">
+          Questions about your application?{" "}
+          <Link href="/contact" className="text-[#0e7490] font-semibold hover:underline">
+            Contact our team
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function ClockIcon({ size = 16, className }: { size?: number; className?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
   );
 }
 
