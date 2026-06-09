@@ -161,7 +161,7 @@ export default function AdvisorApplyPage() {
       fd.append("yearsOfExperience", yearsExperience);
       fd.append("availableFiveHoursPerDay", availableFiveHours);
       fd.append("introVideo", intro);
-      await api.post("/auth/advisor-apply", fd, { isFormData: true, skipAuth: true });
+      await api.post("/auth/advisor-apply", fd, { isFormData: true });
       setSubmitted(true);
     } catch (err) {
       const msg = err instanceof ApiError ? err.message : "Submit failed";
