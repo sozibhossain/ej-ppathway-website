@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { MailIcon, PhoneIcon, ClockIcon } from "../../components/ui/Icons";
 import { MapPin } from "lucide-react";
 import { ContactForm } from "./contact-form";
@@ -8,7 +7,6 @@ import { getSiteContent } from "../../lib/site-content";
 export default async function ContactPage() {
   const data = await getSiteContent("contact");
   const info = data.contactInfo || {};
-  const help = data.quickHelp || {};
   const form = data.formSettings || {};
 
   return (
@@ -74,21 +72,6 @@ export default async function ContactPage() {
                 )}
               </ul>
             </div>
-
-            {help.title && (
-              <div className="bg-[#e6f4f8] border border-[#cfe9f0] rounded-2xl p-5 sm:p-6">
-                <h3 className="text-base sm:text-lg font-bold text-[#0e7490] mb-2">{help.title}</h3>
-                {help.body && <p className="text-sm text-slate-600 mb-4">{help.body}</p>}
-                {help.ctaPrimary?.href ? (
-                  <Link
-                    href={help.ctaPrimary.href}
-                    className="block w-full text-center h-11 leading-11 rounded-lg bg-[#0e7490] hover:bg-[#085a72] transition-colors text-white font-semibold"
-                  >
-                    {help.ctaPrimary.label || "Visit Help Center"}
-                  </Link>
-                ) : null}
-              </div>
-            )}
           </aside>
 
           <ContactForm
