@@ -1,9 +1,9 @@
 import { Suspense } from "react";
-import { AdvisorCard } from "../../components/cards/AdvisorCard";
 import { AdvisorCardSkeleton } from "../../components/ui/Skeleton";
 import { api } from "../../lib/api";
 import { getSiteContent } from "../../lib/site-content";
 import type { Advisor } from "../../lib/types";
+import { AdvisorsBrowser } from "./AdvisorsBrowser";
 
 export default async function AdvisorsListPage() {
   const data = await getSiteContent("advisors");
@@ -51,29 +51,20 @@ async function AdvisorsGrid({ emptyStateText }: { emptyStateText?: string }) {
     advisors = [];
   }
 
-  if (advisors.length === 0) {
-    return (
-      <p className="text-center text-slate-500 py-20">
-        {emptyStateText || "No advisors found yet."}
-      </p>
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
-      {advisors.map((a) => (
-        <AdvisorCard key={a.user._id} advisor={a} />
-      ))}
-    </div>
-  );
+  return <AdvisorsBrowser initialAdvisors={advisors} emptyStateText={emptyStateText} />;
 }
 
 function AdvisorsGridSkeleton() {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5">
-      {Array.from({ length: 12 }).map((_, i) => (
-        <AdvisorCardSkeleton key={i} />
-      ))}
+    <div className="flex flex-col lg:flex-row gap-6">
+      <div className="hidden lg:block w-72 shrink-0">
+        <div className="rounded-2xl border border-slate-200 bg-white h-96 animate-pulse" />
+      </div>
+      <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <AdvisorCardSkeleton key={i} />
+        ))}
+      </div>
     </div>
   );
 }

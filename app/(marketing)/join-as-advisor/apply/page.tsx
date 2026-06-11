@@ -33,8 +33,9 @@ type AccountInfo = {
 const STEPS = [
   "Application",
   "Live Interview",
-  "Contract Signed",
-  "Onboarding & Activation",
+  "Under Review",
+  "Approved",
+  "Not Selected",
 ];
 
 const ADVISOR_DASHBOARD_URL =
