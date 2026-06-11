@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Button } from "../../../components/ui/Button";
+import { AdvisorCard } from "../../../components/cards/AdvisorCard";
 import {
   ArrowLeftIcon,
   StarIcon,
@@ -10,7 +11,7 @@ import {
   VideoIcon,
   CalendarIcon,
 } from "../../../components/ui/Icons";
-import { MapPin } from "lucide-react";
+import { MapPin, BadgeCheck, ShieldCheck, Award, Flame, Clock } from "lucide-react";
 import { api } from "../../../lib/api";
 import { getSiteContent } from "../../../lib/site-content";
 import {
@@ -54,6 +55,36 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
   if (!advisor || !advisor.user) notFound();
 
   const { user, profile, reviews } = advisor!;
+
+  // Recommended / similar advisors ("You may also like").
+  let recommended: Advisor[] = [];
+  try {
+    const rr = await api.get<Advisor[]>("/advisors/top-rated", { limit: 6 }, { revalidate: 120, skipAuth: true });
+    recommended = (rr.data || []).filter((a) => a.user?._id && a.user._id !== id).slice(0, 4);
+  } catch {
+    recommended = [];
+  }
+
+  // Trust / credibility badges.
+  const rating = profile?.avgRating || 0;
+  const ratingsCount = profile?.ratingsCount || 0;
+  const totalSessions = profile?.totalSessions || 0;
+  const badges: Array<{ icon: React.ReactNode; label: string; cls: string }> = [];
+  if (profile?.tier === "gold" || (rating >= 4.5 && ratingsCount >= 10)) {
+    badges.push({ icon: <Award size={13} />, label: "Top Rated", cls: "bg-amber-100 text-amber-700" });
+  }
+  if (profile?.tier === "gold" || profile?.tier === "silver") {
+    badges.push({ icon: <ShieldCheck size={13} />, label: "Verified Advisor", cls: "bg-[#e6f4f8] text-[#0e7490]" });
+  }
+  if (totalSessions >= 50) {
+    badges.push({ icon: <Flame size={13} />, label: "Most Booked", cls: "bg-rose-100 text-rose-700" });
+  }
+  if (profile?.isOnline) {
+    badges.push({ icon: <span className="h-2 w-2 rounded-full bg-emerald-500" />, label: "Available Now", cls: "bg-emerald-100 text-emerald-700" });
+  }
+  if (badges.length === 0) {
+    badges.push({ icon: <BadgeCheck size={13} />, label: "New Advisor", cls: "bg-emerald-100 text-emerald-700" });
+  }
   const countries = await fetchCountries();
   const userLocation = formatLocation(
     user.city,
@@ -65,18 +96,6 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
     catalog,
     currencyCodeFrom(countries, user.country) || user.currency,
   );
-  const tierLabel =
-    profile?.tier === "gold"
-      ? "Gold Advisor"
-      : profile?.tier === "silver"
-        ? "Silver Advisor"
-        : "New Advisor";
-  const tierClass =
-    profile?.tier === "gold"
-      ? "bg-amber-100 text-amber-700"
-      : profile?.tier === "silver"
-        ? "bg-slate-100 text-slate-700"
-        : "bg-emerald-100 text-emerald-700";
 
   return (
     <div className="container-page py-6 sm:py-8">
@@ -89,47 +108,79 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
 
       <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-5 sm:gap-6">
         <div className="space-y-4 sm:space-y-5">
-          {/* Profile header card */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row items-start gap-4 sm:gap-5">
-            <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-full overflow-hidden bg-slate-200 shrink-0 ring-2 ring-[#cfe9f0]">
-              {user.profilePhoto ? (
-                <Image
-                  src={user.profilePhoto}
-                  alt={user.name || "Advisor"}
-                  fill
-                  className="object-cover"
-                  sizes="80px"
-                  unoptimized
-                />
-              ) : null}
+          {/* Profile hero card */}
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+            <div className="bg-linear-to-r from-[#0e7490] to-[#0c647c] px-4 sm:px-6 py-2.5 text-white text-xs sm:text-sm font-medium inline-flex items-center gap-2 w-full">
+              <ShieldCheck size={15} /> Verified Prophetic Pathway Advisor
             </div>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
-                {user.name || "Advisor"}
-              </h1>
-              {profile?.professionalTitle && (
-                <p className="text-slate-600 text-sm mt-0.5">{profile.professionalTitle}</p>
-              )}
-              <div className="mt-3">
-                <span
-                  className={`inline-flex items-center gap-1 px-3 py-1 rounded-full ${tierClass} text-xs font-semibold`}
-                >
-                  ★ {tierLabel}
-                </span>
-              </div>
-              <div className="flex items-center gap-3 mt-2 flex-wrap text-sm text-slate-600">
-                <span className="inline-flex items-center gap-1">
-                  <MapPin size={14} className="text-slate-400" />
-                  {userLocation || "Worldwide"}
-                </span>
-                {profile?.avgRating ? (
-                  <span className="inline-flex items-center gap-1 text-slate-700">
-                    <StarIcon size={14} className="text-amber-500" />
-                    <span className="font-semibold">{profile.avgRating.toFixed(1)}</span>
-                    <span className="text-slate-500">({profile.ratingsCount || 0} reviews)</span>
+            <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-start gap-5 sm:gap-6">
+              <div className="relative h-28 w-28 sm:h-36 sm:w-36 rounded-2xl overflow-hidden bg-slate-200 shrink-0 ring-4 ring-[#cfe9f0]">
+                {user.profilePhoto ? (
+                  <Image
+                    src={user.profilePhoto}
+                    alt={user.name || "Advisor"}
+                    fill
+                    className="object-cover"
+                    sizes="144px"
+                    unoptimized
+                  />
+                ) : (
+                  <div className="absolute inset-0 grid place-items-center text-slate-400 text-4xl">👤</div>
+                )}
+                {profile?.isOnline && (
+                  <span className="absolute bottom-2 left-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-medium shadow-sm">
+                    <span className="h-1.5 w-1.5 rounded-full bg-white" /> Online
                   </span>
-                ) : null}
+                )}
               </div>
+              <div className="flex-1 min-w-0">
+                <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
+                  {user.name || "Advisor"}
+                </h1>
+                {profile?.professionalTitle && (
+                  <p className="text-slate-600 text-sm sm:text-base mt-1">{profile.professionalTitle}</p>
+                )}
+
+                {/* Trust badges */}
+                <div className="flex flex-wrap items-center gap-2 mt-3">
+                  {badges.map((b) => (
+                    <span
+                      key={b.label}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full ${b.cls} text-xs font-semibold`}
+                    >
+                      {b.icon}
+                      {b.label}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="flex items-center gap-4 mt-3 flex-wrap text-sm text-slate-600">
+                  <span className="inline-flex items-center gap-1">
+                    <MapPin size={14} className="text-slate-400" />
+                    {userLocation || "Worldwide"}
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-slate-700">
+                    <StarIcon size={15} className="text-amber-500" />
+                    <span className="font-semibold">{rating.toFixed(1)}</span>
+                    <span className="text-slate-500">({ratingsCount} reviews)</span>
+                  </span>
+                  {profile?.isOnline && (
+                    <span className="inline-flex items-center gap-1 text-emerald-600 font-medium">
+                      <Clock size={14} /> Available now
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Social proof stats */}
+            <div className="grid grid-cols-3 divide-x divide-slate-100 border-t border-slate-100">
+              <Stat value={totalSessions.toLocaleString()} label="Total Readings" />
+              <Stat value={`${rating.toFixed(1)} ★`} label={`${ratingsCount} Reviews`} />
+              <Stat
+                value={profile?.yearsOfExperience ? `${profile.yearsOfExperience}` : "—"}
+                label="Years Experience"
+              />
             </div>
           </div>
 
@@ -359,6 +410,20 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
           ) : null}
 
           <div className="bg-white border border-slate-200 rounded-2xl p-5">
+            <div
+              className={`flex items-center gap-2 mb-4 px-3 py-2 rounded-xl text-sm font-medium ${
+                profile?.isOnline
+                  ? "bg-emerald-50 text-emerald-700"
+                  : "bg-slate-50 text-slate-500"
+              }`}
+            >
+              <span
+                className={`h-2.5 w-2.5 rounded-full ${
+                  profile?.isOnline ? "bg-emerald-500" : "bg-slate-400"
+                }`}
+              />
+              {profile?.isOnline ? "Available now — start instantly" : "Currently offline — book ahead"}
+            </div>
             <h3 className="font-semibold text-slate-900 mb-4 inline-flex items-center gap-2">
               <span className="h-6 w-6 rounded-full bg-[#0e7490] text-white inline-flex items-center justify-center text-xs">
                 {currencySymbol}
@@ -396,9 +461,39 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
                 {labels.sendMessage || "Send message"}
               </button>
             </div>
+            <div className="mt-4 flex items-center justify-center gap-1.5 text-xs text-slate-500">
+              <ShieldCheck size={13} className="text-[#0e7490]" />
+              Secure booking · 100% satisfaction guaranteed
+            </div>
           </div>
         </div>
       </div>
+
+      {/* You may also like — recommended advisors */}
+      {recommended.length > 0 && (
+        <section className="mt-10 sm:mt-12">
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-1">
+            You may also like
+          </h2>
+          <p className="text-sm text-slate-500 mb-5">
+            Other trusted prophetic advisors you can connect with.
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+            {recommended.map((a) => (
+              <AdvisorCard key={a.user._id} advisor={a} />
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}
+
+function Stat({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="px-4 py-3 text-center">
+      <div className="text-lg sm:text-xl font-bold text-slate-900">{value}</div>
+      <div className="text-[11px] sm:text-xs text-slate-500 mt-0.5">{label}</div>
     </div>
   );
 }
