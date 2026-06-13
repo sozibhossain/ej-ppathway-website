@@ -5,6 +5,10 @@ import { ChevronDownIcon, UserIcon } from "../ui/Icons";
 import { clearAuthCookies, getCurrentUser } from "../../lib/api";
 import { disconnectSocket } from "../../lib/socket";
 
+const ADVISOR_DASHBOARD_URL =
+  process.env.NEXT_PUBLIC_ADVISOR_DASHBOARD_URL ||
+  "https://ej-ppathway-advisor-dashboard.vercel.app";
+
 export type AuthUser = {
   _id?: string;
   name?: string;
@@ -67,6 +71,7 @@ function Avatar({ user, size = 40 }: { user: AuthUser; size?: number }) {
 export function UserMenu({ user }: { user: AuthUser }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const showAdvisorDashboard = user.role === "advisor";
 
   useEffect(() => {
     if (!open) return;
@@ -107,6 +112,16 @@ export function UserMenu({ user }: { user: AuthUser }) {
             <p className="text-sm font-semibold text-slate-900 truncate">{user.name || "My account"}</p>
             {user.email && <p className="text-xs text-slate-500 truncate">{user.email}</p>}
           </div>
+          {showAdvisorDashboard && (
+            <a
+              href={ADVISOR_DASHBOARD_URL}
+              role="menuitem"
+              className="w-full text-left px-4 py-2.5 text-sm font-medium text-[#0e7490] hover:bg-[#f0f9fb] inline-flex items-center gap-2"
+            >
+              <DashboardIcon size={16} />
+              Advisor Dashboard
+            </a>
+          )}
           <button
             type="button"
             onClick={logout}
@@ -124,6 +139,7 @@ export function UserMenu({ user }: { user: AuthUser }) {
 
 /** Mobile profile block: avatar + name/email + log out, for use inside the mobile menu. */
 export function UserMenuMobile({ user }: { user: AuthUser }) {
+  const showAdvisorDashboard = user.role === "advisor";
   return (
     <div className="mt-3 pt-3 border-t border-slate-100">
       <div className="flex items-center gap-3 px-1 py-2">
@@ -133,6 +149,15 @@ export function UserMenuMobile({ user }: { user: AuthUser }) {
           {user.email && <p className="text-xs text-slate-500 truncate">{user.email}</p>}
         </div>
       </div>
+      {showAdvisorDashboard && (
+        <a
+          href={ADVISOR_DASHBOARD_URL}
+          className="mt-2 w-full h-11 rounded-full border border-[#bfe3ec] text-[#0e7490] font-semibold text-sm inline-flex items-center justify-center gap-2 hover:bg-[#f0f9fb]"
+        >
+          <DashboardIcon size={16} />
+          Advisor Dashboard
+        </a>
+      )}
       <button
         type="button"
         onClick={logout}
@@ -162,6 +187,28 @@ function LogOutIcon({ size = 16, className }: { size?: number; className?: strin
       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
       <polyline points="16 17 21 12 16 7" />
       <line x1="21" y1="12" x2="9" y2="12" />
+    </svg>
+  );
+}
+
+function DashboardIcon({ size = 16, className }: { size?: number; className?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+      <rect x="14" y="3" width="7" height="5" rx="1.5" />
+      <rect x="14" y="12" width="7" height="9" rx="1.5" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" />
     </svg>
   );
 }
