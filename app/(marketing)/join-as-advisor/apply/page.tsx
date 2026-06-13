@@ -54,6 +54,7 @@ export default function AdvisorApplyPage() {
   const countries = useCountries();
   const [yearsExperience, setYearsExperience] = useState("");
   const [availableFiveHours, setAvailableFiveHours] = useState("");
+  const [baptizedInHolySpirit, setBaptizedInHolySpirit] = useState("");
   const [agree, setAgree] = useState(false);
   const [intro, setIntro] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -134,7 +135,8 @@ export default function AdvisorApplyPage() {
       !stateName ||
       !city ||
       !yearsExperience ||
-      !availableFiveHours
+      !availableFiveHours ||
+      !baptizedInHolySpirit
     ) {
       setError("Please complete every field before submitting.");
       return;
@@ -161,6 +163,7 @@ export default function AdvisorApplyPage() {
       fd.append("country", countryCode);
       fd.append("yearsOfExperience", yearsExperience);
       fd.append("availableFiveHoursPerDay", availableFiveHours);
+      fd.append("baptizedInHolySpirit", baptizedInHolySpirit);
       fd.append("introVideo", intro);
       await api.post("/auth/advisor-apply", fd, { isFormData: true });
       setSubmitted(true);
@@ -325,33 +328,43 @@ export default function AdvisorApplyPage() {
 
             <section>
               <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-4 pl-3 border-l-[3px] border-[#0e7490] leading-tight">
-                Experience
+                Experience & Availability
               </h2>
-              <TextField
-                label="Years of Experience *"
-                placeholder="e.g. 5"
-                value={yearsExperience}
-                onChange={(e) => setYearsExperience(e.target.value)}
-                required
-              />
-            </section>
-
-            <section>
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-4 pl-3 border-l-[3px] border-[#0e7490] leading-tight">
-                Availability
-              </h2>
-              <SelectField
-                label="Are you available to work at least 5 hours per day? *"
-                value={availableFiveHours}
-                onChange={(e) => setAvailableFiveHours(e.target.value)}
-                required
-              >
-                <option value="" disabled>
-                  Select an answer
-                </option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-              </SelectField>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <TextField
+                  label="Years of Experience *"
+                  placeholder="e.g. 5"
+                  value={yearsExperience}
+                  onChange={(e) => setYearsExperience(e.target.value)}
+                  required
+                />
+                <SelectField
+                  label="Are you available to work at least 5 hours per day? *"
+                  value={availableFiveHours}
+                  onChange={(e) => setAvailableFiveHours(e.target.value)}
+                  required
+                >
+                  <option value="" disabled>
+                    Select an answer
+                  </option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </SelectField>
+              </div>
+              <div className="mt-4">
+                <SelectField
+                  label="Have you been baptized with the Holy Spirit with the evidence of speaking in tongues? *"
+                  value={baptizedInHolySpirit}
+                  onChange={(e) => setBaptizedInHolySpirit(e.target.value)}
+                  required
+                >
+                  <option value="" disabled>
+                    Select an answer
+                  </option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </SelectField>
+              </div>
               <p className="mt-2 text-xs text-slate-500">
                 Detailed availability is set in your advisor dashboard after approval.
               </p>
