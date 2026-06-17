@@ -29,18 +29,29 @@ type AccountInfo = {
   city?: string;
   dateOfBirth?: string;
 };
+type ApplicationInfo = {
+  status?: string;
+  stage?: string;
+  yearsOfExperience?: string;
+  availableFiveHoursPerDay?: string;
+  baptizedInHolySpirit?: string;
+  applicantDetails?: {
+    dateOfBirth?: string;
+    address?: string;
+    state?: string;
+    city?: string;
+    country?: string;
+  };
+};
 
 const STEPS = [
   "Application",
+  "Pending Review",
   "Live Interview",
   "Under Review",
   "Approved",
   "Not Selected",
 ];
-
-const ADVISOR_DASHBOARD_URL =
-  process.env.NEXT_PUBLIC_ADVISOR_DASHBOARD_URL ||
-  "https://ej-ppathway-advisor-dashboard.vercel.app";
 
 export default function AdvisorApplyPage() {
   const [name, setName] = useState("");
@@ -59,6 +70,7 @@ export default function AdvisorApplyPage() {
   const [intro, setIntro] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [existingApplication, setExistingApplication] = useState<ApplicationInfo | null>(null);
   const [error, setError] = useState("");
 
   const router = useRouter();
@@ -116,6 +128,32 @@ export default function AdvisorApplyPage() {
       } catch {
         /* keep the cached prefill */
       }
+      try {
+        const r = await api.get<ApplicationInfo>("/auth/advisor-application");
+        const app = r.data;
+        if (app && !["approved", "rejected"].includes(app.status || "")) {
+          setExistingApplication(app);
+          if (app.yearsOfExperience) setYearsExperience(app.yearsOfExperience);
+          if (app.availableFiveHoursPerDay) setAvailableFiveHours(app.availableFiveHoursPerDay);
+          if (app.baptizedInHolySpirit) setBaptizedInHolySpirit(app.baptizedInHolySpirit);
+          if (app.applicantDetails?.dateOfBirth) setDob(app.applicantDetails.dateOfBirth);
+          if (app.applicantDetails?.address) setAddress(app.applicantDetails.address);
+          if (app.applicantDetails?.country) setCountryCode(app.applicantDetails.country);
+          if (app.applicantDetails?.state) setStateName(app.applicantDetails.state);
+          if (app.applicantDetails?.city) setCity(app.applicantDetails.city);
+          setLocked({
+            name: true,
+            email: true,
+            phone: true,
+            dob: true,
+            country: true,
+            state: true,
+            city: true,
+          });
+        }
+      } catch {
+        /* no application yet */
+      }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -123,6 +161,10 @@ export default function AdvisorApplyPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    if (existingApplication) {
+      setError("Your current advisor application is already submitted and locked.");
+      return;
+    }
 
     // Every field is mandatory, and the introduction video must be uploaded.
     if (
@@ -166,6 +208,7 @@ export default function AdvisorApplyPage() {
       fd.append("baptizedInHolySpirit", baptizedInHolySpirit);
       fd.append("introVideo", intro);
       await api.post("/auth/advisor-apply", fd, { isFormData: true });
+      setExistingApplication({ status: "pending_review", stage: "application" });
       setSubmitted(true);
     } catch (err) {
       const msg = err instanceof ApiError ? err.message : "Submit failed";
@@ -232,6 +275,11 @@ export default function AdvisorApplyPage() {
                 account profile.
               </p>
             )}
+            {existingApplication && (
+              <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                Application status: <b>{applicationStatusLabel(existingApplication.status)}</b>. Your submitted application is locked while it is being reviewed.
+              </div>
+            )}
 
             <form onSubmit={submit} className="mt-8 space-y-6 sm:space-y-7">
             <section>
@@ -291,6 +339,7 @@ export default function AdvisorApplyPage() {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   leftIcon={<MapPin size={18} />}
+                  disabled={!!existingApplication}
                   required
                 />
                 <label className="block">
@@ -336,12 +385,14 @@ export default function AdvisorApplyPage() {
                   placeholder="e.g. 5"
                   value={yearsExperience}
                   onChange={(e) => setYearsExperience(e.target.value)}
+                  disabled={!!existingApplication}
                   required
                 />
                 <SelectField
                   label="Are you available to work at least 5 hours per day? *"
                   value={availableFiveHours}
                   onChange={(e) => setAvailableFiveHours(e.target.value)}
+                  disabled={!!existingApplication}
                   required
                 >
                   <option value="" disabled>
@@ -356,6 +407,7 @@ export default function AdvisorApplyPage() {
                   label="Have you been baptized with the Holy Spirit with the evidence of speaking in tongues? *"
                   value={baptizedInHolySpirit}
                   onChange={(e) => setBaptizedInHolySpirit(e.target.value)}
+                  disabled={!!existingApplication}
                   required
                 >
                   <option value="" disabled>
@@ -393,7 +445,7 @@ export default function AdvisorApplyPage() {
                 </span>
               }
               checked={agree}
-              onChange={setAgree}
+              onChange={(v) => !existingApplication && setAgree(v)}
             />
 
             <p className="text-xs text-slate-500">
@@ -404,8 +456,8 @@ export default function AdvisorApplyPage() {
 
             {error && <div className="text-sm text-red-600">{error}</div>}
 
-            <Button type="submit" size="lg" className="w-full" disabled={submitting}>
-              {submitting ? "Submitting…" : "Submit"}
+            <Button type="submit" size="lg" className="w-full" disabled={submitting || !!existingApplication}>
+              {existingApplication ? "Application Locked" : submitting ? "Submitting…" : "Submit"}
             </Button>
           </form>
           </div>
@@ -413,12 +465,12 @@ export default function AdvisorApplyPage() {
       </div>
     </section>
 
-      {submitted && <ThankYouModal dashboardUrl={ADVISOR_DASHBOARD_URL} />}
+      {submitted && <ThankYouModal />}
     </>
   );
 }
 
-function ThankYouModal({ dashboardUrl }: { dashboardUrl: string }) {
+function ThankYouModal() {
   return (
     <div className="fixed inset-0 z-100 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 sm:p-8 text-center max-h-[92vh] overflow-y-auto">
@@ -462,12 +514,9 @@ function ThankYouModal({ dashboardUrl }: { dashboardUrl: string }) {
           application status.
         </p>
 
-        <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="mt-5">
           <LinkButton href="/" variant="outline" size="md" className="w-full">
             Back to Home
-          </LinkButton>
-          <LinkButton href={dashboardUrl} target="_blank" size="md" className="w-full">
-            Go to Application Dashboard
           </LinkButton>
         </div>
 
@@ -480,6 +529,15 @@ function ThankYouModal({ dashboardUrl }: { dashboardUrl: string }) {
       </div>
     </div>
   );
+}
+
+function applicationStatusLabel(status?: string) {
+  if (status === "pending_review") return "Pending Review";
+  if (status === "live_interview" || status === "scheduled") return "Live Interview";
+  if (status === "under_review") return "Under Review";
+  if (status === "approved") return "Approved";
+  if (status === "rejected") return "Not Selected";
+  return "Application";
 }
 
 function ClockIcon({ size = 16, className }: { size?: number; className?: string }) {
