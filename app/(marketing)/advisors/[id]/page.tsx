@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { Button } from "../../../components/ui/Button";
+import { BookingActions } from "../../../components/advisor/BookingActions";
 import { AdvisorCard } from "../../../components/cards/AdvisorCard";
 import {
   ArrowLeftIcon,
@@ -11,14 +11,12 @@ import {
   VideoIcon,
   CalendarIcon,
 } from "../../../components/ui/Icons";
-import { MapPin, BadgeCheck, ShieldCheck, Award, Flame, Clock } from "lucide-react";
+import { BadgeCheck, ShieldCheck, Award, Flame, Clock } from "lucide-react";
 import { api } from "../../../lib/api";
 import { getSiteContent } from "../../../lib/site-content";
 import {
   fetchCountries,
-  countryNameFrom,
   currencyCodeFrom,
-  formatLocation,
 } from "../../../lib/countries-data";
 import { fetchCurrencyCatalog, symbolFrom } from "../../../lib/currency-data";
 import type { Advisor, Review } from "../../../lib/types";
@@ -44,6 +42,7 @@ const RATING_BARS: Array<{ key: 5 | 4 | 3 | 2 | 1; defaultPct: number }> = [
 export default async function AdvisorDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const labels = (await getSiteContent("advisor-detail")).labels || {};
+  const footer = (await getSiteContent("global")).footer || {};
 
   let advisor: Detail | null = null;
   try {
@@ -86,10 +85,6 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
     badges.push({ icon: <BadgeCheck size={13} />, label: "New Advisor", cls: "bg-emerald-100 text-emerald-700" });
   }
   const countries = await fetchCountries();
-  const userLocation = formatLocation(
-    user.city,
-    countryNameFrom(countries, user.country),
-  );
   const catalog = await fetchCurrencyCatalog();
   // Symbol follows the advisor's selected country (fall back to stored currency).
   const currencySymbol = symbolFrom(
@@ -155,10 +150,6 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
                 </div>
 
                 <div className="flex items-center gap-4 mt-3 flex-wrap text-sm text-slate-600">
-                  <span className="inline-flex items-center gap-1">
-                    <MapPin size={14} className="text-slate-400" />
-                    {userLocation || "Worldwide"}
-                  </span>
                   <span className="inline-flex items-center gap-1 text-slate-700">
                     <StarIcon size={15} className="text-amber-500" />
                     <span className="font-semibold">{rating.toFixed(1)}</span>
@@ -450,17 +441,13 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
                 symbol={currencySymbol}
               />
             </div>
-            <div className="mt-5 space-y-2">
-              <Button size="md" className="w-full">
-                {labels.bookSession || "Book a session"}
-              </Button>
-              <button
-                type="button"
-                className="w-full h-11 rounded-full bg-slate-100 text-slate-800 font-semibold hover:bg-slate-200 transition-colors"
-              >
-                {labels.sendMessage || "Send message"}
-              </button>
-            </div>
+            <BookingActions
+              advisorId={id}
+              appStoreLink={footer.appStoreLink}
+              playStoreLink={footer.playStoreLink}
+              bookLabel={labels.bookSession || "Book a session"}
+              messageLabel={labels.sendMessage || "Send message"}
+            />
             <div className="mt-4 flex items-center justify-center gap-1.5 text-xs text-slate-500">
               <ShieldCheck size={13} className="text-[#0e7490]" />
               Secure booking · 100% satisfaction guaranteed

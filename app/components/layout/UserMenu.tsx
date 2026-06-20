@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDownIcon, UserIcon } from "../ui/Icons";
 import { clearAuthCookies, getCurrentUser } from "../../lib/api";
 import { disconnectSocket } from "../../lib/socket";
+import { StoreBadges } from "../ui/StoreBadges";
 
 const ADVISOR_DASHBOARD_URL =
   process.env.NEXT_PUBLIC_ADVISOR_DASHBOARD_URL ||
@@ -68,10 +69,20 @@ function Avatar({ user, size = 40 }: { user: AuthUser; size?: number }) {
 }
 
 /** Desktop profile avatar with a dropdown (name/email + log out). */
-export function UserMenu({ user }: { user: AuthUser }) {
+export function UserMenu({
+  user,
+  appStoreLink,
+  playStoreLink,
+}: {
+  user: AuthUser;
+  appStoreLink?: string;
+  playStoreLink?: string;
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const showAdvisorDashboard = user.role === "advisor";
+  // Clients do everything in the app — nudge them to download it.
+  const isClient = !user.role || user.role === "user";
 
   useEffect(() => {
     if (!open) return;
@@ -122,6 +133,14 @@ export function UserMenu({ user }: { user: AuthUser }) {
               Advisor Dashboard
             </a>
           )}
+          {isClient && (appStoreLink || playStoreLink) ? (
+            <div className="px-4 py-3 border-t border-slate-100">
+              <p className="text-xs font-medium text-slate-500 mb-2">
+                Get the Prophetic Pathway app
+              </p>
+              <StoreBadges appStoreLink={appStoreLink} playStoreLink={playStoreLink} />
+            </div>
+          ) : null}
           <button
             type="button"
             onClick={logout}
@@ -138,8 +157,17 @@ export function UserMenu({ user }: { user: AuthUser }) {
 }
 
 /** Mobile profile block: avatar + name/email + log out, for use inside the mobile menu. */
-export function UserMenuMobile({ user }: { user: AuthUser }) {
+export function UserMenuMobile({
+  user,
+  appStoreLink,
+  playStoreLink,
+}: {
+  user: AuthUser;
+  appStoreLink?: string;
+  playStoreLink?: string;
+}) {
   const showAdvisorDashboard = user.role === "advisor";
+  const isClient = !user.role || user.role === "user";
   return (
     <div className="mt-3 pt-3 border-t border-slate-100">
       <div className="flex items-center gap-3 px-1 py-2">
@@ -158,6 +186,14 @@ export function UserMenuMobile({ user }: { user: AuthUser }) {
           Advisor Dashboard
         </a>
       )}
+      {isClient && (appStoreLink || playStoreLink) ? (
+        <div className="mt-3 pt-3 border-t border-slate-100">
+          <p className="text-xs font-medium text-slate-500 mb-2">
+            Get the Prophetic Pathway app
+          </p>
+          <StoreBadges appStoreLink={appStoreLink} playStoreLink={playStoreLink} />
+        </div>
+      ) : null}
       <button
         type="button"
         onClick={logout}
