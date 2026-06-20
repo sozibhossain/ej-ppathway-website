@@ -52,7 +52,11 @@ export function Header({ global }: { global: GlobalSections }) {
           {!ready ? (
             <div className="h-10 w-10 rounded-full bg-slate-100 animate-pulse" aria-hidden="true" />
           ) : user ? (
-            <UserMenu user={user} />
+            <UserMenu
+              user={user}
+              appStoreLink={global.footer?.appStoreLink}
+              playStoreLink={global.footer?.playStoreLink}
+            />
           ) : (
             <>
               <Link
@@ -95,7 +99,11 @@ export function Header({ global }: { global: GlobalSections }) {
               );
             })}
             {ready && user ? (
-              <UserMenuMobile user={user} />
+              <UserMenuMobile
+                user={user}
+                appStoreLink={global.footer?.appStoreLink}
+                playStoreLink={global.footer?.playStoreLink}
+              />
             ) : (
               <div className="grid grid-cols-2 gap-2 mt-3">
                 <Link

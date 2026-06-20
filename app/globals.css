@@ -55,3 +55,13 @@ body {
   background-image: radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px);
   background-size: 16px 16px;
 }
+
+/* Interactive elements should always show a pointer cursor on hover
+   (Tailwind v4 / browsers do not default buttons to pointer). Disabled
+   controls are intentionally excluded so they keep their default/not-allowed cursor. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+label[for],
+summary {
+  cursor: pointer;
+}
