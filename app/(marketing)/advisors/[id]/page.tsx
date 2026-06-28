@@ -14,11 +14,6 @@ import {
 import { BadgeCheck, ShieldCheck, Award, Flame, Clock } from "lucide-react";
 import { api } from "../../../lib/api";
 import { getSiteContent } from "../../../lib/site-content";
-import {
-  fetchCountries,
-  currencyCodeFrom,
-} from "../../../lib/countries-data";
-import { fetchCurrencyCatalog, symbolFrom } from "../../../lib/currency-data";
 import type { Advisor, Review } from "../../../lib/types";
 
 type Detail = {
@@ -84,14 +79,6 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
   if (badges.length === 0) {
     badges.push({ icon: <BadgeCheck size={13} />, label: "New Advisor", cls: "bg-emerald-100 text-emerald-700" });
   }
-  const countries = await fetchCountries();
-  const catalog = await fetchCurrencyCatalog();
-  // Symbol follows the advisor's selected country (fall back to stored currency).
-  const currencySymbol = symbolFrom(
-    catalog,
-    currencyCodeFrom(countries, user.country) || user.currency,
-  );
-
   return (
     <div className="container-page py-6 sm:py-8">
       <Link
@@ -417,28 +404,25 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
             </div>
             <h3 className="font-semibold text-slate-900 mb-4 inline-flex items-center gap-2">
               <span className="h-6 w-6 rounded-full bg-[#0e7490] text-white inline-flex items-center justify-center text-xs">
-                {currencySymbol}
+                Cr
               </span>
-              {labels.pricing || "Pricing"}
+              {labels.pricing || "Credit Pricing"}
             </h3>
             <div className="space-y-3">
               <PriceRow
                 icon={<ChatIcon size={16} />}
                 label="Chat"
                 price={profile?.pricing?.chatPerMin}
-                symbol={currencySymbol}
               />
               <PriceRow
                 icon={<PhoneIcon size={16} />}
                 label="Call"
                 price={profile?.pricing?.callPerMin}
-                symbol={currencySymbol}
               />
               <PriceRow
                 icon={<VideoIcon size={16} />}
                 label="Video"
                 price={profile?.pricing?.videoPerMin}
-                symbol={currencySymbol}
               />
             </div>
             <BookingActions
@@ -489,12 +473,10 @@ function PriceRow({
   icon,
   label,
   price,
-  symbol = "$",
 }: {
   icon: React.ReactNode;
   label: string;
   price?: number;
-  symbol?: string;
 }) {
   return (
     <div className="flex items-center justify-between text-sm">
@@ -502,8 +484,7 @@ function PriceRow({
         <span className="text-[#0e7490]">{icon}</span> {label}
       </span>
       <span className="font-semibold text-slate-900">
-        {symbol}
-        {(price || 0).toFixed(2)}/min
+        {(price || 0).toFixed(2)} credits/min
       </span>
     </div>
   );
