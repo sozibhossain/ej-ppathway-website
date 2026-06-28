@@ -158,6 +158,28 @@ export default function AdvisorApplyPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Keep the status tracker in sync with admin pipeline changes without a manual
+  // reload: while an application is in progress, re-poll its status periodically.
+  useEffect(() => {
+    if (!existingApplication) return;
+    const t = setInterval(async () => {
+      try {
+        const r = await api.get<ApplicationInfo>("/auth/advisor-application");
+        const next = r.data;
+        if (next?.status) {
+          setExistingApplication((prev) =>
+            !prev || (prev.status === next.status && prev.stage === next.stage)
+              ? prev
+              : { ...prev, status: next.status, stage: next.stage },
+          );
+        }
+      } catch {
+        /* ignore poll errors */
+      }
+    }, 20000);
+    return () => clearInterval(t);
+  }, [existingApplication]);
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -267,7 +289,7 @@ export default function AdvisorApplyPage() {
 
           {/* Body */}
           <div className="p-5 sm:p-8 md:p-10">
-            <Stepper currentIdx={0} />
+            <Stepper currentIdx={statusToStepIdx(existingApplication?.status)} />
 
             {prefilled && (
               <p className="mt-6 text-center text-xs text-slate-500">
@@ -529,6 +551,24 @@ function ThankYouModal() {
       </div>
     </div>
   );
+}
+
+function statusToStepIdx(status?: string) {
+  switch (status) {
+    case "pending_review":
+      return 1;
+    case "live_interview":
+    case "scheduled":
+      return 2;
+    case "under_review":
+      return 3;
+    case "approved":
+      return 4;
+    case "rejected":
+      return 5;
+    default:
+      return 0;
+  }
 }
 
 function applicationStatusLabel(status?: string) {
