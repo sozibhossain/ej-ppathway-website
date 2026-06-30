@@ -8,6 +8,23 @@ export default async function HowItWorksPage() {
   const data = await getSiteContent("how-it-works");
   const hero = data.hero || {};
   const sessionTypes = data.sessionTypes?.types || [];
+  const creditPacks = [
+    { package: "25 Credits", price: "$19" },
+    { package: "50 Credits", price: "$35" },
+    { package: "100 Credits", price: "$59" },
+    { package: "200 Credits", price: "$99" },
+  ];
+  const creditUsage = [
+    { activity: "15-Minute Chat Session", credits: "5 Credits" },
+    { activity: "5-Minute Voice Call", credits: "8 Credits" },
+    { activity: "10-Minute Voice Call", credits: "10 Credits" },
+    { activity: "15-Minute Voice Call", credits: "15 Credits" },
+    { activity: "5-Minute Video Call", credits: "10 Credits" },
+    { activity: "10-Minute Video Call", credits: "15 Credits" },
+    { activity: "15-Minute Video Call", credits: "20 Credits" },
+    { activity: "Session Recording", credits: "5 Credits" },
+    { activity: "Chat Transcript", credits: "5 Credits" },
+  ];
 
   return (
     <>
@@ -31,6 +48,56 @@ export default async function HowItWorksPage() {
           <div className="mt-6 flex flex-col sm:flex-row sm:flex-wrap gap-3 justify-center">
             <CmsCtaButton link={hero.ctaPrimary} variant="primary" size="lg" className="w-full sm:w-auto" />
             <CmsCtaButton link={hero.ctaSecondary} variant="outline" size="lg" className="w-full sm:w-auto" />
+          </div>
+        </div>
+      </section>
+
+      <section className="py-8 sm:py-10 md:py-12 bg-white">
+        <div className="container-page">
+          <div className="text-center max-w-3xl mx-auto">
+            <div className="text-[#0e7490] text-sm font-semibold mb-2">Credit Packs</div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">
+              Simple Credits For Every Session
+            </h2>
+            <p className="mt-3 text-sm sm:text-base text-slate-600">
+              Buy credits once, use them for chat, voice, video, recordings, and transcripts. Your dashboard shows purchases, usage, remaining balance, and expiry.
+            </p>
+          </div>
+
+          <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div className="rounded-2xl border border-[#cfe9f0] overflow-hidden bg-[#f7fcfd]">
+              <div className="px-5 py-4 bg-[#e6f4f8] font-semibold text-slate-900">Available Credit Packs</div>
+              <div className="divide-y divide-[#cfe9f0]">
+                {creditPacks.map((pack) => (
+                  <div key={pack.package} className="px-5 py-3 flex items-center justify-between text-sm">
+                    <span className="font-medium text-slate-800">{pack.package}</span>
+                    <span className="text-[#0e7490] font-semibold">{pack.price}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-[#cfe9f0] overflow-hidden bg-[#f7fcfd]">
+              <div className="px-5 py-4 bg-[#e6f4f8] font-semibold text-slate-900">Credit Usage Guide</div>
+              <div className="divide-y divide-[#cfe9f0]">
+                {creditUsage.map((row) => (
+                  <div key={row.activity} className="px-5 py-3 flex items-center justify-between gap-4 text-sm">
+                    <span className="text-slate-700">{row.activity}</span>
+                    <span className="text-[#0e7490] font-semibold whitespace-nowrap">{row.credits}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 rounded-2xl bg-[#002E3A] text-white p-5 sm:p-6">
+            <h3 className="text-lg sm:text-xl font-semibold">Example User Journey</h3>
+            <ol className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+              <li>1. Purchase a 100-credit pack.</li>
+              <li>2. Use credits for chat, voice, and video sessions.</li>
+              <li>3. Track your remaining balance in your account.</li>
+              <li>4. Buy more credits any time, including before a session.</li>
+            </ol>
           </div>
         </div>
       </section>
