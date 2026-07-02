@@ -6,16 +6,16 @@ import type { Faq } from "../../lib/types";
 
 export function FAQSection({ sectionLabel, title }: { sectionLabel?: string; title?: string }) {
   return (
-    <section className="py-8 sm:py-10 md:py-12 bg-white">
-      <div className="container-page max-w-4xl">
-        <div className="text-center mb-8 sm:mb-10">
+    <section className="py-16 sm:py-20 md:py-24 bg-white">
+      <div className="container-page max-w-6xl">
+        <div className="text-center mb-8 sm:mb-12">
           {sectionLabel && (
             <div className="text-[#0e7490] text-sm font-semibold mb-2 inline-flex items-center gap-1">
               + {sectionLabel}
             </div>
           )}
           {title && (
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">{title}</h2>
+            <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-extrabold text-slate-950 leading-tight">{title}</h2>
           )}
         </div>
 
