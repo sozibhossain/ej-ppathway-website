@@ -17,7 +17,7 @@ type Props = {
 
 export function Testimonials({ sectionLabel, title, subtitle, trustpilotRating, totalReviews }: Props) {
   return (
-    <section className="py-8 sm:py-10 md:py-12 bg-white">
+    <section className="py-16 sm:py-20 md:py-24 bg-white">
       <div className="container-page text-center">
         {sectionLabel && (
           <div className="text-[#0e7490] text-sm font-semibold mb-2 inline-flex items-center gap-1">
@@ -25,10 +25,10 @@ export function Testimonials({ sectionLabel, title, subtitle, trustpilotRating, 
           </div>
         )}
         {title && (
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">{title}</h2>
+            <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-extrabold text-slate-950 leading-tight">{title}</h2>
         )}
         {subtitle && (
-          <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">{subtitle}</p>
+          <p className="mt-3 text-sm sm:text-base text-slate-700 max-w-2xl mx-auto font-medium">{subtitle}</p>
         )}
 
         {(trustpilotRating || totalReviews) && (
@@ -181,7 +181,7 @@ function ReviewCard({ review }: { review: Review }) {
   return (
     <div
       data-card
-      className="shrink-0 snap-start w-[85vw] max-w-85 sm:w-85 bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 text-left flex flex-col hover:shadow-md transition-shadow"
+      className="shrink-0 snap-start w-[85vw] max-w-88 sm:w-88 bg-white rounded-lg border-2 border-[#d7c8ff] p-4 sm:p-5 text-left flex flex-col shadow-[0_3px_10px_rgba(109,40,217,0.10)]"
     >
       <div className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-emerald-500 text-white w-fit mb-3">
         {Array.from({ length: rating }).map((_, i) => (
