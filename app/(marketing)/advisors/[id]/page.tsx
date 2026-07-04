@@ -14,11 +14,6 @@ import {
 import { BadgeCheck, ShieldCheck, Award, Flame, Clock } from "lucide-react";
 import { api } from "../../../lib/api";
 import { getSiteContent } from "../../../lib/site-content";
-import {
-  fetchCountries,
-  currencyCodeFrom,
-} from "../../../lib/countries-data";
-import { fetchCurrencyCatalog, symbolFrom } from "../../../lib/currency-data";
 import type { Advisor, Review } from "../../../lib/types";
 
 type Detail = {
@@ -31,13 +26,17 @@ type Detail = {
 const DAY_KEYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] as const;
 const DAY_LABELS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-const RATING_BARS: Array<{ key: 5 | 4 | 3 | 2 | 1; defaultPct: number }> = [
-  { key: 5, defaultPct: 89 },
-  { key: 4, defaultPct: 8 },
-  { key: 3, defaultPct: 2 },
-  { key: 2, defaultPct: 1 },
-  { key: 1, defaultPct: 0 },
+const RATING_BARS: Array<{ key: 5 | 4 | 3 | 2 | 1 }> = [
+  { key: 5 },
+  { key: 4 },
+  { key: 3 },
+  { key: 2 },
+  { key: 1 },
 ];
+
+function isAudioMediaUrl(url: string) {
+  return /\.(aac|aiff|flac|m4a|mp3|ogg|opus|wav)(\?|#|$)/i.test(url);
+}
 
 export default async function AdvisorDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -84,14 +83,6 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
   if (badges.length === 0) {
     badges.push({ icon: <BadgeCheck size={13} />, label: "New Advisor", cls: "bg-emerald-100 text-emerald-700" });
   }
-
-  const countries = await fetchCountries();
-  const catalog = await fetchCurrencyCatalog();
-  // Symbol follows the advisor's selected country (fall back to stored currency).
-  const currencySymbol = symbolFrom(
-    catalog,
-    currencyCodeFrom(countries, user.country) || user.currency,
-  );
 
   return (
     <div className="container-page py-6 sm:py-8">
@@ -287,7 +278,7 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
                     const pct =
                       typeof breakdown === "number"
                         ? Math.round((breakdown / Math.max(1, profile?.ratingsCount || 1)) * 100)
-                        : b.defaultPct;
+                        : 0;
                     return (
                       <div key={b.key} className="flex items-center gap-2 text-xs">
                         <span className="w-5 inline-flex items-center gap-0.5 text-slate-700 shrink-0">
@@ -313,7 +304,7 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
                 {(["communication", "expertise", "professionalism", "valueForMoney"] as const).map(
                   (k) => {
                     const v = profile?.ratingBreakdown?.[k] || 0;
-                    const pct = v > 0 ? Math.round((v / 5) * 100) : 95 + Math.floor(Math.random() * 5);
+                    const pct = v > 0 ? Math.round((v / 5) * 100) : 0;
                     const label =
                       k === "valueForMoney"
                         ? "Value for Money"
@@ -391,13 +382,19 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
           {profile?.introVideoUrl ? (
             <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
               <div className="text-center px-4 py-3 text-slate-800 font-semibold border-b border-slate-100">
-                {labels.introVideo || "Intro video"}
+                {labels.introVideo || "Intro media"}
               </div>
-              <video
-                src={profile.introVideoUrl}
-                controls
-                className="w-full aspect-video bg-black"
-              />
+              {isAudioMediaUrl(profile.introVideoUrl) ? (
+                <div className="flex aspect-video items-center bg-slate-100 px-4">
+                  <audio src={profile.introVideoUrl} controls className="w-full" />
+                </div>
+              ) : (
+                <video
+                  src={profile.introVideoUrl}
+                  controls
+                  className="w-full aspect-video bg-black"
+                />
+              )}
             </div>
           ) : null}
 
@@ -427,19 +424,16 @@ export default async function AdvisorDetailPage({ params }: { params: Promise<{ 
                 icon={<ChatIcon size={16} />}
                 label="Chat"
                 price={profile?.pricing?.chatPerMin}
-                currencySymbol={currencySymbol}
               />
               <PriceRow
                 icon={<PhoneIcon size={16} />}
                 label="Call"
                 price={profile?.pricing?.callPerMin}
-                currencySymbol={currencySymbol}
               />
               <PriceRow
                 icon={<VideoIcon size={16} />}
                 label="Video"
                 price={profile?.pricing?.videoPerMin}
-                currencySymbol={currencySymbol}
               />
             </div>
             <BookingActions
@@ -490,12 +484,10 @@ function PriceRow({
   icon,
   label,
   price,
-  currencySymbol,
 }: {
   icon: React.ReactNode;
   label: string;
   price?: number;
-  currencySymbol: string;
 }) {
   return (
     <div className="flex items-center justify-between text-sm">
@@ -503,7 +495,7 @@ function PriceRow({
         <span className="text-[#0e7490]">{icon}</span> {label}
       </span>
       <span className="font-semibold text-slate-900">
-        {currencySymbol}{(price || 0).toFixed(2)}/min
+        {(price || 0).toFixed(2)} credits/min
       </span>
     </div>
   );

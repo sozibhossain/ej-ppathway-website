@@ -188,7 +188,7 @@ export default function AdvisorApplyPage() {
       return;
     }
 
-    // Every field is mandatory, and the introduction video must be uploaded.
+    // Every field is mandatory, and the introduction audio or video must be uploaded.
     if (
       !name ||
       !email ||
@@ -206,7 +206,7 @@ export default function AdvisorApplyPage() {
       return;
     }
     if (!intro) {
-      setError("Please upload your introduction video before submitting.");
+      setError("Please upload your introduction audio or video before submitting.");
       return;
     }
     if (!agree) {
@@ -446,10 +446,10 @@ export default function AdvisorApplyPage() {
 
             <section>
               <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-4 pl-3 border-l-[3px] border-[#0e7490] leading-tight">
-                Introduction Video
+                Introduction Audio or Video
               </h2>
               <VideoRequirements />
-              <FileDrop label="Upload an Intro video *" file={intro} onChange={setIntro} />
+              <FileDrop label="Upload an Intro audio or video *" file={intro} onChange={setIntro} />
             </section>
 
             <Checkbox
@@ -607,10 +607,10 @@ function VideoRequirements() {
         <span className="h-7 w-7 rounded-lg bg-[#0e7490] text-white inline-flex items-center justify-center shrink-0">
           <UploadIconInline size={15} />
         </span>
-        Introduction Video Requirement
+        Introduction Audio or Video Requirement
       </h3>
       <p className="mt-2">
-        As part of your application, please record a 1–2 minute video introducing yourself and
+        As part of your application, please record a 1-2 minute audio or video introducing yourself and
         answering the questions below.
       </p>
       <ul className="mt-3 list-disc pl-5 space-y-1.5">
@@ -647,16 +647,16 @@ function VideoRequirements() {
         </li>
       </ul>
 
-      <h4 className="mt-4 font-semibold text-slate-900">Technical Requirements — Video Quality</h4>
+      <h4 className="mt-4 font-semibold text-slate-900">Technical Requirements</h4>
       <ul className="mt-2 list-disc pl-5 space-y-1.5">
         <li>Record in a quiet environment.</li>
-        <li>Ensure good lighting with your face clearly visible.</li>
+        <li>For video, ensure good lighting with your face clearly visible.</li>
         <li>Use clear audio with minimal background noise.</li>
-        <li>Position your camera securely and keep it stable.</li>
+        <li>For video, position your camera securely and keep it stable.</li>
       </ul>
 
       <p className="mt-3 font-medium text-slate-800">
-        Applications submitted without a video or with incomplete responses will not be considered.
+        Applications submitted without audio or video, or with incomplete responses, will not be considered.
       </p>
     </div>
   );
@@ -687,13 +687,13 @@ function FileDrop({
         <span className="h-11 w-11 rounded-full bg-white text-[#0e7490] inline-flex items-center justify-center shadow-sm">
           <UploadIconInline size={20} />
         </span>
-        <span className="text-sm font-semibold text-slate-700">{file ? file.name : "Upload an intro video"}</span>
-        <span className="text-xs text-slate-400">MP4 / WebM up to 100 MB</span>
+        <span className="text-sm font-semibold text-slate-700">{file ? file.name : "Upload an intro audio or video"}</span>
+        <span className="text-xs text-slate-400">MP3 / M4A / MP4 / WebM up to 100 MB</span>
       </button>
       <input
         ref={ref}
         type="file"
-        accept="video/*"
+        accept="audio/*,video/*"
         className="hidden"
         onChange={(e) => onChange(e.target.files?.[0] || null)}
       />
