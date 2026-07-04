@@ -8,7 +8,7 @@ export function Footer({ global }: { global: GlobalSections }) {
   const f = global.footer || {};
 
   return (
-    <footer className="bg-[var(--footer-bg)]">
+    <footer style={{ background: "linear-gradient(90deg, #DDF8FF 0%, #E6FAFF 100%)" }}>
       <div className="container-page pt-10 md:pt-14 pb-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-10">
           <div className="lg:col-span-1">
