@@ -251,7 +251,7 @@ export function AdvisorsBrowser({ initialAdvisors, emptyStateText }: Props) {
           </div>
         )}
         {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-3 sm:gap-4 md:gap-5">
             {Array.from({ length: 8 }).map((_, i) => (
               <AdvisorCardSkeleton key={i} />
             ))}
@@ -261,7 +261,7 @@ export function AdvisorsBrowser({ initialAdvisors, emptyStateText }: Props) {
             {emptyStateText || "No advisors match your filters."}
           </p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-3 sm:gap-4 md:gap-5">
             {advisors.map((a) => (
               <AdvisorCard key={a.user._id} advisor={a} />
             ))}

@@ -215,7 +215,7 @@ export type Advisor = {
     ratingsCount?: number;
     ratingBreakdown?: Record<string, number>;
     totalSessions?: number;
-    weeklySchedule?: Record<string, { enabled?: boolean; from?: string; to?: string }>;
+    weeklySchedule?: Record<string, { enabled?: boolean; from?: string; to?: string; slots?: { from?: string; to?: string }[] }>;
   };
   user: {
     _id: string;

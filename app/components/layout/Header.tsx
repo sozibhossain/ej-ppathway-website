@@ -14,7 +14,12 @@ export function Header({ global }: { global: GlobalSections }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, ready } = useAuthUser();
 
-  const nav = global.nav || [];
+  const isAdvisor = user?.role === "advisor";
+  const nav = (global.nav || []).filter((item) => {
+    if (!isAdvisor) return true;
+    const href = item.href.replace(/\/+$/, "");
+    return href !== "/join-as-advisor";
+  });
   const loginLabel = global.auth?.loginLabel || "Log in";
   const signupLabel = global.auth?.signupLabel || "Get Started";
 
