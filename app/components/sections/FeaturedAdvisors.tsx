@@ -62,7 +62,7 @@ async function FeaturedAdvisorsGrid() {
   if (advisors.length === 0) return <FeaturedAdvisorsSkeletonGrid />;
 
   return (
-    <div className="mt-8 sm:mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-5">
+    <div className="mt-8 sm:mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
       {advisors.map((a) => (
         <AdvisorCard key={a.user._id} advisor={a} />
       ))}
@@ -72,7 +72,7 @@ async function FeaturedAdvisorsGrid() {
 
 function FeaturedAdvisorsSkeletonGrid() {
   return (
-    <div className="mt-8 sm:mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 md:gap-5">
+    <div className="mt-8 sm:mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
       {Array.from({ length: 6 }).map((_, i) => (
         <AdvisorCardSkeleton key={i} />
       ))}

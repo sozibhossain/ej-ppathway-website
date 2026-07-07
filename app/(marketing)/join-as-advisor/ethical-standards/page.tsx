@@ -9,7 +9,10 @@ const HERO_FALLBACK = "/ethical-standards-hero.png";
 export default async function EthicalStandardsPage() {
   const data = await getSiteContent("ethical-standards");
   const hero = data.hero || {};
-  const heroImage = hero.backgroundImage || HERO_FALLBACK;
+  const configuredHeroImage = hero.backgroundImage?.trim();
+  const heroImage = configuredHeroImage && !configuredHeroImage.startsWith("linear-gradient")
+    ? configuredHeroImage
+    : HERO_FALLBACK;
 
   return (
     <>
@@ -19,13 +22,13 @@ export default async function EthicalStandardsPage() {
             src={heroImage}
             alt=""
             fill
-            className="object-cover opacity-70"
+            className="object-cover opacity-100"
             sizes="100vw"
             unoptimized
             priority
           />
         )}
-        <div className="absolute inset-0 bg-white/58" aria-hidden="true" />
+        <div className="absolute inset-0 bg-white/62" aria-hidden="true" />
         <div
           className="absolute inset-x-0 bottom-0 h-36 bg-linear-to-b from-white/0 to-white"
           aria-hidden="true"
@@ -48,7 +51,9 @@ export default async function EthicalStandardsPage() {
           )}
           {hero.banner && (
             <div className="mt-5 flex w-full max-w-[620px] items-start gap-3 rounded-[6px] bg-white px-4 py-3 text-left text-xs font-medium leading-snug text-slate-900 shadow-sm ring-1 ring-slate-200 sm:px-5 sm:text-sm">
-              <span className="mt-0.5 text-amber-500">ⓘ</span>
+              <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-slate-300 text-[11px] text-slate-500">
+                !
+              </span>
               <span className="flex-1">{hero.banner}</span>
             </div>
           )}

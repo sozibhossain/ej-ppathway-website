@@ -35,7 +35,7 @@ body {
 
 /* Reusable utility */
 .container-page {
-  max-width: 1664px;
+  max-width: 1220px;
   margin-inline: auto;
   padding-inline: 1rem;
 }
