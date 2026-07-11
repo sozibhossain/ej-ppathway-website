@@ -109,6 +109,18 @@ function TestimonialsCarousel({ reviews }: { reviews: Review[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const drag = useRef({ active: false, startX: 0, startScroll: 0 });
   const [paused, setPaused] = useState(false);
+  const [page, setPage] = useState(0);
+  const pageCount = Math.max(1, Math.ceil(reviews.length / 3));
+
+  const goToPage = (next: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const clamped = Math.max(0, Math.min(pageCount - 1, next));
+    const card = el.querySelector<HTMLElement>("[data-card]");
+    const amount = card ? (card.offsetWidth + 20) * 3 : el.clientWidth;
+    el.scrollTo({ left: amount * clamped, behavior: "smooth" });
+    setPage(clamped);
+  };
 
   // Gentle auto-advance (no buttons); pauses on hover/drag/touch and loops at the end.
   useEffect(() => {
@@ -169,6 +181,33 @@ function TestimonialsCarousel({ reviews }: { reviews: Review[] }) {
           <ReviewCard key={r._id} review={r} />
         ))}
       </div>
+      {pageCount > 1 ? (
+        <div className="mt-5 flex items-center justify-center gap-2">
+          <button
+            type="button"
+            onClick={() => goToPage(page - 1)}
+            className="h-9 rounded-full border border-slate-200 px-3 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+          >
+            Prev
+          </button>
+          {Array.from({ length: pageCount }).map((_, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => goToPage(index)}
+              aria-label={`Show testimonial page ${index + 1}`}
+              className={`h-2.5 w-2.5 rounded-full ${index === page ? "bg-[#0e7490]" : "bg-slate-300"}`}
+            />
+          ))}
+          <button
+            type="button"
+            onClick={() => goToPage(page + 1)}
+            className="h-9 rounded-full border border-slate-200 px-3 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+          >
+            Next
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }

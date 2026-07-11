@@ -18,6 +18,7 @@ import {
 import { MapPin } from "lucide-react";
 import { api, ApiError, getCurrentUser } from "../../../lib/api";
 import { useCountries } from "../../../lib/countries";
+import type { AdvisorApplicationSections, SiteContentDoc } from "../../../lib/types";
 
 const APPLY_PATH = "/join-as-advisor/apply";
 type AccountInfo = {
@@ -53,7 +54,90 @@ const STEPS = [
   "Not Selected",
 ];
 
+const DEFAULT_COPY: AdvisorApplicationSections = {
+  hero: {
+    title: "Become an Advisor",
+    subtitle: "Complete the application below to begin your journey with Prophetic Pathway."
+  },
+  helper: {
+    lockedAccountText: "Your account details are pre-filled and locked below. To change them, update your account profile.",
+    statusPrefix: "Application status:",
+    reviewedLockText: "Your submitted application is locked while it is being reviewed.",
+    approvedMessage: "Your advisor application has been approved.",
+    rejectedMessage: "Your advisor application was not selected."
+  },
+  sections: {
+    personalTitle: "Personal Information",
+    addressTitle: "Address Information",
+    experienceTitle: "Experience & Availability",
+    introVideoTitle: "Introduction Video"
+  },
+  fields: {
+    fullNameLabel: "Enter Your Full Name *",
+    emailLabel: "Enter Your Email *",
+    phoneLabel: "Enter Your Phone Number *",
+    dobLabel: "Date of Birth *",
+    addressLabel: "Enter Your Address *",
+    addressPlaceholder: "Enter address",
+    countryLabel: "Country *",
+    countryPlaceholder: "Select Country",
+    stateLabel: "State *",
+    statePlaceholder: "Enter your state / province",
+    cityLabel: "City *",
+    cityPlaceholder: "Enter your city",
+    experienceLabel: "Years of Experience *",
+    experiencePlaceholder: "e.g. 5",
+    availabilityLabel: "Are you available to work at least 5 hours per day? *",
+    baptizedLabel: "Have you been baptized with the Holy Spirit with the evidence of speaking in tongues? *"
+  },
+  introVideo: {
+    requirementTitle: "Introduction Video Requirement",
+    description: "As part of your application, please record a 1-2 minute video introducing yourself and answering the questions below. You can upload an audio message later from your advisor profile.",
+    technicalTitle: "Technical Requirements",
+    questions: [
+      "Tell us your full name.",
+      "What city, state/province, and country are you located in?",
+      "How long have you been operating in the prophetic?",
+      "Briefly share how your spiritual journey began and how you discovered your prophetic calling.",
+      "What areas do you feel most effective in when helping people?",
+      "How would you describe your approach to prophetic guidance?",
+      "Why Do You Want to Join Prophetic Pathway?"
+    ],
+    technicalRequirements: [
+      "Record in a quiet environment.",
+      "Ensure good lighting with your face clearly visible.",
+      "Use clear audio with minimal background noise.",
+      "Position your camera securely and keep it stable."
+    ],
+    finalNote: "Applications submitted without an introduction video, or with incomplete responses, will not be considered.",
+    uploadLabel: "Upload an Intro Video *",
+    uploadPlaceholder: "Upload an intro video",
+    uploadHint: "MP4 / WebM / MOV up to 100 MB"
+  },
+  consent: {
+    ethicalAgreementPrefix: "I have read and agree to follow the",
+    ethicalStandardsLabel: "Advisors' Ethical Standards",
+    ethicalAgreementSuffix: ". I understand that violating these standards may result in suspension or removal from the platform.",
+    privacyNote: "By submitting this application, you consent to the use of your personal data for the purpose of evaluating your suitability for employment in our organization. Your password, profile photo, and detailed bio are collected later during onboarding.",
+    submitLabel: "Submit",
+    submittingLabel: "Submitting...",
+    lockedLabel: "Application Locked"
+  }
+};
+
+function mergeApplicationCopy(next?: AdvisorApplicationSections): AdvisorApplicationSections {
+  return {
+    hero: { ...DEFAULT_COPY.hero, ...(next?.hero || {}) },
+    helper: { ...DEFAULT_COPY.helper, ...(next?.helper || {}) },
+    sections: { ...DEFAULT_COPY.sections, ...(next?.sections || {}) },
+    fields: { ...DEFAULT_COPY.fields, ...(next?.fields || {}) },
+    introVideo: { ...DEFAULT_COPY.introVideo, ...(next?.introVideo || {}) },
+    consent: { ...DEFAULT_COPY.consent, ...(next?.consent || {}) }
+  };
+}
+
 export default function AdvisorApplyPage() {
+  const [copy, setCopy] = useState<AdvisorApplicationSections>(DEFAULT_COPY);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -123,6 +207,16 @@ export default function AdvisorApplyPage() {
     // Refresh from the server so the latest profile details are used.
     (async () => {
       try {
+        const r = await api.get<SiteContentDoc<AdvisorApplicationSections>>(
+          "/cms/site-content/advisor-application",
+          undefined,
+          { skipAuth: true }
+        );
+        setCopy(mergeApplicationCopy(r.data?.sections));
+      } catch {
+        /* keep default copy */
+      }
+      try {
         const r = await api.get<AccountInfo>("/auth/me");
         if (r.data) apply(r.data);
       } catch {
@@ -131,7 +225,7 @@ export default function AdvisorApplyPage() {
       try {
         const r = await api.get<ApplicationInfo>("/auth/advisor-application");
         const app = r.data;
-        if (app && !["approved", "rejected"].includes(app.status || "")) {
+        if (app) {
           setExistingApplication(app);
           if (app.yearsOfExperience) setYearsExperience(app.yearsOfExperience);
           if (app.availableFiveHoursPerDay) setAvailableFiveHours(app.availableFiveHoursPerDay);
@@ -188,7 +282,7 @@ export default function AdvisorApplyPage() {
       return;
     }
 
-    // Every field is mandatory, and the introduction audio or video must be uploaded.
+    // Every field is mandatory, and the introduction video must be uploaded.
     if (
       !name ||
       !email ||
@@ -206,7 +300,11 @@ export default function AdvisorApplyPage() {
       return;
     }
     if (!intro) {
-      setError("Please upload your introduction audio or video before submitting.");
+      setError("Please upload your introduction video before submitting.");
+      return;
+    }
+    if (!intro.type.startsWith("video/")) {
+      setError("Please choose a video file for your introduction.");
       return;
     }
     if (!agree) {
@@ -279,10 +377,10 @@ export default function AdvisorApplyPage() {
                 onError={(e) => (e.currentTarget.style.display = "none")}
               />
               <h1 className="mt-4 text-2xl sm:text-3xl font-bold inline-flex flex-wrap items-center justify-center gap-2">
-                Become an Advisor <SparkleIcon size={22} />
+                {copy.hero?.title} <SparkleIcon size={22} />
               </h1>
               <p className="mt-1.5 text-sm text-teal-50/90 max-w-md mx-auto">
-                Complete the application below to begin your journey with Prophetic Pathway.
+                {copy.hero?.subtitle}
               </p>
             </div>
           </div>
@@ -293,24 +391,23 @@ export default function AdvisorApplyPage() {
 
             {prefilled && (
               <p className="mt-6 text-center text-xs text-slate-500">
-                Your account details are pre-filled and locked below. To change them, update your
-                account profile.
+                {copy.helper?.lockedAccountText}
               </p>
             )}
             {existingApplication && (
-              <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                Application status: <b>{applicationStatusLabel(existingApplication.status)}</b>. Your submitted application is locked while it is being reviewed.
+              <div className={`mt-6 rounded-xl border px-4 py-3 text-sm ${applicationStatusTone(existingApplication.status)}`}>
+                {copy.helper?.statusPrefix} <b>{applicationStatusLabel(existingApplication.status)}</b>. {applicationStatusMessage(existingApplication.status, copy)}
               </div>
             )}
 
             <form onSubmit={submit} className="mt-8 space-y-6 sm:space-y-7">
             <section>
               <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-4 pl-3 border-l-[3px] border-[#0e7490] leading-tight">
-                Personal Information
+                {copy.sections?.personalTitle}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <TextField
-                  label="Enter Your Full Name *"
+                  label={copy.fields?.fullNameLabel || ""}
                   placeholder="Enter full name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -319,7 +416,7 @@ export default function AdvisorApplyPage() {
                   required
                 />
                 <TextField
-                  label="Enter Your Email *"
+                  label={copy.fields?.emailLabel || ""}
                   type="email"
                   placeholder="Enter Email"
                   value={email}
@@ -329,7 +426,7 @@ export default function AdvisorApplyPage() {
                   required
                 />
                 <TextField
-                  label="Enter Your Phone Number *"
+                  label={copy.fields?.phoneLabel || ""}
                   type="tel"
                   placeholder="Enter phone number"
                   value={phone}
@@ -339,7 +436,7 @@ export default function AdvisorApplyPage() {
                   required
                 />
                 <TextField
-                  label="Date of Birth *"
+                  label={copy.fields?.dobLabel || ""}
                   type="date"
                   value={dob}
                   onChange={(e) => setDob(e.target.value)}
@@ -352,12 +449,12 @@ export default function AdvisorApplyPage() {
 
             <section>
               <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-4 pl-3 border-l-[3px] border-[#0e7490] leading-tight">
-                Address Information
+                {copy.sections?.addressTitle}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <TextField
-                  label="Enter Your Address *"
-                  placeholder="Enter address"
+                  label={copy.fields?.addressLabel || ""}
+                  placeholder={copy.fields?.addressPlaceholder || ""}
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   leftIcon={<MapPin size={18} />}
@@ -365,13 +462,13 @@ export default function AdvisorApplyPage() {
                   required
                 />
                 <label className="block">
-                  <span className="block mb-1.5 text-sm font-medium text-slate-700">Country *</span>
+                  <span className="block mb-1.5 text-sm font-medium text-slate-700">{copy.fields?.countryLabel}</span>
                   <Combobox
                     options={countries.map((c) => ({ value: c.iso2, label: c.name }))}
                     value={countryCode}
                     onChange={(v) => setCountryCode(v)}
                     disabled={locked.country}
-                    placeholder="Select Country"
+                    placeholder={copy.fields?.countryPlaceholder || ""}
                     searchPlaceholder="Search countries…"
                     emptyText="No country found."
                     maxResults={300}
@@ -379,16 +476,16 @@ export default function AdvisorApplyPage() {
                   />
                 </label>
                 <TextField
-                  label="State *"
-                  placeholder="Enter your state / province"
+                  label={copy.fields?.stateLabel || ""}
+                  placeholder={copy.fields?.statePlaceholder || ""}
                   value={stateName}
                   onChange={(e) => setStateName(e.target.value)}
                   disabled={locked.state}
                   required
                 />
                 <TextField
-                  label="City *"
-                  placeholder="Enter your city"
+                  label={copy.fields?.cityLabel || ""}
+                  placeholder={copy.fields?.cityPlaceholder || ""}
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   disabled={locked.city}
@@ -399,19 +496,19 @@ export default function AdvisorApplyPage() {
 
             <section>
               <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-4 pl-3 border-l-[3px] border-[#0e7490] leading-tight">
-                Experience & Availability
+                {copy.sections?.experienceTitle}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <TextField
-                  label="Years of Experience *"
-                  placeholder="e.g. 5"
+                  label={copy.fields?.experienceLabel || ""}
+                  placeholder={copy.fields?.experiencePlaceholder || ""}
                   value={yearsExperience}
                   onChange={(e) => setYearsExperience(e.target.value)}
                   disabled={!!existingApplication}
                   required
                 />
                 <SelectField
-                  label="Are you available to work at least 5 hours per day? *"
+                  label={copy.fields?.availabilityLabel || ""}
                   value={availableFiveHours}
                   onChange={(e) => setAvailableFiveHours(e.target.value)}
                   disabled={!!existingApplication}
@@ -426,7 +523,7 @@ export default function AdvisorApplyPage() {
               </div>
               <div className="mt-4">
                 <SelectField
-                  label="Have you been baptized with the Holy Spirit with the evidence of speaking in tongues? *"
+                  label={copy.fields?.baptizedLabel || ""}
                   value={baptizedInHolySpirit}
                   onChange={(e) => setBaptizedInHolySpirit(e.target.value)}
                   disabled={!!existingApplication}
@@ -446,24 +543,30 @@ export default function AdvisorApplyPage() {
 
             <section>
               <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-4 pl-3 border-l-[3px] border-[#0e7490] leading-tight">
-                Introduction Audio or Video
+                {copy.sections?.introVideoTitle}
               </h2>
-              <VideoRequirements />
-              <FileDrop label="Upload an Intro audio or video *" file={intro} onChange={setIntro} />
+              <VideoRequirements copy={copy} />
+              <FileDrop
+                label={copy.introVideo?.uploadLabel || ""}
+                file={intro}
+                onChange={setIntro}
+                accept="video/*"
+                placeholder={copy.introVideo?.uploadPlaceholder || ""}
+                hint={copy.introVideo?.uploadHint || ""}
+              />
             </section>
 
             <Checkbox
               label={
                 <span>
-                  I have read and agree to follow the{" "}
+                  {copy.consent?.ethicalAgreementPrefix}{" "}
                   <Link
                     href="/join-as-advisor/ethical-standards"
                     className="text-[#0e7490] font-medium hover:underline"
                   >
-                    Advisors&apos; Ethical Standards
+                    {copy.consent?.ethicalStandardsLabel}
                   </Link>
-                  . I understand that violating these standards may result in suspension or removal
-                  from the platform.
+                  {copy.consent?.ethicalAgreementSuffix}
                 </span>
               }
               checked={agree}
@@ -471,15 +574,13 @@ export default function AdvisorApplyPage() {
             />
 
             <p className="text-xs text-slate-500">
-              <b>Note:</b> By submitting this application, you consent to the use of your personal
-              data for the purpose of evaluating your suitability for employment in our organization.
-              Your password, profile photo, and detailed bio are collected later during onboarding.
+              <b>Note:</b> {copy.consent?.privacyNote}
             </p>
 
             {error && <div className="text-sm text-red-600">{error}</div>}
 
             <Button type="submit" size="lg" className="w-full" disabled={submitting || !!existingApplication}>
-              {existingApplication ? "Application Locked" : submitting ? "Submitting…" : "Submit"}
+              {existingApplication ? copy.consent?.lockedLabel : submitting ? copy.consent?.submittingLabel : copy.consent?.submitLabel}
             </Button>
           </form>
           </div>
@@ -580,6 +681,18 @@ function applicationStatusLabel(status?: string) {
   return "Application";
 }
 
+function applicationStatusTone(status?: string) {
+  if (status === "approved") return "border-emerald-200 bg-emerald-50 text-emerald-800";
+  if (status === "rejected") return "border-red-200 bg-red-50 text-red-800";
+  return "border-amber-200 bg-amber-50 text-amber-800";
+}
+
+function applicationStatusMessage(status: string | undefined, copy: AdvisorApplicationSections) {
+  if (status === "approved") return copy.helper?.approvedMessage;
+  if (status === "rejected") return copy.helper?.rejectedMessage;
+  return copy.helper?.reviewedLockText;
+}
+
 function ClockIcon({ size = 16, className }: { size?: number; className?: string }) {
   return (
     <svg
@@ -600,63 +713,31 @@ function ClockIcon({ size = 16, className }: { size?: number; className?: string
   );
 }
 
-function VideoRequirements() {
+function VideoRequirements({ copy }: { copy: AdvisorApplicationSections }) {
   return (
     <div className="mb-4 rounded-2xl border border-[#bfe3ec] bg-[#f0f9fb] p-5 text-sm text-slate-700 leading-relaxed">
       <h3 className="flex items-center gap-2 text-[15px] font-bold text-[#0e7490]">
         <span className="h-7 w-7 rounded-lg bg-[#0e7490] text-white inline-flex items-center justify-center shrink-0">
           <UploadIconInline size={15} />
         </span>
-        Introduction Audio or Video Requirement
+        {copy.introVideo?.requirementTitle}
       </h3>
-      <p className="mt-2">
-        As part of your application, please record a 1-2 minute audio or video introducing yourself and
-        answering the questions below.
-      </p>
+      <p className="mt-2">{copy.introVideo?.description}</p>
       <ul className="mt-3 list-disc pl-5 space-y-1.5">
-        <li>Tell us your full name.</li>
-        <li>What city, state/province, and country are you located in?</li>
-        <li>How long have you been operating in the prophetic?</li>
-        <li>
-          Briefly share how your spiritual journey began and how you discovered your prophetic
-          calling.
-        </li>
-        <li>
-          What areas do you feel most effective in when helping people?
-          <p className="mt-1 text-xs text-slate-500">
-            Examples Include: Dream Interpretation, Vision Interpretation, Interpretation of Tongues,
-            Discernment, Prayer &amp; Intercession, Healing, Relationship guidance, Life purpose and
-            calling, Business and career guidance, Deliverance.
-          </p>
-        </li>
-        <li>
-          How would you describe your approach to prophetic guidance?
-          <p className="mt-1 text-xs text-slate-500">
-            Example: Warm &amp; Encouraging, Calm &amp; Compassionate, Direct &amp; Honest, Deeply
-            Spiritual, Prayer-Focused, Gentle &amp; Nurturing, Practical &amp; Action-Oriented,
-            Discernment-Focused, Professional &amp; Structured, Conversational &amp; Friendly.
-          </p>
-        </li>
-        <li>
-          Why Do You Want to Join Prophetic Pathway?
-          <ul className="mt-1 list-[circle] pl-5 space-y-1 text-slate-600">
-            <li>Why you are interested in serving on the platform.</li>
-            <li>What value and experience you believe you can bring to clients.</li>
-            <li>What makes your approach unique.</li>
-          </ul>
-        </li>
+        {(copy.introVideo?.questions || []).map((item) => (
+          <li key={item}>{item}</li>
+        ))}
       </ul>
 
-      <h4 className="mt-4 font-semibold text-slate-900">Technical Requirements</h4>
+      <h4 className="mt-4 font-semibold text-slate-900">{copy.introVideo?.technicalTitle}</h4>
       <ul className="mt-2 list-disc pl-5 space-y-1.5">
-        <li>Record in a quiet environment.</li>
-        <li>For video, ensure good lighting with your face clearly visible.</li>
-        <li>Use clear audio with minimal background noise.</li>
-        <li>For video, position your camera securely and keep it stable.</li>
+        {(copy.introVideo?.technicalRequirements || []).map((item) => (
+          <li key={item}>{item}</li>
+        ))}
       </ul>
 
       <p className="mt-3 font-medium text-slate-800">
-        Applications submitted without audio or video, or with incomplete responses, will not be considered.
+        {copy.introVideo?.finalNote}
       </p>
     </div>
   );
@@ -666,10 +747,16 @@ function FileDrop({
   label,
   file,
   onChange,
+  accept,
+  placeholder,
+  hint,
 }: {
   label: string;
   file: File | null;
   onChange: (f: File | null) => void;
+  accept: string;
+  placeholder: string;
+  hint: string;
 }) {
   const ref = useRef<HTMLInputElement>(null);
   return (
@@ -687,13 +774,15 @@ function FileDrop({
         <span className="h-11 w-11 rounded-full bg-white text-[#0e7490] inline-flex items-center justify-center shadow-sm">
           <UploadIconInline size={20} />
         </span>
-        <span className="text-sm font-semibold text-slate-700">{file ? file.name : "Upload an intro audio or video"}</span>
-        <span className="text-xs text-slate-400">MP3 / M4A / MP4 / WebM up to 100 MB</span>
+        <span className="max-w-full px-4 text-center text-sm font-semibold text-slate-700 break-all">
+          {file ? file.name : placeholder}
+        </span>
+        <span className="text-xs text-slate-400">{hint}</span>
       </button>
       <input
         ref={ref}
         type="file"
-        accept="audio/*,video/*"
+        accept={accept}
         className="hidden"
         onChange={(e) => onChange(e.target.files?.[0] || null)}
       />

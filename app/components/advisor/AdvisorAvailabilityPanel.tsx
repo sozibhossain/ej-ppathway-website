@@ -37,6 +37,19 @@ type Props = {
 
 const FALLBACK_TIMEZONES = [
   "UTC",
+  "Africa/Abidjan",
+  "Africa/Accra",
+  "Africa/Banjul",
+  "Africa/Bissau",
+  "Africa/Conakry",
+  "Africa/Dakar",
+  "Africa/Freetown",
+  "Africa/Lome",
+  "Africa/Monrovia",
+  "Africa/Nouakchott",
+  "Africa/Ouagadougou",
+  "Africa/Bangui",
+  "Africa/Lagos",
   "America/New_York",
   "America/Chicago",
   "America/Denver",
@@ -312,6 +325,7 @@ export function AdvisorAvailabilityPanel({ advisorId, profile, labels, footer }:
             playStoreLink={footer.playStoreLink}
             bookLabel={labels.bookSession || "Book a session"}
             messageLabel={labels.sendMessage || "Send message"}
+            showMessage={false}
           />
           <p className="mt-3 inline-flex w-full items-center justify-center gap-1.5 text-xs text-slate-500">
             <ShieldCheckIcon size={13} className="text-[#1f6f91]" />

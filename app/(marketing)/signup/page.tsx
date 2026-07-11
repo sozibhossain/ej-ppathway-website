@@ -20,9 +20,37 @@ import {
 } from "../../components/ui/Icons";
 import { api, ApiError } from "../../lib/api";
 import { useCountries } from "../../lib/countries";
+import type { SignupSections, SiteContentDoc } from "../../lib/types";
+
+const DEFAULT_COPY: Required<NonNullable<SignupSections["form"]>> = {
+  title: "Create your account",
+  subtitle: "Join Prophetic Pathway in a few quick steps.",
+  nameLabel: "Full Name",
+  namePlaceholder: "Enter your full name",
+  emailLabel: "Email Address",
+  emailPlaceholder: "Enter your email",
+  phoneLabel: "Phone Number",
+  phonePlaceholder: "+1 (000) 000-0000",
+  dobLabel: "Date of Birth",
+  countryLabel: "Country",
+  countryPlaceholder: "Select Country",
+  cityLabel: "City",
+  cityPlaceholder: "Enter your city",
+  stateLabel: "State",
+  statePlaceholder: "Enter your state / province",
+  passwordLabel: "Password",
+  passwordPlaceholder: "Create a strong password",
+  termsLabel: "I agree to the",
+  termsLinkLabel: "Terms and Conditions",
+  submitLabel: "Create An Account",
+  submittingLabel: "Creating account...",
+  loginPrompt: "Already have an account?",
+  loginLinkLabel: "Log in"
+};
 
 export default function SignupPage() {
   const router = useRouter();
+  const [copy, setCopy] = useState(DEFAULT_COPY);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -41,6 +69,18 @@ export default function SignupPage() {
   useEffect(() => {
     const r = new URLSearchParams(window.location.search).get("redirect");
     if (r && r.startsWith("/") && !r.startsWith("//")) setRedirect(r);
+    (async () => {
+      try {
+        const res = await api.get<SiteContentDoc<SignupSections>>(
+          "/cms/site-content/signup",
+          undefined,
+          { skipAuth: true }
+        );
+        setCopy({ ...DEFAULT_COPY, ...(res.data?.sections?.form || {}) });
+      } catch {
+        /* keep defaults */
+      }
+    })();
   }, []);
 
   const loginHref = redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : "/login";
@@ -102,19 +142,19 @@ export default function SignupPage() {
               />
             </div>
             <h1 className="text-2xl font-bold text-[#0e7490] inline-flex flex-wrap justify-center items-center gap-2">
-              Create your account <SparkleIcon size={20} />
+              {copy.title} <SparkleIcon size={20} />
             </h1>
-            <p className="text-sm text-slate-600 mt-1">Join Prophetic Pathway in a few quick steps.</p>
+            <p className="text-sm text-slate-600 mt-1">{copy.subtitle}</p>
           </div>
 
           <form onSubmit={submit} className="space-y-4">
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                  Full Name
+                  {copy.nameLabel}
                 </label>
                 <TextField
                   type="text"
-                  placeholder="Enter your full name"
+                  placeholder={copy.namePlaceholder}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   leftIcon={<UserIcon size={17} />}
@@ -124,11 +164,11 @@ export default function SignupPage() {
 
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                  Email Address
+                  {copy.emailLabel}
                 </label>
                 <TextField
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder={copy.emailPlaceholder}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   leftIcon={<MailIcon size={17} />}
@@ -139,11 +179,11 @@ export default function SignupPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                    Phone Number
+                    {copy.phoneLabel}
                   </label>
                   <TextField
                     type="tel"
-                    placeholder="+1 (000) 000-0000"
+                    placeholder={copy.phonePlaceholder}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     leftIcon={<PhoneIcon size={17} />}
@@ -152,7 +192,7 @@ export default function SignupPage() {
                 </div>
                 <div className="space-y-1.5">
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                    Date of Birth
+                    {copy.dobLabel}
                   </label>
                   <TextField
                     type="date"
@@ -167,13 +207,13 @@ export default function SignupPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                    Country
+                    {copy.countryLabel}
                   </label>
                   <Combobox
                     options={countries.map((c) => ({ value: c.iso2, label: c.name }))}
                     value={countryCode}
                     onChange={(v) => setCountryCode(v)}
-                    placeholder="Select Country"
+                    placeholder={copy.countryPlaceholder}
                     searchPlaceholder="Search countries…"
                     emptyText="No country found."
                     maxResults={300}
@@ -182,22 +222,22 @@ export default function SignupPage() {
                 </div>
                 <div className="space-y-1.5">
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                    City
+                    {copy.cityLabel}
                   </label>
                   <TextField
                     type="text"
-                    placeholder="Enter your city"
+                    placeholder={copy.cityPlaceholder}
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                   />
                 </div>
                 <div className="space-y-1.5">
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                    State
+                    {copy.stateLabel}
                   </label>
                   <TextField
                     type="text"
-                    placeholder="Enter your state / province"
+                    placeholder={copy.statePlaceholder}
                     value={stateName}
                     onChange={(e) => setStateName(e.target.value)}
                   />
@@ -206,11 +246,11 @@ export default function SignupPage() {
 
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                  Password
+                  {copy.passwordLabel}
                 </label>
                 <TextField
                   type={showPwd ? "text" : "password"}
-                  placeholder="Create a strong password"
+                  placeholder={copy.passwordPlaceholder}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   leftIcon={<LockIcon size={17} />}
@@ -231,9 +271,9 @@ export default function SignupPage() {
               <Checkbox
                 label={
                   <span className="text-slate-600 text-sm">
-                    I agree to the{" "}
+                    {copy.termsLabel}{" "}
                     <Link href="/terms" className="text-[#0e7490] font-semibold hover:underline">
-                      Terms and Conditions
+                      {copy.termsLinkLabel}
                     </Link>
                   </span>
                 }
@@ -262,17 +302,17 @@ export default function SignupPage() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                     </svg>
-                    Creating account…
+                    {copy.submittingLabel}
                   </span>
                 ) : (
-                  "Create An Account"
+                  copy.submitLabel
                 )}
               </Button>
 
               <p className="text-center text-sm text-slate-500">
-                Already have an account?{" "}
+                {copy.loginPrompt}{" "}
                 <Link href={loginHref} className="text-[#0e7490] font-bold hover:underline">
-                  Log in
+                  {copy.loginLinkLabel}
                 </Link>
               </p>
             </form>

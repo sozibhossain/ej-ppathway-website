@@ -81,6 +81,49 @@ export type AdvisorDetailSections = {
   };
 };
 
+export type LoginSections = {
+  form?: {
+    title?: string;
+    subtitle?: string;
+    emailPlaceholder?: string;
+    passwordPlaceholder?: string;
+    rememberLabel?: string;
+    forgotPasswordLabel?: string;
+    submitLabel?: string;
+    submittingLabel?: string;
+    signupPrompt?: string;
+    signupLinkLabel?: string;
+  };
+};
+
+export type SignupSections = {
+  form?: {
+    title?: string;
+    subtitle?: string;
+    nameLabel?: string;
+    namePlaceholder?: string;
+    emailLabel?: string;
+    emailPlaceholder?: string;
+    phoneLabel?: string;
+    phonePlaceholder?: string;
+    dobLabel?: string;
+    countryLabel?: string;
+    countryPlaceholder?: string;
+    cityLabel?: string;
+    cityPlaceholder?: string;
+    stateLabel?: string;
+    statePlaceholder?: string;
+    passwordLabel?: string;
+    passwordPlaceholder?: string;
+    termsLabel?: string;
+    termsLinkLabel?: string;
+    submitLabel?: string;
+    submittingLabel?: string;
+    loginPrompt?: string;
+    loginLinkLabel?: string;
+  };
+};
+
 export type JoinAsAdvisorSections = {
   hero?: { title?: string; subtitle?: string; backgroundImage?: string; ctaPrimary?: LinkValue };
   joiningProcess?: { sectionLabel?: string; title?: string; subtitle?: string; steps?: Step[] };
@@ -92,6 +135,39 @@ export type JoinAsAdvisorSections = {
   requirements?: { title?: string; bullets?: string[]; image?: string };
   advisorTestimonials?: { sectionLabel?: string; title?: string; videos?: { name?: string; quote?: string; videoUrl?: string; thumbnail?: string }[] };
   beforeYouApply?: { eyebrow?: string; title?: string; body?: string; ctaPrimary?: LinkValue; footnote?: string };
+};
+
+export type AdvisorApplicationSections = {
+  hero?: { title?: string; subtitle?: string };
+  helper?: {
+    lockedAccountText?: string;
+    statusPrefix?: string;
+    reviewedLockText?: string;
+    approvedMessage?: string;
+    rejectedMessage?: string;
+  };
+  sections?: { personalTitle?: string; addressTitle?: string; experienceTitle?: string; introVideoTitle?: string };
+  fields?: Record<string, string | undefined>;
+  introVideo?: {
+    requirementTitle?: string;
+    description?: string;
+    technicalTitle?: string;
+    questions?: string[];
+    technicalRequirements?: string[];
+    finalNote?: string;
+    uploadLabel?: string;
+    uploadPlaceholder?: string;
+    uploadHint?: string;
+  };
+  consent?: {
+    ethicalAgreementPrefix?: string;
+    ethicalStandardsLabel?: string;
+    ethicalAgreementSuffix?: string;
+    privacyNote?: string;
+    submitLabel?: string;
+    submittingLabel?: string;
+    lockedLabel?: string;
+  };
 };
 
 export type EthicalStandardsSections = {
@@ -157,7 +233,10 @@ export type SectionsMap = {
   "how-it-works": HowItWorksSections;
   advisors: AdvisorsSections;
   "advisor-detail": AdvisorDetailSections;
+  login: LoginSections;
+  signup: SignupSections;
   "join-as-advisor": JoinAsAdvisorSections;
+  "advisor-application": AdvisorApplicationSections;
   "ethical-standards": EthicalStandardsSections;
   reviews: ReviewsSections;
   blogs: BlogsSections;
@@ -206,6 +285,7 @@ export type Advisor = {
     expertise?: string[];
     styles?: string[];
     languages?: string[];
+    audioMessageUrl?: string;
     introVideoUrl?: string;
     pricing?: { chatPerMin?: number; callPerMin?: number; videoPerMin?: number };
     isOnline?: boolean;

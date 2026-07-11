@@ -1,13 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
 import { AdvisorAvailabilityPanel } from "./AdvisorAvailabilityPanel";
-import {
-  CalendarIcon,
-  ChatIcon,
-  PhoneIcon,
-  StarIcon,
-  VideoIcon,
-} from "../ui/Icons";
+import { ChatIcon, PhoneIcon, StarIcon, VideoIcon } from "../ui/Icons";
 import type { Advisor, AdvisorDetailSections, GlobalSections, Review } from "../../lib/types";
 
 type Detail = {
@@ -29,16 +26,34 @@ type ScheduleDay = NonNullable<Advisor["profile"]["weeklySchedule"]>[string];
 
 const DAY_KEYS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"] as const;
 const STARS = [1, 2, 3, 4, 5];
+type ReviewFilter = "recent" | "call" | "chat" | "video";
 
 export function MarketplaceAdvisorDetail({ advisor, recommended, advisorId, labels, footer }: Props) {
   const { user, profile, reviews } = advisor;
+  const [mediaModal, setMediaModal] = useState<{ url: string; title: string; type: "audio" | "video" } | null>(null);
+  const [reviewFilter, setReviewFilter] = useState<ReviewFilter>("recent");
   const advisorName = displayName(user.name);
   const rating = profile.avgRating || 0;
   const ratingsCount = profile.ratingsCount || 0;
+  const reviewCountLabel = formatReviewCount(ratingsCount);
   const totalReadings = profile.totalSessions || 0;
   const todaysRange = todaysDisplayRange(profile.weeklySchedule);
   const paragraphs = profileParagraphs(profile);
   const endorsements = endorsementRows(profile, ratingsCount);
+  const audioMessageUrl =
+    profile.audioMessageUrl || (profile.introVideoUrl && isAudioMediaUrl(profile.introVideoUrl) ? profile.introVideoUrl : "");
+  const introVideoUrl = profile.introVideoUrl && !isAudioMediaUrl(profile.introVideoUrl) ? profile.introVideoUrl : "";
+  const filteredReviews = useMemo(() => filterAndSortReviews(reviews, reviewFilter), [reviews, reviewFilter]);
+  const totalReviewPages = Math.ceil(filteredReviews.length / 5);
+
+  useEffect(() => {
+    console.log("Marketplace advisor reviews:", reviews);
+    console.log("Filtered marketplace advisor reviews:", {
+      filter: reviewFilter,
+      reviews: filteredReviews,
+    });
+  }, [reviews, reviewFilter, filteredReviews]);
+
 
   return (
     <main className="bg-white text-[#152238]">
@@ -89,18 +104,30 @@ export function MarketplaceAdvisorDetail({ advisor, recommended, advisorId, labe
                 <div className="mt-4 flex items-center gap-2">
                   {StarRating(rating, 22)}
                   <span className="text-sm font-semibold text-slate-500">
-                    {ratingsCount ? `${rating.toFixed(1)} (${ratingsCount} reviews)` : "No reviews yet"}
+                    {ratingsCount ? `${rating.toFixed(1)} (${reviewCountLabel})` : "No reviews yet"}
                   </span>
                 </div>
 
-                {profile.introVideoUrl ? (
-                  <a
-                    href={profile.introVideoUrl}
-                    className="mt-5 inline-flex items-center gap-2 text-base font-semibold text-[#1f6f91] hover:underline"
-                  >
-                    {isAudioMediaUrl(profile.introVideoUrl) ? "Listen to message" : "Watch intro video"}
-                  </a>
-                ) : null}
+                <div className="mt-5 flex flex-wrap gap-3">
+                  {audioMessageUrl ? (
+                    <button
+                      type="button"
+                      onClick={() => setMediaModal({ url: audioMessageUrl, title: "Listen to Message", type: "audio" })}
+                      className="inline-flex items-center gap-2 text-base font-semibold text-[#1f6f91] hover:underline"
+                    >
+                      Listen to message
+                    </button>
+                  ) : null}
+                  {introVideoUrl ? (
+                    <button
+                      type="button"
+                      onClick={() => setMediaModal({ url: introVideoUrl, title: labels.introVideo || "Intro Video", type: "video" })}
+                      className="inline-flex items-center gap-2 text-base font-semibold text-[#1f6f91] hover:underline"
+                    >
+                      Watch intro video
+                    </button>
+                  ) : null}
+                </div>
 
                 <p className={`mt-6 text-lg font-bold ${profile.isOnline ? "text-[#4b861b]" : "text-[#a92828]"}`}>
                   {profile.isOnline
@@ -113,18 +140,28 @@ export function MarketplaceAdvisorDetail({ advisor, recommended, advisorId, labe
                   <ActionRate label="Chat" icon={<ChatIcon size={18} />} price={profile.pricing?.chatPerMin} />
                 </div>
 
-                <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="mt-5 grid grid-cols-1 gap-3">
                   <SmallService label="Video" icon={<VideoIcon size={16} />} price={profile.pricing?.videoPerMin} />
-                  <SmallService label="Appointments" icon={<CalendarIcon size={16} />} />
                 </div>
               </div>
             </div>
           </section>
 
-          {profile.introVideoUrl ? (
+          {audioMessageUrl ? (
             <MediaPanel
-              url={profile.introVideoUrl}
-              title={isAudioMediaUrl(profile.introVideoUrl) ? "Audio message" : labels.introVideo || "Intro video"}
+              url={audioMessageUrl}
+              title="Listen to Message"
+              type="audio"
+              onOpen={() => setMediaModal({ url: audioMessageUrl, title: "Listen to Message", type: "audio" })}
+            />
+          ) : null}
+
+          {introVideoUrl ? (
+            <MediaPanel
+              url={introVideoUrl}
+              title={labels.introVideo || "Intro Video"}
+              type="video"
+              onOpen={() => setMediaModal({ url: introVideoUrl, title: labels.introVideo || "Intro Video", type: "video" })}
             />
           ) : null}
 
@@ -175,30 +212,38 @@ export function MarketplaceAdvisorDetail({ advisor, recommended, advisorId, labe
           </h2>
           <div className="rounded border border-[#d6d6d6] bg-[#f8f8f8] px-4 py-4">
             <div>{StarRating(rating, 21)}</div>
-            <p className="mt-1 font-semibold">{ratingsCount.toLocaleString()} reviews</p>
+            <p className="mt-1 font-semibold">{ratingsCount ? reviewCountLabel : "No reviews yet"}</p>
           </div>
 
           <div className="mt-5 flex items-center gap-3">
             <span className="font-bold">Sort By</span>
-            <button className="rounded border border-[#cfcfcf] bg-white px-4 py-2 font-semibold" type="button">
-              Most Recent
-            </button>
+            <select
+              value={reviewFilter}
+              onChange={(event) => setReviewFilter(event.target.value as ReviewFilter)}
+              className="rounded border border-[#cfcfcf] bg-white px-4 py-2 font-semibold text-slate-950"
+              aria-label="Filter reviews"
+            >
+              <option value="recent">Most Recent</option>
+              <option value="call">Phone Reviews</option>
+              <option value="chat">Chat Reviews</option>
+              <option value="video">Video Reviews</option>
+            </select>
           </div>
 
           <div className="mt-3 border-t border-[#cfd8dc]">
-            {reviews.length ? (
-              reviews.slice(0, 6).map((review, index) => (
+            {filteredReviews.length ? (
+              filteredReviews.slice(0, 6).map((review, index) => (
                 <ReviewRow key={review._id} review={review} featured={index === 0} />
               ))
             ) : (
-              <p className="py-8 text-center text-sm text-slate-500">No reviews yet.</p>
+              <p className="py-8 text-center text-sm text-slate-500">{emptyReviewsText(reviewFilter)}</p>
             )}
           </div>
 
-          {ratingsCount ? (
+          {totalReviewPages > 1 ? (
             <div className="mt-8 flex justify-center">
               <div className="inline-flex overflow-hidden rounded border border-[#d7d7d7] text-sm">
-                {["<<", "1", "2", "3", "...", Math.max(1, Math.ceil(ratingsCount / 5)).toString(), ">>"].map((item) => (
+                {reviewPaginationItems(totalReviewPages).map((item) => (
                   <span key={item} className="border-r border-[#d7d7d7] px-4 py-2 last:border-r-0">
                     {item}
                   </span>
@@ -233,6 +278,14 @@ export function MarketplaceAdvisorDetail({ advisor, recommended, advisorId, labe
           </aside>
         </div>
       </div>
+      {mediaModal ? (
+        <MediaModal
+          url={mediaModal.url}
+          title={mediaModal.title}
+          type={mediaModal.type}
+          onClose={() => setMediaModal(null)}
+        />
+      ) : null}
     </main>
   );
 }
@@ -312,18 +365,125 @@ function StarRating(rating: number, size = 17) {
   );
 }
 
-function MediaPanel({ url, title }: { url: string; title: string }) {
+function formatReviewCount(count: number) {
+  return `${count.toLocaleString()} ${count === 1 ? "review" : "reviews"}`;
+}
+
+function filterAndSortReviews(reviews: Review[], filter: ReviewFilter) {
+  return [...reviews]
+    .filter((review) => filter === "recent" || review.sessionType === filter)
+    .sort((a, b) => reviewTimestamp(b.createdAt) - reviewTimestamp(a.createdAt));
+}
+
+function reviewTimestamp(value?: string) {
+  if (!value) return 0;
+  const timestamp = new Date(value).getTime();
+  return Number.isNaN(timestamp) ? 0 : timestamp;
+}
+
+function emptyReviewsText(filter: ReviewFilter) {
+  if (filter === "call") return "No phone reviews yet.";
+  if (filter === "chat") return "No chat reviews yet.";
+  if (filter === "video") return "No video reviews yet.";
+  return "No reviews yet.";
+}
+
+function reviewPaginationItems(totalPages: number) {
+  if (totalPages <= 1) return [];
+  if (totalPages <= 5) return ["<<", ...Array.from({ length: totalPages }, (_, index) => String(index + 1)), ">>"];
+  return ["<<", "1", "2", "3", "...", String(totalPages), ">>"];
+}
+
+function MediaPanel({
+  url,
+  title,
+  type,
+  onOpen,
+}: {
+  url: string;
+  title: string;
+  type: "audio" | "video";
+  onOpen: () => void;
+}) {
   return (
     <section className="mt-4 max-w-[760px] rounded border border-[#d6d6d6] bg-white">
       <h2 className="border-b border-[#e4e4e4] px-4 py-3 text-base font-bold text-slate-950">{title}</h2>
       <div className="bg-[#f8f8f8] p-4">
-        {isAudioMediaUrl(url) ? (
-          <audio src={url} controls className="w-full" preload="metadata" />
+        {type === "audio" ? (
+          <div className="flex flex-col gap-3 rounded border border-slate-200 bg-white p-4">
+            <audio src={url} controls className="w-full" preload="metadata" />
+            <button
+              type="button"
+              onClick={onOpen}
+              className="self-start rounded bg-[#1f6f91] px-4 py-2 text-sm font-bold text-white hover:bg-[#195b78]"
+            >
+              Open Listener
+            </button>
+          </div>
         ) : (
-          <video src={url} controls className="aspect-video w-full bg-black" preload="metadata" />
+          <button
+            type="button"
+            onClick={onOpen}
+            className="group relative block aspect-video w-full overflow-hidden bg-black text-white"
+            aria-label={`Open ${title}`}
+          >
+            <video src={url} className="h-full w-full object-cover opacity-80" preload="metadata" muted playsInline />
+            <span className="absolute inset-0 grid place-items-center">
+              <span className="rounded-full bg-white/90 px-5 py-3 text-sm font-bold text-[#152238] shadow-lg group-hover:bg-white">
+                Play Intro Video
+              </span>
+            </span>
+          </button>
         )}
       </div>
     </section>
+  );
+}
+
+function MediaModal({
+  url,
+  title,
+  type,
+  onClose,
+}: {
+  url: string;
+  title: string;
+  type: "audio" | "video";
+  onClose: () => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-100 flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-md"
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-3xl overflow-hidden rounded-lg bg-white shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+          <h2 className="text-base font-bold text-slate-950">{title}</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded border border-slate-200 px-3 py-1 text-sm font-bold text-slate-700 hover:bg-slate-50"
+          >
+            Close
+          </button>
+        </div>
+        <div className="bg-slate-950 p-4">
+          {type === "audio" ? (
+            <div className="rounded bg-white p-4">
+              <audio src={url} controls autoPlay className="w-full" />
+            </div>
+          ) : (
+            <video src={url} controls autoPlay className="aspect-video w-full bg-black" />
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 

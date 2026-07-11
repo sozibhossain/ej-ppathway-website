@@ -22,12 +22,14 @@ export function BookingActions({
   playStoreLink,
   bookLabel,
   messageLabel,
+  showMessage = true,
 }: {
   advisorId: string;
   appStoreLink?: string;
   playStoreLink?: string;
   bookLabel: string;
   messageLabel: string;
+  showMessage?: boolean;
 }) {
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -67,13 +69,15 @@ export function BookingActions({
         <Button size="md" className="w-full" onClick={() => openApp("book")}>
           {bookLabel}
         </Button>
-        <button
-          type="button"
-          onClick={() => openApp("message")}
-          className="w-full h-11 rounded-full bg-slate-100 text-slate-800 font-semibold hover:bg-slate-200 transition-colors"
-        >
-          {messageLabel}
-        </button>
+        {showMessage ? (
+          <button
+            type="button"
+            onClick={() => openApp("message")}
+            className="w-full h-11 rounded-full bg-slate-100 text-slate-800 font-semibold hover:bg-slate-200 transition-colors"
+          >
+            {messageLabel}
+          </button>
+        ) : null}
       </div>
 
       {modalOpen ? (
