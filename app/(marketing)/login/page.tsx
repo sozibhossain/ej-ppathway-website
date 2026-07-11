@@ -14,8 +14,23 @@ import {
   EyeOffIcon,
 } from "../../components/ui/Icons";
 import { api, ApiError, setAuthCookies } from "../../lib/api";
+import type { LoginSections, SiteContentDoc } from "../../lib/types";
+
+const DEFAULT_COPY: Required<NonNullable<LoginSections["form"]>> = {
+  title: "Welcome Back",
+  subtitle: "Sign in to continue your spiritual journey.",
+  emailPlaceholder: "Email",
+  passwordPlaceholder: "Password",
+  rememberLabel: "Remember me",
+  forgotPasswordLabel: "Forgot Password?",
+  submitLabel: "Login",
+  submittingLabel: "Signing in...",
+  signupPrompt: "Don't have an account?",
+  signupLinkLabel: "Create An Account"
+};
 
 export default function LoginPage() {
+  const [copy, setCopy] = useState(DEFAULT_COPY);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
@@ -28,6 +43,18 @@ export default function LoginPage() {
   useEffect(() => {
     const r = new URLSearchParams(window.location.search).get("redirect");
     if (r && r.startsWith("/") && !r.startsWith("//")) setRedirect(r);
+    (async () => {
+      try {
+        const res = await api.get<SiteContentDoc<LoginSections>>(
+          "/cms/site-content/login",
+          undefined,
+          { skipAuth: true }
+        );
+        setCopy({ ...DEFAULT_COPY, ...(res.data?.sections?.form || {}) });
+      } catch {
+        /* keep defaults */
+      }
+    })();
   }, []);
 
   const submit = async (e: React.FormEvent) => {
@@ -71,17 +98,17 @@ export default function LoginPage() {
 
           <div className="text-center mb-1">
             <h1 className="text-xl sm:text-2xl font-bold text-[#0e7490] inline-flex flex-wrap justify-center items-center gap-2">
-              Welcome Back <SparkleIcon size={20} />
+              {copy.title} <SparkleIcon size={20} />
             </h1>
           </div>
           <p className="text-center text-sm sm:text-base text-slate-600 mb-5 sm:mb-6">
-            Sign in to continue your spiritual journey.
+            {copy.subtitle}
           </p>
 
           <form onSubmit={submit} className="space-y-3">
             <TextField
               type="email"
-              placeholder="Email"
+              placeholder={copy.emailPlaceholder}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               leftIcon={<MailIcon size={18} />}
@@ -89,7 +116,7 @@ export default function LoginPage() {
             />
             <TextField
               type={showPwd ? "text" : "password"}
-              placeholder="Password"
+              placeholder={copy.passwordPlaceholder}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               leftIcon={<LockIcon size={18} />}
@@ -106,25 +133,25 @@ export default function LoginPage() {
             />
 
             <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
-              <Checkbox label="Remember me" checked={remember} onChange={setRemember} />
+              <Checkbox label={copy.rememberLabel} checked={remember} onChange={setRemember} />
               <Link href="/forgot-password" className="text-[#0e7490] font-medium hover:underline">
-                Forgot Password?
+                {copy.forgotPasswordLabel}
               </Link>
             </div>
 
             {error && <div className="text-sm text-red-600">{error}</div>}
 
             <Button type="submit" size="lg" className="w-full" disabled={submitting}>
-              {submitting ? "Signing in…" : "Login"}
+              {submitting ? copy.submittingLabel : copy.submitLabel}
             </Button>
 
             <div className="text-center text-sm text-slate-600">
-              Don&apos;t have an account?{" "}
+              {copy.signupPrompt}{" "}
               <Link
                 href={redirect ? `/signup?redirect=${encodeURIComponent(redirect)}` : "/signup"}
                 className="text-[#0e7490] font-semibold hover:underline"
               >
-                Create An Account
+                {copy.signupLinkLabel}
               </Link>
             </div>
           </form>
