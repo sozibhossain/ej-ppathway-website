@@ -288,6 +288,7 @@ export type Advisor = {
     audioMessageUrl?: string;
     introVideoUrl?: string;
     pricing?: { chatPerMin?: number; callPerMin?: number; videoPerMin?: number };
+    sessionTypes?: { chat?: boolean; call?: boolean; video?: boolean };
     isOnline?: boolean;
     isFeaturedOnHome?: boolean;
     tier?: "bronze" | "silver" | "gold";

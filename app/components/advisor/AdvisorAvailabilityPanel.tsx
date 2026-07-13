@@ -24,6 +24,7 @@ type AvailabilityResponse = {
   stepMinutes: number;
   scheduleWindow: { from: string; to: string } | null;
   scheduleWindows?: { from: string; to: string }[];
+  sessionTypes?: { chat?: boolean; call?: boolean; video?: boolean };
   availableSlots: AvailabilitySlot[];
   bookedSlots: AvailabilitySlot[];
 };
@@ -238,6 +239,10 @@ export function AdvisorAvailabilityPanel({ advisorId, profile, labels, footer }:
   const windowLabel = scheduleWindows.length
     ? scheduleWindows.map((window) => `${window.from} - ${window.to}`).join(", ")
     : "Closed";
+  const sessionTypes = availability?.sessionTypes || profile.sessionTypes || {};
+  const chatEnabled = sessionTypes.chat !== false;
+  const callEnabled = sessionTypes.call !== false;
+  const videoEnabled = sessionTypes.video !== false;
 
   return (
     <div>
@@ -315,18 +320,25 @@ export function AdvisorAvailabilityPanel({ advisorId, profile, labels, footer }:
             {labels.pricing || "Pricing"}
           </h3>
           <div className="space-y-2 text-sm">
-            <PriceRow icon={<ChatIcon size={15} />} label="Chat" value={price(profile.pricing?.chatPerMin)} />
-            <PriceRow icon={<PhoneIcon size={15} />} label="Call" value={price(profile.pricing?.callPerMin)} />
-            <PriceRow icon={<VideoIcon size={15} />} label="Video" value={price(profile.pricing?.videoPerMin)} />
+            {chatEnabled ? <PriceRow icon={<ChatIcon size={15} />} label="Chat" value={price(profile.pricing?.chatPerMin)} /> : null}
+            {callEnabled ? <PriceRow icon={<PhoneIcon size={15} />} label="Call" value={price(profile.pricing?.callPerMin)} /> : null}
+            {videoEnabled ? <PriceRow icon={<VideoIcon size={15} />} label="Video" value={price(profile.pricing?.videoPerMin)} /> : null}
+            {!chatEnabled && !callEnabled && !videoEnabled ? (
+              <p className="rounded border border-[#d6d6d6] bg-white px-3 py-2 text-center text-slate-500">
+                No booking modes enabled
+              </p>
+            ) : null}
           </div>
-          <BookingActions
-            advisorId={advisorId}
-            appStoreLink={footer.appStoreLink}
-            playStoreLink={footer.playStoreLink}
-            bookLabel={labels.bookSession || "Book a session"}
-            messageLabel={labels.sendMessage || "Send message"}
-            showMessage={false}
-          />
+          {chatEnabled || callEnabled || videoEnabled ? (
+            <BookingActions
+              advisorId={advisorId}
+              appStoreLink={footer.appStoreLink}
+              playStoreLink={footer.playStoreLink}
+              bookLabel={labels.bookSession || "Book a session"}
+              messageLabel={labels.sendMessage || "Send message"}
+              showMessage={false}
+            />
+          ) : null}
           <p className="mt-3 inline-flex w-full items-center justify-center gap-1.5 text-xs text-slate-500">
             <ShieldCheckIcon size={13} className="text-[#1f6f91]" />
             Secure booking
