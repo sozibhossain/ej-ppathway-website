@@ -61,7 +61,8 @@ export default function AdvisorOnboardingPage() {
   const [styles, setStyles] = useState<string[]>([]);
 
   useEffect(() => {
-    const nextToken = new URLSearchParams(window.location.search).get("token") || "";
+    const params = new URLSearchParams(window.location.search);
+    const nextToken = params.get("token") || params.get("onboarding") || "";
     setToken(nextToken);
     if (!nextToken) {
       setError("Invalid or missing onboarding link.");
