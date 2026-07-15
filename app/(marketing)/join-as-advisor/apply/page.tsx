@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { TextField, SelectField, Checkbox } from "../../../components/ui/Input";
+import { TextArea, TextField, SelectField, Checkbox } from "../../../components/ui/Input";
 import { Combobox } from "../../../components/ui/Combobox";
 import { Button, LinkButton } from "../../../components/ui/Button";
 import {
@@ -44,6 +44,24 @@ type ApplicationInfo = {
     country?: string;
   };
 };
+type OnboardingDetails = {
+  user?: AccountInfo & { timezone?: string };
+  applicantDetails?: ApplicationInfo["applicantDetails"];
+  professionalTitle?: string;
+  bio?: string;
+  detailedDescription?: string;
+  yearsOfExperience?: string;
+  expertise?: string[];
+  styles?: string[];
+  languages?: string[];
+  status?: string;
+};
+type OnboardingProfileForm = {
+  professionalTitle: string;
+  languages: string;
+  bio: string;
+  detailedDescription: string;
+};
 
 const STEPS = [
   "Application",
@@ -52,6 +70,25 @@ const STEPS = [
   "Under Review",
   "Approved",
   "Not Selected",
+];
+
+const OPTIONS_EXPERTISE = [
+  "Love & Relationship",
+  "Dream Interpretation",
+  "Career",
+  "Deliverance",
+  "family",
+  "marriage",
+  "Finances",
+];
+const OPTIONS_STYLES = [
+  "Compassionate",
+  "Direct",
+  "Expressive",
+  "Thoughtful",
+  "Inspirational",
+  "straightforward",
+  "Connection",
 ];
 
 const DEFAULT_COPY: AdvisorApplicationSections = {
@@ -156,6 +193,17 @@ export default function AdvisorApplyPage() {
   const [submitted, setSubmitted] = useState(false);
   const [existingApplication, setExistingApplication] = useState<ApplicationInfo | null>(null);
   const [error, setError] = useState("");
+  const [onboardingToken, setOnboardingToken] = useState("");
+  const [onboardingSubmitting, setOnboardingSubmitting] = useState(false);
+  const [onboardingSubmitted, setOnboardingSubmitted] = useState(false);
+  const [onboardingForm, setOnboardingForm] = useState({
+    professionalTitle: "",
+    languages: "English",
+    bio: "",
+    detailedDescription: "",
+  });
+  const [onboardingExpertise, setOnboardingExpertise] = useState<string[]>([]);
+  const [onboardingStyles, setOnboardingStyles] = useState<string[]>([]);
 
   const router = useRouter();
   const [checking, setChecking] = useState(true);
@@ -176,6 +224,10 @@ export default function AdvisorApplyPage() {
   // visitors to login (returning here after), and pre-fill the form from the
   // signed-in user's account details.
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const nextOnboardingToken = params.get("onboarding") || params.get("token") || "";
+    setOnboardingToken(nextOnboardingToken);
+
     const apply = (u: AccountInfo) => {
       if (u.name) setName(u.name);
       if (u.email) setEmail(u.email);
@@ -197,11 +249,11 @@ export default function AdvisorApplyPage() {
     };
 
     const cached = getCurrentUser<AccountInfo>();
-    if (!cached) {
+    if (!cached && !nextOnboardingToken) {
       router.replace(`/login?redirect=${encodeURIComponent(APPLY_PATH)}`);
       return;
     }
-    apply(cached);
+    if (cached) apply(cached);
     setChecking(false);
 
     // Refresh from the server so the latest profile details are used.
@@ -215,6 +267,48 @@ export default function AdvisorApplyPage() {
         setCopy(mergeApplicationCopy(r.data?.sections));
       } catch {
         /* keep default copy */
+      }
+      if (nextOnboardingToken) {
+        try {
+          const r = await api.get<OnboardingDetails>(
+            "/contracts/advisor-onboarding",
+            { token: nextOnboardingToken },
+            { skipAuth: true }
+          );
+          const data = r.data || {};
+          if (data.user) apply(data.user);
+          if (data.applicantDetails?.dateOfBirth) setDob(data.applicantDetails.dateOfBirth);
+          if (data.applicantDetails?.address) setAddress(data.applicantDetails.address);
+          if (data.applicantDetails?.country) setCountryCode(data.applicantDetails.country);
+          if (data.applicantDetails?.state) setStateName(data.applicantDetails.state);
+          if (data.applicantDetails?.city) setCity(data.applicantDetails.city);
+          setYearsExperience(data.yearsOfExperience || "");
+          setExistingApplication({
+            status: "pending_review",
+            stage: "application",
+            yearsOfExperience: data.yearsOfExperience || "",
+          });
+          setOnboardingForm({
+            professionalTitle: data.professionalTitle || "",
+            languages: (data.languages?.length ? data.languages : ["English"]).join(", "),
+            bio: data.bio || "",
+            detailedDescription: data.detailedDescription || "",
+          });
+          setOnboardingExpertise(data.expertise || []);
+          setOnboardingStyles(data.styles || []);
+          setLocked({
+            name: true,
+            email: true,
+            phone: true,
+            dob: true,
+            country: true,
+            state: true,
+            city: true,
+          });
+        } catch (err) {
+          setError(err instanceof ApiError ? err.message : "This onboarding link is invalid or expired.");
+        }
+        return;
       }
       try {
         const r = await api.get<AccountInfo>("/auth/me");
@@ -256,6 +350,7 @@ export default function AdvisorApplyPage() {
   // reload: while an application is in progress, re-poll its status periodically.
   useEffect(() => {
     if (!existingApplication) return;
+    if (onboardingToken) return;
     const t = setInterval(async () => {
       try {
         const r = await api.get<ApplicationInfo>("/auth/advisor-application");
@@ -272,7 +367,7 @@ export default function AdvisorApplyPage() {
       }
     }, 20000);
     return () => clearInterval(t);
-  }, [existingApplication]);
+  }, [existingApplication, onboardingToken]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -341,6 +436,68 @@ export default function AdvisorApplyPage() {
     }
   };
 
+  const updateOnboarding = (key: keyof typeof onboardingForm, value: string) => {
+    setOnboardingForm((current) => ({ ...current, [key]: value }));
+  };
+
+  const toggleOnboardingValue = (
+    value: string,
+    list: string[],
+    setter: (next: string[]) => void,
+  ) => {
+    setter(list.includes(value) ? list.filter((item) => item !== value) : [...list, value]);
+  };
+
+  const submitOnboarding = async () => {
+    setError("");
+    if (!onboardingToken) {
+      setError("Missing onboarding token.");
+      return;
+    }
+    if (
+      !onboardingForm.professionalTitle.trim() ||
+      !onboardingForm.languages.trim() ||
+      !onboardingForm.bio.trim() ||
+      onboardingExpertise.length === 0 ||
+      onboardingStyles.length === 0
+    ) {
+      setError("Please complete professional title, languages, bio, skills, and style.");
+      return;
+    }
+    setOnboardingSubmitting(true);
+    try {
+      await api.post(
+        "/contracts/advisor-onboarding",
+        {
+          token: onboardingToken,
+          name,
+          phone,
+          country: countryCode,
+          state: stateName,
+          city,
+          professionalTitle: onboardingForm.professionalTitle,
+          yearsOfExperience: yearsExperience,
+          languages: onboardingForm.languages.split(",").map((item) => item.trim()).filter(Boolean),
+          expertise: onboardingExpertise,
+          styles: onboardingStyles,
+          bio: onboardingForm.bio,
+          detailedDescription: onboardingForm.detailedDescription,
+        },
+        { skipAuth: true }
+      );
+      setOnboardingSubmitted(true);
+      setExistingApplication((current) => ({
+        ...(current || {}),
+        status: "pending_review",
+        stage: "application",
+      }));
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "Failed to complete onboarding.");
+    } finally {
+      setOnboardingSubmitting(false);
+    }
+  };
+
   if (checking) {
     return (
       <section className="bg-[#f0f9fb] py-20 min-h-[60vh] flex items-center justify-center">
@@ -395,11 +552,37 @@ export default function AdvisorApplyPage() {
               </p>
             )}
             {existingApplication && (
-              <div className={`mt-6 rounded-xl border px-4 py-3 text-sm ${applicationStatusTone(existingApplication.status)}`}>
+              <div id="pending-review" className={`mt-6 rounded-xl border px-4 py-3 text-sm ${applicationStatusTone(existingApplication.status)}`}>
                 {copy.helper?.statusPrefix} <b>{applicationStatusLabel(existingApplication.status)}</b>. {applicationStatusMessage(existingApplication.status, copy)}
               </div>
             )}
 
+            {onboardingToken ? (
+              <PendingReviewOnboardingSection
+                name={name}
+                email={email}
+                phone={phone}
+                dob={dob}
+                address={address}
+                country={countryCode}
+                stateName={stateName}
+                city={city}
+                yearsExperience={yearsExperience}
+                form={onboardingForm}
+                expertise={onboardingExpertise}
+                styles={onboardingStyles}
+                submitted={onboardingSubmitted}
+                submitting={onboardingSubmitting}
+                onFormChange={updateOnboarding}
+                onToggleExpertise={(value) =>
+                  toggleOnboardingValue(value, onboardingExpertise, setOnboardingExpertise)
+                }
+                onToggleStyle={(value) =>
+                  toggleOnboardingValue(value, onboardingStyles, setOnboardingStyles)
+                }
+                onSubmit={submitOnboarding}
+              />
+            ) : (
             <form onSubmit={submit} className="mt-8 space-y-6 sm:space-y-7">
             <section>
               <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-4 pl-3 border-l-[3px] border-[#0e7490] leading-tight">
@@ -583,6 +766,7 @@ export default function AdvisorApplyPage() {
               {existingApplication ? copy.consent?.lockedLabel : submitting ? copy.consent?.submittingLabel : copy.consent?.submitLabel}
             </Button>
           </form>
+            )}
           </div>
         </div>
       </div>
@@ -650,6 +834,265 @@ function ThankYouModal() {
           </Link>
         </p>
       </div>
+    </div>
+  );
+}
+
+function PendingReviewOnboardingSection({
+  name,
+  email,
+  phone,
+  dob,
+  address,
+  country,
+  stateName,
+  city,
+  yearsExperience,
+  form,
+  expertise,
+  styles,
+  submitted,
+  submitting,
+  onFormChange,
+  onToggleExpertise,
+  onToggleStyle,
+  onSubmit,
+}: {
+  name: string;
+  email: string;
+  phone: string;
+  dob: string;
+  address: string;
+  country: string;
+  stateName: string;
+  city: string;
+  yearsExperience: string;
+  form: OnboardingProfileForm;
+  expertise: string[];
+  styles: string[];
+  submitted: boolean;
+  submitting: boolean;
+  onFormChange: (key: keyof OnboardingProfileForm, value: string) => void;
+  onToggleExpertise: (value: string) => void;
+  onToggleStyle: (value: string) => void;
+  onSubmit: () => void;
+}) {
+  return (
+    <section className="mt-8 space-y-6">
+      {submitted ? (
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-sm text-emerald-800">
+          Your profile information has been submitted for admin review.
+        </div>
+      ) : null}
+
+      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+        <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-4 pl-3 border-l-[3px] border-[#0e7490] leading-tight">
+          Locked Account Information
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <TextField label="Full Name" value={name} disabled />
+          <TextField label="Email" value={email} disabled />
+          <TextField label="Phone Number" value={phone} disabled />
+          <TextField label="Date of Birth" value={dob} disabled />
+          <TextField label="Address" value={address} disabled />
+          <TextField label="Experience" value={yearsExperience} disabled />
+          <TextField label="Country" value={country} disabled />
+          <TextField label="State" value={stateName} disabled />
+          <TextField label="City" value={city} disabled />
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-5">
+        <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-4 pl-3 border-l-[3px] border-[#0e7490] leading-tight">
+          Complete Profile Information
+        </h2>
+        <div className="grid grid-cols-1 gap-4">
+          <TextField
+            label="Professional Title *"
+            value={form.professionalTitle}
+            onChange={(e) => onFormChange("professionalTitle", e.target.value)}
+            placeholder="e.g. Spiritual Advisor"
+            disabled={submitted}
+          />
+          <TextArea
+            label="Short Bio *"
+            value={form.bio}
+            onChange={(e) => onFormChange("bio", e.target.value)}
+            placeholder="Write a short public bio."
+            disabled={submitted}
+          />
+          <TextArea
+            label="Detailed Description"
+            value={form.detailedDescription}
+            onChange={(e) => onFormChange("detailedDescription", e.target.value)}
+            placeholder="Add more detail about your approach, experience, and calling."
+            disabled={submitted}
+          />
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-5">
+        <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-4 pl-3 border-l-[3px] border-[#0e7490] leading-tight">
+          Expertise & Categories
+        </h2>
+        <OnboardingCategoryFilters
+          expertise={expertise}
+          styles={styles}
+          languages={form.languages}
+          disabled={submitted}
+          onToggleExpertise={onToggleExpertise}
+          onToggleStyle={onToggleStyle}
+          onLanguagesChange={(value) => onFormChange("languages", value)}
+        />
+      </div>
+
+      <Button type="button" size="lg" className="w-full" onClick={onSubmit} disabled={submitting || submitted}>
+        {submitted ? "Submitted for Review" : submitting ? "Submitting..." : "Submit Profile for Review"}
+      </Button>
+    </section>
+  );
+}
+
+function OnboardingCategoryFilters({
+  expertise,
+  styles,
+  languages,
+  disabled,
+  onToggleExpertise,
+  onToggleStyle,
+  onLanguagesChange,
+}: {
+  expertise: string[];
+  styles: string[];
+  languages: string;
+  disabled: boolean;
+  onToggleExpertise: (value: string) => void;
+  onToggleStyle: (value: string) => void;
+  onLanguagesChange: (value: string) => void;
+}) {
+  const [languageInput, setLanguageInput] = useState("");
+  const languageValues = languages.split(",").map((item) => item.trim()).filter(Boolean);
+
+  const addLanguage = () => {
+    const next = languageInput.trim();
+    if (!next) return;
+    const exists = languageValues.some((item) => item.toLowerCase() === next.toLowerCase());
+    if (!exists) onLanguagesChange([...languageValues, next].join(", "));
+    setLanguageInput("");
+  };
+
+  const removeLanguage = (value: string) => {
+    onLanguagesChange(languageValues.filter((item) => item !== value).join(", "));
+  };
+
+  return (
+    <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+      <OnboardingFilterColumn
+        title="Skills/Expertise *"
+        placeholder="Choose Skills & Expertise"
+        options={OPTIONS_EXPERTISE}
+        values={expertise}
+        disabled={disabled}
+        onToggle={onToggleExpertise}
+      />
+      <OnboardingFilterColumn
+        title="Style *"
+        placeholder="Choose Style"
+        options={OPTIONS_STYLES}
+        values={styles}
+        disabled={disabled}
+        onToggle={onToggleStyle}
+      />
+      <div>
+        <h3 className="mb-3 text-sm font-bold text-slate-900">Languages *</h3>
+        <div className="flex gap-2 rounded-lg border border-slate-200 bg-white p-1.5">
+          <input
+            type="text"
+            value={languageInput}
+            disabled={disabled}
+            onChange={(e) => setLanguageInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addLanguage();
+              }
+            }}
+            placeholder="Type your language"
+            className="min-w-0 flex-1 bg-transparent px-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 disabled:cursor-not-allowed"
+          />
+          <button
+            type="button"
+            disabled={disabled || !languageInput.trim()}
+            onClick={addLanguage}
+            className="rounded-md bg-[#0e7490] px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-[#0a6178] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-500"
+          >
+            Add
+          </button>
+        </div>
+        <SelectedValueList values={languageValues} disabled={disabled} onToggle={removeLanguage} />
+      </div>
+    </div>
+  );
+}
+
+function OnboardingFilterColumn({
+  title,
+  placeholder,
+  options,
+  values,
+  disabled,
+  onToggle,
+}: {
+  title: string;
+  placeholder: string;
+  options: string[];
+  values: string[];
+  disabled: boolean;
+  onToggle: (value: string) => void;
+}) {
+  return (
+    <div>
+      <h3 className="mb-3 text-sm font-bold text-slate-900">{title}</h3>
+      <Combobox
+        options={options.map((option) => ({ value: option, label: option }))}
+        value=""
+        onChange={onToggle}
+        placeholder={placeholder}
+        searchPlaceholder="Search..."
+        emptyText="No results."
+        disabled={disabled}
+        allowCustom
+        triggerClassName="h-11 rounded-lg border border-slate-200 bg-white px-3"
+      />
+      <SelectedValueList values={values} disabled={disabled} onToggle={onToggle} />
+    </div>
+  );
+}
+
+function SelectedValueList({
+  values,
+  disabled,
+  onToggle,
+}: {
+  values: string[];
+  disabled: boolean;
+  onToggle: (value: string) => void;
+}) {
+  return (
+    <div className="mt-3 space-y-2">
+      {values.map((value) => (
+        <div key={value} className="flex min-h-11 items-center justify-between gap-3 rounded-lg bg-[#eaf6fb] px-3 py-2 text-sm text-slate-900">
+          <span className="min-w-0 break-words">{value}</span>
+          <button
+            type="button"
+            disabled={disabled}
+            onClick={() => onToggle(value)}
+            className="shrink-0 rounded-md bg-red-100 px-3 py-1.5 text-xs font-bold text-red-600 transition-colors hover:bg-red-200 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            Remove
+          </button>
+        </div>
+      ))}
     </div>
   );
 }
