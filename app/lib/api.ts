@@ -5,27 +5,12 @@
  * Auth token is read from cookie on the client side (set by login flow).
  */
 
-// This client runs in BOTH server components (build / ISR / SSR) and the browser.
-// - In the browser the backend's plain-HTTP origin would be blocked as mixed
-//   content, so requests go through the same-origin `/proxy-api/*` rewrite
-//   (see next.config.ts) which forwards to the backend over HTTP server-side.
-// - On the server there is no mixed-content rule and a relative URL can't be
-//   fetched, so we must call the backend with an absolute URL directly.
-const BACKEND_API_URL_DEFAULT = "http://187.77.10.158:5002/api/v1";
-
 function resolveApiBaseUrl(): string {
-  if (typeof window === "undefined") {
-    // Server-side: only an absolute http(s) URL can be fetched.
-    for (const candidate of [
-      process.env.BACKEND_API_URL,
-      process.env.NEXT_PUBLIC_API_BASE_URL,
-    ]) {
-      if (candidate && /^https?:\/\//i.test(candidate)) return candidate;
-    }
-    return BACKEND_API_URL_DEFAULT;
+  const configuredUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();
+  if (!configuredUrl || !/^https?:\/\//i.test(configuredUrl)) {
+    throw new Error("NEXT_PUBLIC_API_BASE_URL must be set to an absolute API URL");
   }
-  // Browser: use the same-origin HTTPS proxy path (defaults to it if unset).
-  return process.env.NEXT_PUBLIC_API_BASE_URL || "/proxy-api";
+  return configuredUrl.replace(/\/+$/, "");
 }
 
 export const API_BASE_URL = resolveApiBaseUrl();
@@ -89,15 +74,8 @@ export const getAccessToken = (): string | null => getCookie(ACCESS_TOKEN_COOKIE
 
 /**
  * Socket.io server origin.
- *
- * On Vercel the REST API is reached through a same-origin `/proxy-api/*` rewrite
- * (HTTP backend behind an HTTPS proxy). That trick does NOT work for Socket.io:
- * Vercel rewrites can't proxy WebSocket upgrades, so a relative/derived origin
- * can never reach the backend. Real-time chat therefore needs the backend on a
- * real wss:// origin — set NEXT_PUBLIC_SOCKET_ORIGIN to that when available.
- * Falls back to deriving from the API base (works in local dev where the API
- * base is an absolute http://localhost URL). When neither yields an absolute
- * http(s) URL, the socket stays disabled and chat falls back to REST polling.
+ * Defaults to the HTTPS API origin. NEXT_PUBLIC_SOCKET_ORIGIN can override it
+ * when Socket.io is hosted separately.
  */
 const DERIVED_SOCKET_ORIGIN =
   process.env.NEXT_PUBLIC_SOCKET_ORIGIN ||
