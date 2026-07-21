@@ -29,6 +29,12 @@ const DEFAULT_COPY: Required<NonNullable<LoginSections["form"]>> = {
   signupLinkLabel: "Create An Account"
 };
 
+const ALLOWED_LOGIN_ROLES = new Set(["user", "advisor"]);
+
+type LoginUser = {
+  role?: string | null;
+};
+
 export default function LoginPage() {
   const [copy, setCopy] = useState(DEFAULT_COPY);
   const [email, setEmail] = useState("");
@@ -66,12 +72,18 @@ export default function LoginPage() {
     }
     setSubmitting(true);
     try {
-      const r = await api.post<{ accessToken: string; refreshToken: string; user: unknown }>(
+      const r = await api.post<{ accessToken: string; refreshToken: string; user: LoginUser }>(
         "/auth/login",
         { email, password },
         { skipAuth: true }
       );
       if (r.data) {
+        const role = String(r.data.user?.role || "").trim().toLowerCase();
+        if (!ALLOWED_LOGIN_ROLES.has(role)) {
+          setError("This account cannot sign in here. Please use the correct portal.");
+          setSubmitting(false);
+          return;
+        }
         setAuthCookies(r.data.accessToken, r.data.refreshToken, r.data.user);
       }
       if (typeof window !== "undefined") window.location.href = redirect || "/";
