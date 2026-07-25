@@ -43,6 +43,10 @@ export function MarketplaceAdvisorDetail({ advisor, recommended, advisorId, labe
   const audioMessageUrl =
     profile.audioMessageUrl || (profile.introVideoUrl && isAudioMediaUrl(profile.introVideoUrl) ? profile.introVideoUrl : "");
   const introVideoUrl = profile.introVideoUrl && !isAudioMediaUrl(profile.introVideoUrl) ? profile.introVideoUrl : "";
+  const sessionTypes = profile.sessionTypes || {};
+  const chatEnabled = sessionTypes.chat !== false;
+  const callEnabled = sessionTypes.call !== false;
+  const videoEnabled = sessionTypes.video !== false;
   const filteredReviews = useMemo(() => filterAndSortReviews(reviews, reviewFilter), [reviews, reviewFilter]);
   const totalReviewPages = Math.ceil(filteredReviews.length / 5);
 
@@ -135,35 +139,21 @@ export function MarketplaceAdvisorDetail({ advisor, recommended, advisorId, labe
                     : "Currently offline - appointments available"}
                 </p>
 
-                <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <ActionRate label="Call Me" icon={<PhoneIcon size={18} />} price={profile.pricing?.callPerMin} />
-                  <ActionRate label="Chat" icon={<ChatIcon size={18} />} price={profile.pricing?.chatPerMin} />
-                </div>
+                {callEnabled || chatEnabled ? (
+                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {callEnabled ? <ActionRate label="Call Me" icon={<PhoneIcon size={18} />} price={profile.pricing?.callPerMin} /> : null}
+                    {chatEnabled ? <ActionRate label="Chat" icon={<ChatIcon size={18} />} price={profile.pricing?.chatPerMin} /> : null}
+                  </div>
+                ) : null}
 
-                <div className="mt-5 grid grid-cols-1 gap-3">
-                  <SmallService label="Video" icon={<VideoIcon size={16} />} price={profile.pricing?.videoPerMin} />
-                </div>
+                {videoEnabled ? (
+                  <div className="mt-5 grid grid-cols-1 gap-3">
+                    <SmallService label="Video" icon={<VideoIcon size={16} />} price={profile.pricing?.videoPerMin} />
+                  </div>
+                ) : null}
               </div>
             </div>
           </section>
-
-          {audioMessageUrl ? (
-            <MediaPanel
-              url={audioMessageUrl}
-              title="Listen to Message"
-              type="audio"
-              onOpen={() => setMediaModal({ url: audioMessageUrl, title: "Listen to Message", type: "audio" })}
-            />
-          ) : null}
-
-          {introVideoUrl ? (
-            <MediaPanel
-              url={introVideoUrl}
-              title={labels.introVideo || "Intro Video"}
-              type="video"
-              onOpen={() => setMediaModal({ url: introVideoUrl, title: labels.introVideo || "Intro Video", type: "video" })}
-            />
-          ) : null}
 
         <section className="mt-4 max-w-[760px]">
           <h2 className="mb-5 text-xl font-bold text-slate-950">About {advisorName}</h2>
@@ -312,8 +302,18 @@ function formatList(items?: string[]) {
 function displayRange(day?: ScheduleDay) {
   if (!day || day.enabled === false) return "Closed";
   return scheduleRanges(day)
-    .map((slot) => `${slot.from} - ${slot.to}`)
+    .map((slot) => `${formatScheduleClock(slot.from)} - ${formatScheduleClock(slot.to)}`)
     .join(", ") || "Closed";
+}
+
+function formatScheduleClock(value?: string) {
+  const [hourRaw, minuteRaw] = String(value || "").split(":");
+  const hour = Number.parseInt(hourRaw, 10);
+  const minute = Number.parseInt(minuteRaw, 10);
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) return value || "";
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+  return `${hour12}:${String(minute).padStart(2, "0")} ${suffix}`;
 }
 
 function todaysDisplayRange(schedule?: Advisor["profile"]["weeklySchedule"]) {
@@ -392,52 +392,6 @@ function reviewPaginationItems(totalPages: number) {
   if (totalPages <= 1) return [];
   if (totalPages <= 5) return ["<<", ...Array.from({ length: totalPages }, (_, index) => String(index + 1)), ">>"];
   return ["<<", "1", "2", "3", "...", String(totalPages), ">>"];
-}
-
-function MediaPanel({
-  url,
-  title,
-  type,
-  onOpen,
-}: {
-  url: string;
-  title: string;
-  type: "audio" | "video";
-  onOpen: () => void;
-}) {
-  return (
-    <section className="mt-4 max-w-[760px] rounded border border-[#d6d6d6] bg-white">
-      <h2 className="border-b border-[#e4e4e4] px-4 py-3 text-base font-bold text-slate-950">{title}</h2>
-      <div className="bg-[#f8f8f8] p-4">
-        {type === "audio" ? (
-          <div className="flex flex-col gap-3 rounded border border-slate-200 bg-white p-4">
-            <audio src={url} controls className="w-full" preload="metadata" />
-            <button
-              type="button"
-              onClick={onOpen}
-              className="self-start rounded bg-[#1f6f91] px-4 py-2 text-sm font-bold text-white hover:bg-[#195b78]"
-            >
-              Open Listener
-            </button>
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={onOpen}
-            className="group relative block aspect-video w-full overflow-hidden bg-black text-white"
-            aria-label={`Open ${title}`}
-          >
-            <video src={url} className="h-full w-full object-cover opacity-80" preload="metadata" muted playsInline />
-            <span className="absolute inset-0 grid place-items-center">
-              <span className="rounded-full bg-white/90 px-5 py-3 text-sm font-bold text-[#152238] shadow-lg group-hover:bg-white">
-                Play Intro Video
-              </span>
-            </span>
-          </button>
-        )}
-      </div>
-    </section>
-  );
 }
 
 function MediaModal({

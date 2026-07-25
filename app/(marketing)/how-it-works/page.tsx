@@ -2,29 +2,65 @@ import { CmsCtaButton } from "../../components/ui/Button";
 import { Icon, CalendarIcon, CheckIcon } from "../../components/ui/Icons";
 import { CTA } from "../../components/sections/CTA";
 import { FAQSection } from "../../components/sections/FAQSection";
+import { api } from "../../lib/api";
 import { getSiteContent } from "../../lib/site-content";
 
+type CreditPack = {
+  id: string;
+  label: string;
+  credits: number;
+  bonusCredits?: number;
+  totalCredits?: number;
+  priceUsd: number;
+};
+
+type CreditUsageBlock = {
+  id: string;
+  activity: string;
+  credits: number;
+};
+
+type CreditSummary = {
+  packs?: CreditPack[];
+  usageBlocks?: CreditUsageBlock[];
+};
+
+async function getCreditSummary() {
+  try {
+    const res = await api.get<CreditSummary>("/wallet/credit-packs", undefined, {
+      skipAuth: true,
+      revalidate: 60,
+    });
+    return {
+      packs: res.data?.packs || [],
+      usageBlocks: res.data?.usageBlocks || [],
+    };
+  } catch {
+    return { packs: [], usageBlocks: [] };
+  }
+}
+
+function formatMoney(value?: number) {
+  return `$${Number(value || 0).toLocaleString(undefined, {
+    minimumFractionDigits: Number(value || 0) % 1 === 0 ? 0 : 2,
+    maximumFractionDigits: 2,
+  })}`;
+}
+
+function formatCredits(value?: number) {
+  const credits = Number(value || 0);
+  return `${credits.toLocaleString()} ${credits === 1 ? "Credit" : "Credits"}`;
+}
+
 export default async function HowItWorksPage() {
-  const data = await getSiteContent("how-it-works");
+  const [data, creditSummary] = await Promise.all([
+    getSiteContent("how-it-works"),
+    getCreditSummary(),
+  ]);
   const hero = data.hero || {};
   const sessionTypes = data.sessionTypes?.types || [];
-  const creditPacks = [
-    { package: "25 Credits", price: "$19" },
-    { package: "50 Credits", price: "$35" },
-    { package: "100 Credits", price: "$59" },
-    { package: "200 Credits", price: "$99" },
-  ];
-  const creditUsage = [
-    { activity: "15-Minute Chat Session", credits: "5 Credits" },
-    { activity: "5-Minute Voice Call", credits: "8 Credits" },
-    { activity: "10-Minute Voice Call", credits: "10 Credits" },
-    { activity: "15-Minute Voice Call", credits: "15 Credits" },
-    { activity: "5-Minute Video Call", credits: "10 Credits" },
-    { activity: "10-Minute Video Call", credits: "15 Credits" },
-    { activity: "15-Minute Video Call", credits: "20 Credits" },
-    { activity: "Session Recording", credits: "5 Credits" },
-    { activity: "Chat Transcript", credits: "5 Credits" },
-  ];
+  const creditPacks = creditSummary.packs;
+  const creditUsage = creditSummary.usageBlocks;
 
   return (
     <>
@@ -68,24 +104,30 @@ export default async function HowItWorksPage() {
             <div className="rounded-2xl border border-[#cfe9f0] overflow-hidden bg-[#f7fcfd]">
               <div className="px-5 py-4 bg-[#e6f4f8] font-semibold text-slate-900">Available Credit Packs</div>
               <div className="divide-y divide-[#cfe9f0]">
-                {creditPacks.map((pack) => (
-                  <div key={pack.package} className="px-5 py-3 flex items-center justify-between text-sm">
-                    <span className="font-medium text-slate-800">{pack.package}</span>
-                    <span className="text-[#0e7490] font-semibold">{pack.price}</span>
+                {creditPacks.length ? creditPacks.map((pack) => (
+                  <div key={pack.id} className="px-5 py-3 flex items-center justify-between text-sm">
+                    <span className="font-medium text-slate-800">
+                      {pack.label || formatCredits(pack.totalCredits || pack.credits)}
+                    </span>
+                    <span className="text-[#0e7490] font-semibold">{formatMoney(pack.priceUsd)}</span>
                   </div>
-                ))}
+                )) : (
+                  <div className="px-5 py-5 text-sm text-slate-500">No active credit packs available.</div>
+                )}
               </div>
             </div>
 
             <div className="rounded-2xl border border-[#cfe9f0] overflow-hidden bg-[#f7fcfd]">
               <div className="px-5 py-4 bg-[#e6f4f8] font-semibold text-slate-900">Credit Usage Guide</div>
               <div className="divide-y divide-[#cfe9f0]">
-                {creditUsage.map((row) => (
-                  <div key={row.activity} className="px-5 py-3 flex items-center justify-between gap-4 text-sm">
+                {creditUsage.length ? creditUsage.map((row) => (
+                  <div key={row.id} className="px-5 py-3 flex items-center justify-between gap-4 text-sm">
                     <span className="text-slate-700">{row.activity}</span>
-                    <span className="text-[#0e7490] font-semibold whitespace-nowrap">{row.credits}</span>
+                    <span className="text-[#0e7490] font-semibold whitespace-nowrap">{formatCredits(row.credits)}</span>
                   </div>
-                ))}
+                )) : (
+                  <div className="px-5 py-5 text-sm text-slate-500">No active credit usage guide available.</div>
+                )}
               </div>
             </div>
           </div>

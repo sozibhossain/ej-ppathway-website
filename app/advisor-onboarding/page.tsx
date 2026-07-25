@@ -23,11 +23,6 @@ type OnboardingDetails = {
   expertise?: string[];
   styles?: string[];
   languages?: string[];
-  pricing?: {
-    chatPerMin?: number;
-    callPerMin?: number;
-    videoPerMin?: number;
-  };
 };
 
 const OPTIONS_EXPERTISE = ["Love & Relationships", "Career", "Family", "Finances", "Dream Interpretation", "Deliverance", "Marriage"];
@@ -51,9 +46,6 @@ export default function AdvisorOnboardingPage() {
     professionalTitle: "",
     yearsOfExperience: "",
     languages: "",
-    chatPerMin: "",
-    callPerMin: "",
-    videoPerMin: "",
     bio: "",
     detailedDescription: "",
   });
@@ -87,9 +79,6 @@ export default function AdvisorOnboardingPage() {
           professionalTitle: data.professionalTitle || "",
           yearsOfExperience: data.yearsOfExperience || "",
           languages: (data.languages || ["English"]).join(", "),
-          chatPerMin: String(data.pricing?.chatPerMin ?? ""),
-          callPerMin: String(data.pricing?.callPerMin ?? ""),
-          videoPerMin: String(data.pricing?.videoPerMin ?? ""),
           bio: data.bio || "",
           detailedDescription: data.detailedDescription || "",
         });
@@ -127,9 +116,6 @@ export default function AdvisorOnboardingPage() {
           languages: form.languages.split(",").map((item) => item.trim()).filter(Boolean),
           expertise,
           styles,
-          chatPerMin: Number(form.chatPerMin || 0),
-          callPerMin: Number(form.callPerMin || 0),
-          videoPerMin: Number(form.videoPerMin || 0),
         },
         { skipAuth: true }
       );
@@ -168,11 +154,6 @@ export default function AdvisorOnboardingPage() {
               <TextField label="Professional Title" value={form.professionalTitle} onChange={(e) => update("professionalTitle", e.target.value)} />
               <TextField label="Years of Experience" value={form.yearsOfExperience} onChange={(e) => update("yearsOfExperience", e.target.value)} />
               <TextField label="Languages" value={form.languages} onChange={(e) => update("languages", e.target.value)} />
-              <div className="grid grid-cols-3 gap-3">
-                <TextField label="Chat" type="number" value={form.chatPerMin} onChange={(e) => update("chatPerMin", e.target.value)} />
-                <TextField label="Call" type="number" value={form.callPerMin} onChange={(e) => update("callPerMin", e.target.value)} />
-                <TextField label="Video" type="number" value={form.videoPerMin} onChange={(e) => update("videoPerMin", e.target.value)} />
-              </div>
             </div>
             <ChoiceGroup title="Expertise Areas" options={OPTIONS_EXPERTISE} values={expertise} onToggle={(v) => toggle(v, expertise, setExpertise)} />
             <ChoiceGroup title="Styles" options={OPTIONS_STYLES} values={styles} onToggle={(v) => toggle(v, styles, setStyles)} />

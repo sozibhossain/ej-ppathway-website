@@ -146,6 +146,20 @@ function price(value?: number) {
   return `${(value || 0).toFixed(2)} credits/min`;
 }
 
+function formatScheduleClock(value?: string) {
+  const [hourRaw, minuteRaw] = String(value || "").split(":");
+  const hour = Number.parseInt(hourRaw, 10);
+  const minute = Number.parseInt(minuteRaw, 10);
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) return value || "";
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+  return `${hour12}:${String(minute).padStart(2, "0")} ${suffix}`;
+}
+
+function formatScheduleWindow(window: { from: string; to: string }) {
+  return `${formatScheduleClock(window.from)} - ${formatScheduleClock(window.to)}`;
+}
+
 function compactSlots(slots: AvailabilitySlot[]) {
   if (!slots.length) return [];
   const sorted = [...slots].sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
@@ -236,8 +250,12 @@ export function AdvisorAvailabilityPanel({ advisorId, profile, labels, footer }:
     : availability?.scheduleWindow
       ? [availability.scheduleWindow]
       : fallbackSchedule || [];
+  const scheduleRows = scheduleWindows.map((window) => ({
+    startLabel: formatScheduleClock(window.from),
+    endLabel: formatScheduleClock(window.to),
+  }));
   const windowLabel = scheduleWindows.length
-    ? scheduleWindows.map((window) => `${window.from} - ${window.to}`).join(", ")
+    ? scheduleWindows.map(formatScheduleWindow).join(", ")
     : "Closed";
   const sessionTypes = availability?.sessionTypes || profile.sessionTypes || {};
   const chatEnabled = sessionTypes.chat !== false;
@@ -294,8 +312,13 @@ export function AdvisorAvailabilityPanel({ advisorId, profile, labels, footer }:
           title="Appointment Availability"
           loading={loading}
           error={error}
-          rows={groupedSlots.length ? groupedSlots : fallbackSchedule ? fallbackSchedule.map((window) => ({ startLabel: window.from, endLabel: window.to })) : []}
+          rows={scheduleRows.length ? scheduleRows : groupedSlots}
           emptyText={availableToday ? "" : bookedSlots.length ? "No open slots left" : "No appointment slots"}
+          modes={{
+            call: callEnabled,
+            chat: chatEnabled,
+            video: videoEnabled,
+          }}
         />
 
         <div className="mt-4 rounded border border-[#d6d6d6] bg-white px-3 py-2 text-sm">
@@ -355,13 +378,21 @@ function AvailabilityTable({
   loading,
   error,
   emptyText,
+  modes,
 }: {
   title: string;
   rows: Array<{ startLabel: string; endLabel: string }>;
   loading: boolean;
   error: string;
   emptyText: string;
+  modes: { call: boolean; chat: boolean; video: boolean };
 }) {
+  const actions = [
+    modes.call ? { key: "call", icon: <PhoneIcon size={17} className="text-slate-900" />, label: "Call" } : null,
+    modes.chat ? { key: "chat", icon: <ChatIcon size={17} className="text-slate-900" />, label: "Chat" } : null,
+    modes.video ? { key: "video", icon: <VideoIcon size={17} className="text-slate-900" />, label: "Video" } : null,
+  ].filter(Boolean) as Array<{ key: string; icon: React.ReactNode; label: string }>;
+
   return (
     <div className="mt-5">
       <h4 className="mb-2 text-center font-bold">{title}</h4>
@@ -372,16 +403,24 @@ function AvailabilityTable({
           <div className="px-3 py-3 text-center text-sm text-[#a92828]">{error}</div>
         ) : rows.length ? (
           rows.map((row, index) => (
-            <div key={`${row.startLabel}-${row.endLabel}-${index}`} className="grid grid-cols-[1fr_48px_48px] border-b border-[#d6d6d6] last:border-b-0">
+            <div
+              key={`${row.startLabel}-${row.endLabel}-${index}`}
+              className="grid border-b border-[#d6d6d6] last:border-b-0"
+              style={{ gridTemplateColumns: actions.length ? `1fr repeat(${actions.length}, 48px)` : "1fr" }}
+            >
               <span className="px-3 py-2 text-center font-semibold">
                 {row.startLabel} - {row.endLabel}
               </span>
-              <span className="grid place-items-center border-l border-[#9fb7c0]">
-                <PhoneIcon size={17} className="text-slate-900" />
-              </span>
-              <span className="grid place-items-center">
-                <ChatIcon size={17} className="text-slate-900" />
-              </span>
+              {actions.map((action) => (
+                <span
+                  key={action.key}
+                  className="grid place-items-center border-l border-[#9fb7c0]"
+                  title={action.label}
+                  aria-label={action.label}
+                >
+                  {action.icon}
+                </span>
+              ))}
             </div>
           ))
         ) : (
