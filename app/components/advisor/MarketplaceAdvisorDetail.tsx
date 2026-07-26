@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { AdvisorAvailabilityPanel } from "./AdvisorAvailabilityPanel";
+import { AppRedirectModal, useAdvisorAppLauncher } from "./BookingActions";
 import { ChatIcon, PhoneIcon, StarIcon, VideoIcon } from "../ui/Icons";
 import type { Advisor, AdvisorDetailSections, GlobalSections, Review } from "../../lib/types";
 
@@ -32,6 +33,11 @@ export function MarketplaceAdvisorDetail({ advisor, recommended, advisorId, labe
   const { user, profile, reviews } = advisor;
   const [mediaModal, setMediaModal] = useState<{ url: string; title: string; type: "audio" | "video" } | null>(null);
   const [reviewFilter, setReviewFilter] = useState<ReviewFilter>("recent");
+  const appLauncher = useAdvisorAppLauncher({
+    advisorId,
+    appStoreLink: footer.appStoreLink,
+    playStoreLink: footer.playStoreLink,
+  });
   const advisorName = displayName(user.name);
   const rating = profile.avgRating || 0;
   const ratingsCount = profile.ratingsCount || 0;
@@ -141,14 +147,33 @@ export function MarketplaceAdvisorDetail({ advisor, recommended, advisorId, labe
 
                 {callEnabled || chatEnabled ? (
                   <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {callEnabled ? <ActionRate label="Call Me" icon={<PhoneIcon size={18} />} price={profile.pricing?.callPerMin} /> : null}
-                    {chatEnabled ? <ActionRate label="Chat" icon={<ChatIcon size={18} />} price={profile.pricing?.chatPerMin} /> : null}
+                    {callEnabled ? (
+                      <ActionRate
+                        label="Call Me"
+                        icon={<PhoneIcon size={18} />}
+                        price={profile.pricing?.callPerMin}
+                        onClick={appLauncher.openAdvisorInApp}
+                      />
+                    ) : null}
+                    {chatEnabled ? (
+                      <ActionRate
+                        label="Chat"
+                        icon={<ChatIcon size={18} />}
+                        price={profile.pricing?.chatPerMin}
+                        onClick={appLauncher.openAdvisorInApp}
+                      />
+                    ) : null}
                   </div>
                 ) : null}
 
                 {videoEnabled ? (
                   <div className="mt-5 grid grid-cols-1 gap-3">
-                    <SmallService label="Video" icon={<VideoIcon size={16} />} price={profile.pricing?.videoPerMin} />
+                    <SmallService
+                      label="Video"
+                      icon={<VideoIcon size={16} />}
+                      price={profile.pricing?.videoPerMin}
+                      onClick={appLauncher.openAdvisorInApp}
+                    />
                   </div>
                 ) : null}
               </div>
@@ -276,6 +301,12 @@ export function MarketplaceAdvisorDetail({ advisor, recommended, advisorId, labe
           onClose={() => setMediaModal(null)}
         />
       ) : null}
+      <AppRedirectModal
+        open={appLauncher.modalOpen}
+        onClose={() => appLauncher.setModalOpen(false)}
+        appStoreLink={footer.appStoreLink}
+        playStoreLink={footer.playStoreLink}
+      />
     </main>
   );
 }
@@ -441,11 +472,22 @@ function MediaModal({
   );
 }
 
-function ActionRate({ label, icon, price }: { label: string; icon: React.ReactNode; price?: number }) {
+function ActionRate({
+  label,
+  icon,
+  price,
+  onClick,
+}: {
+  label: string;
+  icon: React.ReactNode;
+  price?: number;
+  onClick: () => void;
+}) {
   return (
     <div>
       <button
         type="button"
+        onClick={onClick}
         className="flex h-14 w-full flex-col items-center justify-center rounded bg-[#4b861b] text-xs font-bold text-white transition-colors hover:bg-[#3f7416]"
       >
         {icon}
@@ -458,10 +500,21 @@ function ActionRate({ label, icon, price }: { label: string; icon: React.ReactNo
   );
 }
 
-function SmallService({ label, icon, price }: { label: string; icon: React.ReactNode; price?: number }) {
+function SmallService({
+  label,
+  icon,
+  price,
+  onClick,
+}: {
+  label: string;
+  icon: React.ReactNode;
+  price?: number;
+  onClick: () => void;
+}) {
   return (
     <button
       type="button"
+      onClick={onClick}
       className="h-10 rounded border border-[#cfcfcf] bg-white text-sm font-bold text-slate-900 hover:bg-slate-50"
     >
       <span className="inline-flex items-center gap-2">
