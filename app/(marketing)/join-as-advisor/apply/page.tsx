@@ -66,8 +66,12 @@ type OnboardingProfileForm = {
 const STEPS = [
   "Application",
   "Pending Review",
+  "Interview Scheduled",
   "Live Interview",
   "Under Review",
+  "Awaiting Signature",
+  "Awaiting Approval",
+  "Awaiting Submission",
   "Approved",
   "Not Selected",
 ];
@@ -1101,15 +1105,22 @@ function statusToStepIdx(status?: string) {
   switch (status) {
     case "pending_review":
       return 1;
-    case "live_interview":
     case "scheduled":
       return 2;
-    case "under_review":
+    case "live_interview":
       return 3;
-    case "approved":
+    case "under_review":
       return 4;
-    case "rejected":
+    case "awaiting_signature":
       return 5;
+    case "awaiting_approval":
+      return 6;
+    case "awaiting_submission":
+      return 7;
+    case "approved":
+      return 8;
+    case "rejected":
+      return 9;
     default:
       return 0;
   }
@@ -1117,8 +1128,12 @@ function statusToStepIdx(status?: string) {
 
 function applicationStatusLabel(status?: string) {
   if (status === "pending_review") return "Pending Review";
-  if (status === "live_interview" || status === "scheduled") return "Live Interview";
+  if (status === "scheduled") return "Interview Scheduled";
+  if (status === "live_interview") return "Live Interview";
   if (status === "under_review") return "Under Review";
+  if (status === "awaiting_signature") return "Awaiting Signature";
+  if (status === "awaiting_approval") return "Awaiting Approval";
+  if (status === "awaiting_submission") return "Awaiting Submission";
   if (status === "approved") return "Approved";
   if (status === "rejected") return "Not Selected";
   return "Application";
@@ -1133,6 +1148,9 @@ function applicationStatusTone(status?: string) {
 function applicationStatusMessage(status: string | undefined, copy: AdvisorApplicationSections) {
   if (status === "approved") return copy.helper?.approvedMessage;
   if (status === "rejected") return copy.helper?.rejectedMessage;
+  if (status === "awaiting_signature") return "Your advisor contract has been sent and is waiting for your signature.";
+  if (status === "awaiting_approval") return "Your signed contract is waiting for admin approval.";
+  if (status === "awaiting_submission") return "Your onboarding profile is waiting for submission.";
   return copy.helper?.reviewedLockText;
 }
 
